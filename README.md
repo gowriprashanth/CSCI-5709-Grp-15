@@ -2,15 +2,16 @@
 
 ## Tutorial 2
 
-* *Date Created*: 28 Jan 2024
-* *Last Modification Date*: 28 Jan 2024
-* *Git URL*: <https://git.cs.dal.ca/kanagaraj/csci-5708-grp-15>
-* *Gowri Prashanth Kanagaraj - Branch URL*: <https://git.cs.dal.ca/kanagaraj/csci-5708-grp-15/-/tree/develop/gowri-kanagaraj>
+- _Date Created_: 28 Jan 2024
+- _Last Modification Date_: 28 Jan 2024
+- _Git URL_: <https://git.cs.dal.ca/kanagaraj/csci-5708-grp-15>
+- _Gowri Prashanth Kanagaraj - Branch URL_: <https://git.cs.dal.ca/kanagaraj/csci-5708-grp-15/-/tree/develop/gowri-kanagaraj>
+- _Nisarg Sharadkumar Vaghela - Branch URL_: <https://git.cs.dal.ca/kanagaraj/csci-5708-grp-15/-/tree/develop/nisarg-vaghela>
 
 ## Authors
 
-* [Gowri Prashanth Kanagaraj](gw351441@dal.ca) - *(Owner)*
-* [Name](email@dal.ca) - *(Role)*
-* [Name](email@dal.ca) - *(Role)*
-* [Name](email@dal.ca) - *(Role)*
-* [Name](email@dal.ca) - *(Role)*
+- [Gowri Prashanth Kanagaraj](gw351441@dal.ca) - _(Owner)_
+- [Nisarg Sharadkumar Vaghela](ns897912@dal.ca) - _(Owner)_
+- [Name](email@dal.ca) - _(Role)_
+- [Name](email@dal.ca) - _(Role)_
+- [Name](email@dal.ca) - _(Role)_
