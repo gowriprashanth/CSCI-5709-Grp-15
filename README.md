@@ -10,7 +10,7 @@
 - _Bhautik Rameshbhai Koshiya - Branch URL_: <https://git.cs.dal.ca/kanagaraj/csci-5708-grp-15/-/tree/develop/bhautik-koshiya>
 - _Darshit Mukeshbhai Dhameliya - Branch URL_: <https://git.cs.dal.ca/kanagaraj/csci-5708-grp-15/-/tree/develop/darshit-dhameliya>
 - _Kuldeep Rajeshbhai Gajera - Branch URL_: <https://git.cs.dal.ca/kanagaraj/csci-5708-grp-15/-/tree/develop/kuldeep-gajera>
-
+- _Dhruvik Maheshbhai Kakadiya - Branch URL_: <https://git.cs.dal.ca/kanagaraj/csci-5708-grp-15/-/tree/develop/dhruvik-kakadiya>
 
 ## Authors
 
@@ -19,3 +19,4 @@
 - [Bhautik Rameshbhai Koshiya](bh889463@dal.ca) - _(Owner)_
 - [Darshit Mukeshbhai Dhameliya](darshit.dhameliya@dal.ca) - _(Owner)_
 - [Kuldeep Rajeshbhai Gajera](kl210309@dal.ca) - _(Owner)_
+- [Dhruvik Maheshbhai Kakadiya](dhruvik.kakadiya@dal.ca) - _(Owner)_
