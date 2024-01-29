@@ -9,6 +9,7 @@
 - _Nisarg Sharadkumar Vaghela - Branch URL_: <https://git.cs.dal.ca/kanagaraj/csci-5708-grp-15/-/tree/develop/nisarg-vaghela>
 - _Bhautik Rameshbhai Koshiya - Branch URL_: <https://git.cs.dal.ca/kanagaraj/csci-5708-grp-15/-/tree/develop/bhautik-koshiya>
 - _Darshit Mukeshbhai Dhameliya - Branch URL_: <https://git.cs.dal.ca/kanagaraj/csci-5708-grp-15/-/tree/develop/darshit-dhameliya>
+- _Dhruvik Maheshbhai Kakadiya - Branch URL_: <https://git.cs.dal.ca/kanagaraj/csci-5708-grp-15/-/tree/develop/dhruvik-kakadiya>
 
 
 ## Authors
@@ -17,4 +18,6 @@
 - [Nisarg Sharadkumar Vaghela](ns897912@dal.ca) - _(Owner)_
 - [Bhautik Rameshbhai Koshiya](bh889463@dal.ca) - _(Owner)_
 - [Darshit Mukeshbhai Dhameliya](darshit.dhameliya@dal.ca) - _(Owner)_
+- [Dhruvik Maheshbhai Kakadiya](dhruvik.kakadiya@dal.ca) - _(Owner)_
 - [Name](email@dal.ca) - _(Role)_
+
