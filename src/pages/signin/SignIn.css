@@ -1,0 +1,167 @@
+.layout-default.layout-signin header.ant-layout-header {
+    display: flex;
+    position: relative;
+    background-color: #fff;
+    color: #141414;
+    box-shadow: 0 20px 27px rgb(0 0 0 / 5%);
+    flex-direction: row;
+    padding: 0 50px;
+    height: 64px;
+    line-height: 64px;
+  }
+
+  .fill-muted {
+    fill: #8c8c8c;
+  }
+  .layout-default .ant-layout-header .header-brand h5 {
+    white-space: nowrap;
+  
+    color: #141414;
+    margin: 0;
+  }
+  .layout-default .ant-layout-header .header-nav a svg {
+    margin-right: 5px;
+  }
+  .layout-default .ant-layout-header .header-nav a span,
+  .layout-default .ant-layout-header .header-nav a svg {
+    vertical-align: middle;
+  }
+  .layout-default .ant-layout-header .header-nav a {
+    color: #141414;
+    padding: 6px 12px;
+    font-weight: 400;
+  }
+  
+  .layout-default
+    .ant-layout-header
+    .header-nav
+    .ant-menu-horizontal
+    > .ant-menu-item,
+  .layout-default
+    .ant-layout-header
+    .header-nav
+    .ant-menu-horizontal
+    > .ant-menu-item-active,
+  .layout-default
+    .ant-layout-header
+    .header-nav
+    .ant-menu-horizontal
+    > .ant-menu-item-selected,
+  .layout-default
+    .ant-layout-header
+    .header-nav
+    .ant-menu-horizontal
+    > .ant-menu-item:hover,
+  .layout-default
+    .ant-layout-header
+    .header-nav
+    .ant-menu-horizontal
+    > .ant-menu-submenu,
+  .layout-default
+    .ant-layout-header
+    .header-nav
+    .ant-menu-horizontal
+    > .ant-menu-submenu-active,
+  .layout-default
+    .ant-layout-header
+    .header-nav
+    .ant-menu-horizontal
+    > .ant-menu-submenu-selected,
+  .layout-default
+    .ant-layout-header
+    .header-nav
+    .ant-menu-horizontal
+    > .ant-menu-submenu:hover {
+    color: #8c8c8c;
+    font-weight: 600;
+    border: none;
+  }
+  .layout-default
+    .ant-layout-header
+    .header-nav
+    .ant-menu-horizontal
+    > .ant-menu-item {
+    padding: 0;
+  }
+  .sign-in {
+    padding: 0 20px;
+  }
+  .layout-default .ant-layout-content {
+    padding-top: 40px;
+  }
+  .font-regular {
+    font-weight: 400;
+  }
+  .signin h1 {
+    font-size: 48px;
+    font-weight: 700;
+    color: #141414;
+  }
+  
+  .signin h5 {
+    font-weight: 400;
+    color: #8c8c8c;
+    font-size: 20px;
+    white-space: normal;
+  }
+  .ant-row.ant-form-item.username {
+    display: block;
+  }
+  
+  .ant-row.ant-form-item.username
+    .ant-col.ant-form-item-label
+    .ant-form-item-required:before {
+    display: none;
+  }
+  
+  .ant-row.ant-form-item.username .ant-col.ant-form-item-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #141414;
+  }
+  .signin .ant-form-item-control-input button.ant-switch {
+    margin-right: 5px;
+  }
+  .text-dark {
+    color: #141414;
+  }
+  .sign-img img {
+    width: 100%;
+    max-width: 500px;
+    margin: auto;
+    display: block;
+  }
+  .layout-signin {
+    background: #fff;
+  }
+  .layout-signin footer.ant-layout-footer svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .layout-signin footer.ant-layout-footer ul li:after {
+    display: none;
+  }
+  .layout-default .ant-layout-footer .copyright {
+    font-size: 16px;
+    color: #8c8c8c;
+  }
+  
+  .row-col .ant-row {
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+  .layout-default.ant-layout.layout-sign-up .header-col.header-brand h5 {
+    color: #fff;
+  }
+  
+  .layout-default.ant-layout.layout-sign-up .header-col.header-nav a {
+    color: #fff;
+  }
+  
+  .layout-default.ant-layout.layout-sign-up
+    .header-col.header-nav
+    svg
+    path.fill-muted {
+    fill: #fff;
+  }

@@ -1,0 +1,250 @@
+.layout-default.ant-layout.layout-sign-up header.ant-layout-header {
+    display: flex;
+    position: relative;
+    background-color: #fff ;
+    color: #141414;
+    box-shadow: 0 20px 27px rgb(0 0 0 / 5%);
+    flex-direction: row;
+    padding: 0 50px;
+    height: 64px;
+    line-height: 64px;
+  }
+
+  .inside{
+    margin-top: 250px;
+  }
+
+  .layout-default .ant-layout-header {
+    display: flex;
+    background-color: #ffffff;
+    color: #141414;
+    box-shadow: 0 20px 27px rgb(0 0 0 / 5%);
+  }
+  
+  .header-col.header-nav {
+    margin-left: auto;
+    width: 100%;
+    margin-right: auto;
+  }
+  .header-col.header-nav .ant-menu-overflow {
+    justify-content: center;
+  }
+  
+  .header-col.header-nav .ant-menu-horizontal {
+    background: transparent;
+    box-shadow: none;
+    border: 0px;
+  }
+  
+  .layout-default.ant-layout.layout-sign-up {
+    padding: 11px;
+  }
+  .header-col.header-nav li:after {
+    display: none;
+  }
+  
+  .header-col.header-brand {
+    white-space: nowrap;
+  }
+  
+  .header-col.header-brand h5 {
+    margin: 0px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  
+  .header-col.header-nav {
+    color: #fff;
+    font-weight: 600;
+  }
+  
+  .header-col.header-nav ul li {
+    color: #fff !important;
+  }
+  
+  .header-col.header-nav ul li img {
+    margin-top: -2px;
+    margin-right: 5px;
+  }
+  .header-col.header-btn button {
+    height: 34px;
+    padding: 0 16px;
+    border-radius: 34px;
+    line-height: 33px;
+  }
+  .sign-up-header .content {
+    padding-top: 40px;
+    max-width: 480px;
+    margin: auto;
+  }
+  .sign-up-header * {
+    color: #fff;
+  }
+  .sign-up-header .content h1 {
+    font-size: 48px;
+    color: #fff;
+  }
+  .text-lg {
+    font-size: 16px;
+  }
+  .card-signup .sign-up-gateways .ant-btn {
+    margin-right: 10px;
+    margin-left: 10px;
+    height: 60px;
+    width: 70px;
+    box-shadow: none;
+    border-radius: 6px;
+  }
+  .card-signup {
+    width: 100%;
+    max-width: 500px;
+    margin: auto;
+    box-shadow: 0 20px 27px rgb(0 0 0 / 5%);
+    border-radius: 12px;
+    margin-top: -190px;
+    margin-bottom: 20px;
+  }
+  .card-signup h5 {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 600;
+    color: #141414;
+    margin: 0px;
+  }
+  .header-solid .ant-card-head {
+    border-bottom: 0;
+  }
+  .card-signup .sign-up-gateways .ant-btn img {
+    width: 20px;
+  }
+  .sign-up-gateways {
+    text-align: center;
+  }
+  .m-25,
+  .mb-25,
+  .my-25 {
+    margin-bottom: 25px;
+  }
+  .m-25,
+  .mt-25,
+  .my-25 {
+    margin-top: 25px;
+  }
+  .text-center {
+    text-align: center;
+  }
+  .font-semibold {
+    font-weight: 600;
+  }
+  .text-muted {
+    color: #8c8c8c;
+  }
+  .ant-input {
+    border-radius: 6px;
+  }
+  .ant-input {
+    font-weight: 600;
+    color: #8c8c8c;
+  }
+  .ant-input {
+    height: 40px;
+    border: 1px solid #d9d9d9;
+  }
+  .font-bold {
+    font-weight: 700;
+  }
+  .text-dark {
+    color: #141414;
+  }
+  .ant-btn,
+  .ant-radio-group .ant-radio-button-wrapper {
+    font-weight: 600;
+    font-size: 12px;
+    height: 40px;
+    padding: 0 15px;
+    line-height: 40px;
+  }
+  .ant-btn {
+    box-shadow: 0 2px 4px rgb(0 0 0 / 7%);
+    border-radius: 6px;
+  }
+  .layout-default .ant-layout-footer {
+    color: rgba(0, 0, 0, 0.65);
+    font-size: 14px;
+    background: transparent;
+    text-align: center;
+  }
+  .layout-default .ant-layout-footer .ant-menu-horizontal {
+    border: none;
+    line-height: 1.5;
+    margin: 0 0 30px;
+    background-color: transparent;
+    font-size: 16px;
+  }
+  .layout-default .ant-layout-footer .ant-menu-horizontal {
+    text-align: center;
+    display: block;
+  }
+  
+  .layout-default .ant-layout-footer .ant-menu-horizontal > .ant-menu-item,
+  .layout-default .ant-layout-footer .ant-menu-horizontal > .ant-menu-item-active,
+  .layout-default
+    .ant-layout-footer
+    .ant-menu-horizontal
+    > .ant-menu-item-selected,
+  .layout-default .ant-layout-footer .ant-menu-horizontal > .ant-menu-item:hover,
+  .layout-default .ant-layout-footer .ant-menu-horizontal > .ant-menu-submenu,
+  .layout-default
+    .ant-layout-footer
+    .ant-menu-horizontal
+    > .ant-menu-submenu-active,
+  .layout-default
+    .ant-layout-footer
+    .ant-menu-horizontal
+    > .ant-menu-submenu-selected,
+  .layout-default
+    .ant-layout-footer
+    .ant-menu-horizontal
+    > .ant-menu-submenu:hover {
+    color: #8c8c8c;
+    border: none;
+  }
+  .layout-default .ant-layout-footer .ant-menu-horizontal > .ant-menu-item-active,
+  .layout-default
+    .ant-layout-footer
+    .ant-menu-horizontal
+    > .ant-menu-item-selected,
+  .layout-default .ant-layout-footer .ant-menu-horizontal > .ant-menu-item:hover,
+  .layout-default
+    .ant-layout-footer
+    .ant-menu-horizontal
+    > .ant-menu-submenu-active,
+  .layout-default
+    .ant-layout-footer
+    .ant-menu-horizontal
+    > .ant-menu-submenu-selected,
+  .layout-default
+    .ant-layout-footer
+    .ant-menu-horizontal
+    > .ant-menu-submenu:hover {
+    color: #262626;
+  }
+  .layout-default.ant-layout.layout-sign-up .ant-layout-footer ul li:after {
+    display: none;
+  }
+  .layout-default.ant-layout.layout-sign-up footer.ant-layout-footer ul li a svg {
+    width: 18px;
+    height: 18px;
+  }
+  .layout-default .ant-layout-footer .menu-nav-social a svg {
+    fill: #8c8c8c;
+    vertical-align: middle;
+  }
+  .layout-default .ant-layout-footer .menu-nav-social a:hover svg {
+    fill: #1890ff;
+  }
+  .layout-default .ant-layout-footer .copyright a {
+    color: inherit;
+    font-weight: normal;
+  }
