@@ -1,0 +1,124 @@
+.issuestack-carousel-section {
+    min-height: calc(100vh - 85px);
+    display: flex;
+    align-items: center;
+    font-family: inherit;
+}
+
+.issuestack-carousel-section .carousel-content-wrapper {
+    row-gap: 30px;
+    align-items: center;
+    width: 100%;
+    padding: 20px 80px;
+}
+
+.issuestack-carousel-section .carousel-content-wrapper .carousel-image {
+    width: 100%;
+    border-radius: 15px;
+    margin: auto;
+}
+
+.issuestack-carousel-section .carousel-content-wrapper .carousel-button-wrapper {
+    margin: 20px 10px;
+}
+
+.issuestack-carousel-section .carousel-content-wrapper .carousel-button-wrapper .ant-btn{
+    font-size: 16px;
+}
+
+.issuestack-carousel-section .carousel-content-wrapper .title-text {
+    font-size: 36px;
+    margin: 0;
+    font-weight: bold;
+    color: #1890ff;
+}
+
+.issuestack-carousel-section .carousel-content-wrapper .supportive-text {
+    font-size: 32px;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    color: black;
+    font-weight: bold;
+}
+
+.issuestack-carousel-section .carousel-button-wrapper .ant-btn {
+    line-height: 40px;
+}
+
+.issuestack-carousel-section .carousel-content-wrapper p {
+    font-size: 20px;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    color: black;
+}
+
+.issuestack-section .section-title {
+    display: flex;
+    justify-content: center;
+}
+
+.issuestack-section .section-title h1 {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.features-section .feature-content-wrapper {
+    justify-content: center;
+    text-align: center;
+    padding: 20px 80px 40px 80px;
+}
+
+.features-section .feature-content-wrapper .ant-card {
+    background-color: #f8f9fa;
+    border: 1px solid #ebedef;
+}
+
+.features-section .feature-content-wrapper .ant-statistic-content-value {
+    display: none;
+}
+
+.contact-content-wrapper .contact-form-wrapper,
+.about-content-wrapper .about-description-wrapper,
+.faq-content-wrapper .faq-description-wrapper {
+    padding: 40px 80px
+}
+
+.about-content-wrapper .about-description-wrapper h1 {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.about-content-wrapper .about-description-wrapper p {
+    font-size: 15px;
+    color: black;
+}
+
+.about-content-wrapper .about-description-wrapper .about-tagline {
+    font-size: 18px;
+    color: black;
+}
+
+.about-content-wrapper .about-image-wrapper img {
+    max-height: 650px
+}
+
+.about-content-wrapper .about-image-wrapper,
+.contact-content-wrapper .contact-image-wrapper,
+.faq-content-wrapper .faq-image-wrapper {
+    justify-content: center;
+    display: flex;
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+    .issuestack-carousel-section .carousel-content-wrapper {
+        padding: 20px 80px;
+    }
+}
+
+@media (min-width: 268px) and (max-width: 768px) {
+    .issuestack-carousel-section .carousel-content-wrapper {
+        padding: 20px 30px;
+    }
+}

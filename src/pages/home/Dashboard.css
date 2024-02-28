@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+
+* {
+  font-size: 100%;
+  font-family: "Roboto", sans-serif !important;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  height: 75vh;
+  overflow: hidden;
+}
+
+.header,
+.footer {
+  padding: 1rem;
+  flex-shrink: 0;
+}
+
+.board {
+  display: flex;
+  flex: 1 1 auto;
+  overflow: auto;
+}
+
+.board-column-list {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+  margin: 0;
+  padding: 10px 10px 0;
+  list-style: none;
+}
+
+.board-container {
+  
+  display: flex;
+  flex-direction: row;
+  padding: 10px 0 10px 10px;
+}
+
+
+
+.board-column {
+  display: flex;
+  flex-direction: column;
+  margin-right: 8px;
+  min-width: 250px;
+  max-width: 280px;
+  border: 1px solid #e5e5e5;
+  border-radius: 4px;
+  background-color: #eee;
+}
+
+.board-column-header {
+  padding: 10px;
+  font-weight: bold;
+  font-size: 0.875rem;
+}
+
+
+
+.add-members-button {
+    background-color: #0099CC; 
+    color: white;
+    border:  2px solid #008CBA; 
+    border-radius:  7px; 
+    text-transform: uppercase;
+    font-weight: bold; 
+    transition: all  0.3s ease;
+  }
+  
+  .add-members-button:hover {
+    background-color: #008CBA; 
+    cursor: pointer; 
+  }
+  
+  .add-members-button:active {
+    transform: scale(0.98); 
+  }
+  
+
+  .card:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+.card {
+  padding: 10px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  margin-bottom: 10px;
+  cursor: grab;
+}
+
+
+
+

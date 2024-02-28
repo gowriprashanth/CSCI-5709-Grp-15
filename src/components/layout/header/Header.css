@@ -1,0 +1,19 @@
+.header-col.header-nav {
+    margin-left: auto;
+    width: 100%;
+    margin-right: auto;
+  }
+  .header-col.header-nav .ant-menu-overflow {
+    
+    justify-content: right !important;
+  }
+  
+  .header-col.header-nav .ant-menu-horizontal {
+    background: transparent;
+    box-shadow: none;
+    border: 0px;
+  }
+  
+/* .icon-color{
+  background-color: black;
+} */
