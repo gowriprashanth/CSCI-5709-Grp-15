@@ -1,8 +1,12 @@
-const express = require('express');
-const router = express.Router();
+/**
+ * @author Darshit Dhameliya
+ */
+const ticketRoutes = require("./tickets") 
 
-router.get('/', function(req, res, next) {
-  res.status(200).send({ message: 'Server is running' });
-});
+const registerRoutes = (app) => {
+  app.use("/tickets", ticketRoutes);
+}
 
-module.exports = router;
+module.exports = {
+  registerRoutes
+}
