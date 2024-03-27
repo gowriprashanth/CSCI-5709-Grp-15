@@ -8,7 +8,7 @@ const uri = process.env.DATABASE_URL
 const client = new MongoClient(uri);
 
 client.connect();
-const db = client.db("web-tutorial5");
+const db = client.db("Group15DB");
 
 module.exports = {
     db
