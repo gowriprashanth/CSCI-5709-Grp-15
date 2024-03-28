@@ -153,7 +153,7 @@ const ResetPassword = async (req, res) => {
             user.resetToken = null;
             await user.save();
         }else{
-            return res.json({ message: 'Reset Password link is expired.'})
+            return res.status(404).json({ message: 'Reset Password link is expired.'})
         }
 
         res.json({ message: 'Password reset successfully' });
