@@ -145,13 +145,16 @@ const ResetPassword = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
+        if(user.resetToken && user.resetToken != null){ 
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(newPassword, salt);
 
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(newPassword, salt);
-
-        user.password = hashedPassword;
-        user.resetToken = null;
-        await user.save();
+            user.password = hashedPassword;
+            user.resetToken = null;
+            await user.save();
+        }else{
+            return res.json({ message: 'Reset Password link is expired.'})
+        }
 
         res.json({ message: 'Password reset successfully' });
     } catch (error) {
