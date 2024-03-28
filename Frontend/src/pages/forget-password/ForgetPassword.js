@@ -23,7 +23,7 @@ export default class ForgotPassword extends Component {
     if (email) {
 
       try{
-        const response = await axios.post(`http://localhost:3001/user/forgotPassword`, {
+        const response = await axios.post(`https://csci-5709-bk-assignment3.onrender.com/user/forgotPassword`, {
           email: email,
         })
 

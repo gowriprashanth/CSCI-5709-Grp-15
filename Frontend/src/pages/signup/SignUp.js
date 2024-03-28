@@ -24,7 +24,7 @@ export default class SignUp extends Component {
     if (name && email && password && role && remember) {
      
       try{
-          const response = await axios.post(`http://localhost:3001/user/signup`, {
+          const response = await axios.post(`https://csci5709-web-project.netlify.app/user/signup`, {
             name: name,
             email: email,
             role: role,

@@ -110,7 +110,7 @@ const ForgotPassword = async (req, res) => {
         }
 
         const resetToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '10m' });
-        const URL = `http://localhost:3000/reset-password?token=${resetToken}`;
+        const URL = `https://csci5709-web-project.netlify.app/reset-password?token=${resetToken}`;
         const mailOptions = {
             from: process.env.USERNAME, 
             to: email, 
