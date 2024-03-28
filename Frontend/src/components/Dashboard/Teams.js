@@ -1,7 +1,7 @@
-import {
-  SortableContext,
-  horizontalListSortingStrategy,
-} from "@dnd-kit/sortable";
+// import {
+//   SortableContext,
+//   horizontalListSortingStrategy,
+// } from "@dnd-kit/sortable";
 import React, { useEffect, useState } from "react";
 import { TeamTickets } from "./TeamTickets";
 
@@ -51,40 +51,7 @@ export default function Teams({
   return (
     <div className="board">
       <div className="board-container">
-        <SortableContext
-          items={containers}
-          strategy={horizontalListSortingStrategy}
-        >
-          {containers.map((containerId) => {
-            if (
-              columns.filter((c) => "column-" + c.id === containerId)[0]
-                .isDeleted === false
-            ) {
-              const columnName = columns.filter(
-                (c) => "column-" + c.id === containerId
-              )[0].name;
-              const columnDescription = columns.filter(
-                (c) => "column-" + c.id === containerId
-              )[0].description;
-
-              return (
-                <TeamTickets
-                  id={containerId}
-                  key={containerId}
-                  items={items[containerId]}
-                  name={columnName}
-                  description={columnDescription}
-                  data={data}
-                  handleDeleteColumn={handleDeleteColumn}
-                  handleEditTeam={handleEditTeam}
-                  handleSubmitRaiseTicket={handleSubmitRaiseTicket}
-                />
-              );
-            } else {
-              return null;
-            }
-          })}
-        </SortableContext>
+        
       </div>
     </div>
   );

@@ -4,10 +4,10 @@ import {
   SettingOutlined,
   UsergroupAddOutlined,
 } from "@ant-design/icons";
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+// import {
+//   SortableContext,
+//   verticalListSortingStrategy,
+// } from "@dnd-kit/sortable";
 import {
   Avatar,
   Badge,
@@ -206,17 +206,7 @@ export const TeamTickets = (props) => {
         />
       </div>
       <div className="board-column-list">
-        <SortableContext items={items} strategy={verticalListSortingStrategy}>
-          {items.map((item, _index) => {
-            return (
-              <FieldItem
-                key={item}
-                item={data.filter((d) => "task-" + d.id === item)[0]}
-                disabled={isSortingContainer}
-              />
-            );
-          })}
-        </SortableContext>
+       
 
         <Modal
           title={
