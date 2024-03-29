@@ -29,7 +29,7 @@ See deployment for notes on how to deploy the project on a live system.
 
 ### Prerequisites
 
-You’ll need to have __Node 14.0.0__ or later version on your local development machine (but it’s not required on the server). I recommend using the latest LTS version.
+You’ll need to have **Node 14.0.0** or later version on your local development machine (but it’s not required on the server). I recommend using the latest LTS version.
 
 ### Installing
 
@@ -48,6 +48,7 @@ Build application
 ```
 npm run build
 ```
+
 Start application
 
 ```
@@ -56,9 +57,9 @@ npm start
 
 ## Built With
 
-* [React](https://react.dev/) - The web framework used
-* [Ant Design](https://ant.design/) - High-quality UI components
-* [Moment](https://momentjs.com/) - Date Formatting/Manipulation
-* [React Router Dom](https://www.npmjs.com/package/react-router-dom) -  Declarative routing for React web applications
+- [React](https://react.dev/) - The web framework used
+- [Ant Design](https://ant.design/) - High-quality UI components
+- [Moment](https://momentjs.com/) - Date Formatting/Manipulation
+- [React Router Dom](https://www.npmjs.com/package/react-router-dom) - Declarative routing for React web applications
 
 All the images are taken from [StorySet](https://storyset.com/).
