@@ -51,7 +51,7 @@ export default function Teams({
   return (
     <div className="board">
       <div className="board-container">
-        <SortableContext
+      <SortableContext
           items={containers}
           strategy={horizontalListSortingStrategy}
         >
@@ -85,6 +85,7 @@ export default function Teams({
             }
           })}
         </SortableContext>
+
       </div>
     </div>
   );

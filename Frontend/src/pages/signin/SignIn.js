@@ -3,25 +3,47 @@ import { Link } from "react-router-dom";
 import { Layout, Menu, Button, Form, Input, Card } from "antd";
 import "./SignIn.css";
 import HeaderAuthentication from "../../components/layout/headerauthentication/HeaderAuthentication";
+import axios from 'axios';
 
 const { Footer, Content } = Layout;
 export default class SignIn extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLogin: false,
+      token: null,
+      errorMessage: "" 
     };
 
     this.handleSignIn = this.handleSignIn.bind(this);
   }
 
-  handleSignIn = (values) => {
+  handleSignIn = async (values) => {
     const { email, password } = values;
     if (email && password) {
-      this.setState({ isLogin: true }, () => {
-        localStorage.setItem("isLogin", this.state.isLogin);
-        this.props.history.push("/dashboard");
-      });
+
+      try{
+        const response = await axios.post(`https://csci-5709-bk-assignment3.onrender.com/user/signin`, {
+          email: email,
+          password: password,
+        })
+
+        if(response.status === 200){
+          const responseData = response.data;
+          console.log("response", responseData);
+          this.setState({ token: responseData.token }, () => {
+            localStorage.setItem("token", responseData.token);
+            this.props.history.push("/dashboard");
+          });
+        }
+        
+      }catch(error){
+        console.error("Server Error")
+        this.setState({ errorMessage: "Invalid email or password." });
+        setTimeout(() => {
+          this.setState({ errorMessage: "" });
+        }, 5000);
+    }
+
     } else {
       console.log("Username and password are required.");
     }
@@ -125,6 +147,15 @@ export default class SignIn extends Component {
                     SIGN IN
                   </Button>
                 </Form.Item>
+                {
+                    this.state.errorMessage ? (
+                      <p className="color text-danger font-semibold">
+                        {this.state.errorMessage}
+                      </p>
+                    ) : (
+                      null
+                    )
+                }
                 <p className="font-semibold text-muted">
                   Don't have an account?{" "}
                   <Link to="/sign-up" className="text-dark font-bold">
