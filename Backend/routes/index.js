@@ -3,12 +3,12 @@
  */
 const ticketRoutes = require("./tickets") 
 const userRoutes = require("./userRoutes")
-const chartRoutes = require("./chartRoutes")
+const analyticsRoutes = require("./analyticsRoutes")
 
 const registerRoutes = (app) => {
   app.use("/tickets", ticketRoutes);
   app.use("/user", userRoutes);
-  app.use("/chart",chartRoutes);
+  app.use("/analytics",analyticsRoutes);
 }
 
 module.exports = {
