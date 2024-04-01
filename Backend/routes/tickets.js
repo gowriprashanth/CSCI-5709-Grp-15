@@ -1,5 +1,5 @@
 /**
- * @author Darshit Dhameliya
+ * @author Darshit Dhameliya, Nisarg Vaghela
  */
 const express = require('express');
 const router = express.Router();
@@ -10,27 +10,67 @@ router.put('/:id/update-status', async (req, res, next) => {
   try {
     const message = await ticketController.updateTicketStatus({ message: "Hello" })
     res.status(StatusCodes.OK).send({ message });
-  } catch(error) {
+  } catch (error) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error.message || error })
   }
 });
 
 router.put('/:id/update-priority', async (req, res, next) => {
-    try {
-      const message = await ticketController.updateTicketPriority({ message: "Hello" })
-      res.status(StatusCodes.OK).send({ message });
-    } catch(error) {
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error.message || error })
-    }
+  try {
+    const message = await ticketController.updateTicketPriority({ message: "Hello" })
+    res.status(StatusCodes.OK).send({ message });
+  } catch (error) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error.message || error })
+  }
 });
 
 router.put('/:id/update-assignee', async (req, res, next) => {
-    try {
-      const message = await ticketController.updateTicketAssignee({ message: "Hello" })
-      res.status(StatusCodes.OK).send({ message });
-    } catch(error) {
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error.message || error })
-    }
+  try {
+    const message = await ticketController.updateTicketAssignee({ message: "Hello" })
+    res.status(StatusCodes.OK).send({ message });
+  } catch (error) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error.message || error })
+  }
 });
+
+router.post('/create', async (req, res, next) => {
+  try {
+    //TODO: add teamId in request body
+    const { title, description, files = [] } = req.body
+    if (!title) {
+      res.status(StatusCodes.BAD_REQUEST).send({ error: "title is required" });
+      return
+    }
+    if (!description) {
+      res.status(StatusCodes.BAD_REQUEST).send({ error: "description is required" });
+      return
+    }
+    const message = await ticketController.createTicket({ data: { title, description, files } })
+    res.status(StatusCodes.OK).send({ message });
+  } catch (error) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error.message || error })
+  }
+});
+
+
+router.post('/add-attachments', async (req, res, next) => {
+  try {
+    let { ticketId, files } = req.body
+    if (!ticketId) {
+      res.status(StatusCodes.BAD_REQUEST).send({ error: "ticketId is required" });
+      return
+    }
+    if (!files || !files.length) {
+      res.status(StatusCodes.BAD_REQUEST).send({ error: "files is required" });
+      return
+    }
+    const message = await ticketController.addAttachments({ data: { ticketId, files } })
+    res.status(StatusCodes.OK).send({ message });
+  } catch (error) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error.message || error })
+  }
+});
+
+//TODO: Add route to get ticket details by team id
 
 module.exports = router;
