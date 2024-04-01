@@ -3,18 +3,50 @@ import { Layout, Menu, Button, Card, Form, Input, Checkbox, Radio } from "antd";
 import "./SignUp.css";
 import { Link } from "react-router-dom";
 import HeaderAuthentication from "../../components/layout/headerauthentication/HeaderAuthentication";
+import axios from 'axios';
 
 const { Footer, Content } = Layout;
-
 export default class SignUp extends Component {
-  handleSignUp = (values) => {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      errorMessage: "" 
+    };
+
+    this.handleSignUp = this.handleSignUp.bind(this);
+  }
+
+  handleSignUp = async (values) => {
+    const API_URL = process.env.API_URL;
+
     const { name, email, password, role, remember } = values;
     if (name && email && password && role && remember) {
-      this.setState({ isLogin: true }, () => {
-        localStorage.setItem("isLogin", this.state.isLogin);
-        this.props.history.push("/dashboard");
-        console.log(role);
-      });
+     
+      try{
+          const response = await axios.post(`https://csci-5709-bk-assignment3.onrender.com/user/signup`, {
+            name: name,
+            email: email,
+            role: role,
+            password: password,
+          })
+
+          if(response.status === 200){
+            const responseData = response.data;
+            console.log("response", responseData);
+            this.setState({ token: responseData.token }, () => {
+              localStorage.setItem("token", responseData.token);
+              this.props.history.push("/dashboard");
+              console.log(role);
+            });
+          }
+      }catch(error){
+        console.error("Server Error")
+        this.setState({ errorMessage: "User with this email already exists  " });
+        setTimeout(() => {
+          this.setState({ errorMessage: "" });
+        }, 5000);
+      }
     } else {
       console.log("UserName, Email and Password are required.");
     }
@@ -129,7 +161,15 @@ export default class SignUp extends Component {
                 >
                   <Input.Password placeholder="Password" />
                 </Form.Item>
-
+                {
+                    this.state.errorMessage ? (
+                      <p className="color text-danger font-semibold">
+                        {this.state.errorMessage}
+                      </p>
+                    ) : (
+                      null
+                    )
+                }
                 <Form.Item
                   name="role"
                   rules={[
@@ -137,8 +177,8 @@ export default class SignUp extends Component {
                   ]}
                 >
                   <Radio.Group>
-                    <Radio value="admin">Admin</Radio>
-                    <Radio value="employee">Employee</Radio>
+                    <Radio value="Admin">Admin</Radio>
+                    <Radio value="Employee">Employee</Radio>
                   </Radio.Group>
                 </Form.Item>
 
