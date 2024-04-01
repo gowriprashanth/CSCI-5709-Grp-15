@@ -1,16 +1,16 @@
 {
-  "name": "backend",
-  "version": "0.0.0",
-  "private": true,
-  "scripts": {
-    "start": "nodemon server.js "
-  },
-  "dependencies": {
-    "dotenv": "^16.4.5",
-    "express": "~4.16.1",
-    "http-errors": "~1.6.3",
-    "http-status-codes": "^2.3.0",
-    "mongoose": "^8.2.3",
-    "nodemon": "^3.1.0"
-  }
+	"name": "backend",
+	"version": "0.0.0",
+	"private": true,
+	"scripts": {
+		"start": "nodemon server.js "
+	},
+	"dependencies": {
+		"dotenv": "^16.4.5",
+		"express": "~4.16.1",
+		"http-errors": "~1.6.3",
+		"http-status-codes": "^2.3.0",
+		"mongoose": "^8.2.3",
+		"nodemon": "^3.1.0"
+	}
 }

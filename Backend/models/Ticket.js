@@ -1,6 +1,8 @@
+/**
+ * @author Nisarg Vaghela
+ */
+
 const mongoose = require('mongoose');
-const TicketAttachment = require('./TicketAttachment');
-const TicketComment = require('./TicketComment');
 
 const ticketSchema = new mongoose.Schema({
     title: {
@@ -11,15 +13,24 @@ const ticketSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    files: [TicketAttachment],
-    comments: [TicketComment],
+    attachments: [{
+        type: mongoose.ObjectId,
+        ref: 'Attachments'
+    }],
+    comments: [{ type: mongoose.ObjectId, ref: 'TicketComment' }],
     assignee: [{
         userId: mongoose.ObjectId
     }],
     priority: String,
     status: String,
-    createdAt: Date,
-    modifiedAt: Date
+    isEscalated: {
+        type: Boolean,
+        default: false
+    },
+    team: {
+        type: mongoose.ObjectId,
+        ref: 'Team'
+    }
 })
 
 module.exports = mongoose.model('Ticket', ticketSchema)
