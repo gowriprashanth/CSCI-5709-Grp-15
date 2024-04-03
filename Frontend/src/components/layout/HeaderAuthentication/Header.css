@@ -1,0 +1,128 @@
+.menuBar {
+    padding: 0 20px;
+    border-bottom: solid 1px #e8e8e8;
+    overflow: auto;
+    box-shadow: 0 0 30px #f3f1f1;
+}
+  
+.logo {
+    width: 150px;
+    float: left;
+}
+  
+.logo a {
+    display: inline-block;
+    font-size: 20px;
+    padding: 19px 20px;
+    text-transform: capitalize;
+}
+  
+.menuCon {
+    width: calc(100% - 150px);
+    height: 70px;
+    /* float: right; */
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-weight: bold;
+}
+  
+.menuCon .ant-menu-item {
+    padding: 0px 5px;
+}
+  
+.menuCon .ant-menu-submenu-title {
+    padding: 10px 20px;
+}
+  
+.menuCon .ant-menu-item a,
+.menuCon .ant-menu-submenu-title a {
+    padding: 10px 15px;
+}
+  
+.menuCon .ant-menu-horizontal {
+    border-bottom: none;
+}
+  
+.barsMenu {
+    height: 32px;
+    padding: 6px;
+    margin-top: 8px;
+    display: none !important;
+    color: #1890ff !important;
+    background: white !important;
+    border: 1px solid #1890ff !important;
+}
+  
+.barsBtn {
+    display: block;
+    width: 20px;
+    height: 2px;
+    /* color: #1890ff !important;
+    background: white !important;
+    border: 1px solid #1890ff !important; */
+    line-height: 0px !important;
+    position: relative;
+}
+  
+.barsBtn:after,
+.barsBtn:before {
+    content: attr(x);
+    width: 20px;
+    position: absolute;
+    top: -6px;
+    left: 0;
+    height: 2px;
+    background: #1890ff;
+}
+  
+.barsBtn:after {
+    top: auto;
+    bottom: -6px;
+}
+  
+.ant-drawer-body {
+    padding: 0;
+}
+  
+.barsMenu>span {
+    display: block !important;
+}
+  
+.ant-drawer-body .ant-menu-horizontal>.ant-menu-item,
+.ant-drawer-body .ant-menu-horizontal>.ant-menu-submenu {
+    display: inline-block;
+    width: 100%;
+}
+  
+.ant-drawer-body .ant-menu-horizontal {
+    border-bottom: none;
+}
+  
+.ant-drawer-body .ant-menu-horizontal>.ant-menu-item:hover {
+    border-bottom-color: transparent;
+}
+  
+@media (max-width: 767px) {
+    .barsMenu {
+        display: inline-block !important;
+    }
+  
+    .leftMenu {
+        display: none;
+    }
+  
+    .logo a {
+        margin-left: -20px;
+    }
+  
+    .menuCon .ant-menu-item,
+    .menuCon .ant-menu-submenu-title {
+        padding: 1px 20px;
+    }
+  
+    .logo a {
+        padding: 10px 20px;
+        line-height: 55px;
+    }
+}

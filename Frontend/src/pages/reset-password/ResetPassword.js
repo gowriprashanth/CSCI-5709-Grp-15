@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Layout, Menu, Button, Form, Input, Card } from "antd";
 import "../signin/SignIn.css";
-import HeaderAuthentication from "../../components/layout/headerauthentication/HeaderAuthentication";
+import HeaderAuthentication from "../../components/layout/HeaderAuthentication";
 import { message } from "antd";
 import axios from 'axios';
 

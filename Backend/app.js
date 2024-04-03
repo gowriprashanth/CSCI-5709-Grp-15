@@ -2,12 +2,11 @@ const createError = require('http-errors');
 const express = require('express');
 
 const { registerRoutes } = require('./routes');
+const cors = require('cors')
 
 const app = express();
 
-const cors = require('cors');
-
-app.use(cors());
+app.use(cors())
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
