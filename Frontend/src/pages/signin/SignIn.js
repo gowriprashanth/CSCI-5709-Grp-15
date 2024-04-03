@@ -40,12 +40,21 @@ export default class SignIn extends Component {
         }
       } catch (error) {
         console.error("Server Error");
-        this.setState({
-          errorMessage: "Invalid email or password or server error",
-        });
-        setTimeout(() => {
-          this.setState({ errorMessage: "" });
-        }, 5000);
+        if (error.response.status === 404 || error.response.status === 401) {
+          this.setState({
+            errorMessage: "Invalid email or password.",
+          });
+          setTimeout(() => {
+            this.setState({ errorMessage: "" });
+          }, 5000);
+        } else {
+          this.setState({
+            errorMessage: "Server error",
+          });
+          setTimeout(() => {
+            this.setState({ errorMessage: "" });
+          }, 5000);
+        }
       }
     } else {
       console.log("Username and password are required.");

@@ -40,7 +40,7 @@ export default class ResetPassword extends Component {
     if (password) {
 
       try{
-        const response = await axios.post(`https://csci-5709-bk-assignment3.onrender.com/user/resetPassword`, {
+        const response = await axios.post(`http://localhost:3001/user/resetPassword`, {
           newPassword: password,
           resetToken: this.state.token
         })
@@ -57,12 +57,23 @@ export default class ResetPassword extends Component {
         
       }catch(error){
         console.error("Server Error")
-        this.setState({ errorMessage: "Reset Password link is expired" });
-        setTimeout(() => {
-          this.setState({ errorMessage: "" });
-        }, 5000);
+        if(error.response.status === 404){
+          this.setState({ errorMessage: "User not found" });
+          setTimeout(() => {
+            this.setState({ errorMessage: "" });
+          }, 5000);
+        }else if(error.respose.status === 401){
+          this.setState({ errorMessage: "Reset Password link is expired." });
+          setTimeout(() => {
+            this.setState({ errorMessage: "" });
+          }, 5000);
+        }else{
+          this.setState({ errorMessage: "Server Error" });
+          setTimeout(() => {
+            this.setState({ errorMessage: "" });
+          }, 5000);
+        }
     }
-
     } else {
       console.log("Password are required.");
     }
