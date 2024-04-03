@@ -89,7 +89,7 @@ const addAttachments = async (data) => {
 const getTicketsByTeamId = async (data) => {
     const { teamId } = data
     return await Ticket.find({
-        teamId: teamId
+        team: teamId
     });
 }
 
