@@ -86,6 +86,13 @@ const addAttachments = async (data) => {
     })
 }
 
+const getTicketsByTeamId = async (data) => {
+    const { teamId } = data
+    return await Ticket.find({
+        teamId: teamId
+    });
+}
+
 
 module.exports = {
     createTicket,
@@ -93,4 +100,5 @@ module.exports = {
     updateTicketStatus,
     updateTicketPriority,
     updateTicketAssignee,
+    getTicketsByTeamId
 }
