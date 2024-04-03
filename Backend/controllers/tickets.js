@@ -5,33 +5,16 @@
 const Attachment = require("../models/Attachment")
 const Ticket = require("../models/Ticket")
 const fs = require('fs')
-/**
- * It perfoms ticket update operation
- * @param data 
- * @returns 
- */
-const updateTicketStatus = (data) => {
-    return data.message = "Updated by controller"
-}
 
 /**
  * It perfoms ticket update operation
  * @param data 
  * @returns 
  */
-const updateTicketPriority = (data) => {
-    return data.message = "Updated by controller"
+const updateTicketData = async ({ id, ...data }) => {
+    await Ticket.findOneAndUpdate({ _id: id }, { $set: data }, { upsert: true, new: true });
+    return true
 }
-
-/**
- * It perfoms ticket update operation
- * @param data 
- * @returns 
- */
-const updateTicketAssignee = (data) => {
-    return data.message = "Updated by controller"
-}
-
 
 const createTicket = async (data) => {
     const { title, description, files } = data.data
@@ -97,8 +80,6 @@ const getTicketsByTeamId = async (data) => {
 module.exports = {
     createTicket,
     addAttachments,
-    updateTicketStatus,
-    updateTicketPriority,
-    updateTicketAssignee,
+    updateTicketData,
     getTicketsByTeamId
 }

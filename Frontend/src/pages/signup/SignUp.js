@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Layout, Menu, Button, Card, Form, Input, Checkbox, Radio } from "antd";
 import "./SignUp.css";
 import { Link } from "react-router-dom";
-import HeaderAuthentication from "../../components/layout/headerauthentication/HeaderAuthentication";
+import HeaderAuthentication from "../../components/layout/HeaderAuthentication";
 import axios from 'axios';
 
 const { Footer, Content } = Layout;
