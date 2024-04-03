@@ -51,24 +51,28 @@ export default function Teams({
   return (
     <div className="board">
       <div className="board-container">
-      <SortableContext
+        <SortableContext
           items={containers}
           strategy={horizontalListSortingStrategy}
         >
           {containers.map((containerId) => {
-            if (
-              columns.filter((c) => "column-" + c.id === containerId)[0]
-                .isDeleted === false
-            ) {
+            const checkPos = columns.filter(
+              (c) => "column-" + c.id === containerId
+            );
+            if (checkPos.length > 0 && checkPos[0].isDeleted === false) {
               const columnName = columns.filter(
                 (c) => "column-" + c.id === containerId
               )[0].name;
               const columnDescription = columns.filter(
                 (c) => "column-" + c.id === containerId
               )[0].description;
+              const pid = columns.filter(
+                (c) => "column-" + c.id === containerId
+              )[0]._id;
 
               return (
                 <TeamTickets
+                  pid={pid}
                   id={containerId}
                   key={containerId}
                   items={items[containerId]}
@@ -85,7 +89,6 @@ export default function Teams({
             }
           })}
         </SortableContext>
-
       </div>
     </div>
   );

@@ -29,7 +29,7 @@ import React, { useState } from "react";
 import { UserOutlined } from "@ant-design/icons";
 import { demoMembers } from "../../mock/MockDataDashboard";
 import RaiseTicketForm from "../../pages/RaiseTicketForm";
-import { useHistory } from "react-router-dom"
+import { useHistory } from "react-router-dom";
 
 export const TeamTickets = (props) => {
   const [isMembersVisible, setIsMembersVisible] = useState(false);
@@ -42,6 +42,7 @@ export const TeamTickets = (props) => {
     useState(false);
 
   const {
+    pid,
     id,
     items,
     name,
@@ -91,7 +92,8 @@ export const TeamTickets = (props) => {
       title: "Confirm Deletion",
       content: "Are you sure you want to delete this team?",
       onOk: async () => {
-        handleDeleteColumn(parseInt(id.split("-")[1]));
+        //handleDeleteColumn(parseInt(id.split("-")[1]));
+        handleDeleteColumn(pid);
         message.success("Team Deleted Successfully!");
       },
       onCancel: () => {
@@ -163,12 +165,7 @@ export const TeamTickets = (props) => {
     editMemberForm
       .validateFields()
       .then((values) => {
-        handleEditTeam(
-          parseInt(id.split("-")[1]),
-          values.name,
-          values.description
-        );
-
+        handleEditTeam(pid, values.name, values.description);
         setIsMemberEditModalVisible(false);
         message.success("Team Details Updated Successfully!");
       })
@@ -206,7 +203,7 @@ export const TeamTickets = (props) => {
         />
       </div>
       <div className="board-column-list">
-      <SortableContext items={items} strategy={verticalListSortingStrategy}>
+        <SortableContext items={items} strategy={verticalListSortingStrategy}>
           {items.map((item, _index) => {
             return (
               <FieldItem
@@ -335,11 +332,11 @@ export const TeamTickets = (props) => {
 export const FieldItem = (props) => {
   const { item } = props;
 
-  const history = useHistory()
+  const history = useHistory();
 
   const onTicketClick = () => {
-    history.push("/ticket-detail", { ...item })
-  }
+    history.push("/ticket-detail", { ...item });
+  };
 
   return (
     <div
@@ -353,38 +350,65 @@ export const FieldItem = (props) => {
         <Row justify="space-between">
           <Col span={20}>
             <div onClick={onTicketClick}>
-              <h6 style={{
-                display: "block",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}>{item.title}</h6>
-              <span style={{
-                display: "block",
-                marginTop: "5px",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}>{item.description}</span>
+              <h6
+                style={{
+                  display: "block",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {item.title}
+              </h6>
+              <span
+                style={{
+                  display: "block",
+                  marginTop: "5px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {item.description}
+              </span>
             </div>
-            <Row style={{ marginTop: "4px", marginLeft: "4px" }} align="middle" justify="space-between" >
-              <Badge count={item.status.st} showZero color={item.status.color} />
-              {(item.assignee && item.assignee.length > 0) ?
-                <Avatar.Group maxCount={2} maxStyle={{ backgroundColor: "#1890ff" }}>
+            <Row
+              style={{ marginTop: "4px", marginLeft: "4px" }}
+              align="middle"
+              justify="space-between"
+            >
+              <Badge
+                count={item.status.st}
+                showZero
+                color={item.status.color}
+              />
+              {item.assignee && item.assignee.length > 0 ? (
+                <Avatar.Group
+                  maxCount={2}
+                  maxStyle={{ backgroundColor: "#1890ff" }}
+                >
                   {item.assignee.map((assignee, index) => {
                     return (
                       <Tooltip title={assignee} placement="top">
-                        <Avatar key={index} style={{ backgroundColor: "#1890ff", verticalAlign: "middle" }} size="small">
+                        <Avatar
+                          key={index}
+                          style={{
+                            backgroundColor: "#1890ff",
+                            verticalAlign: "middle",
+                          }}
+                          size="small"
+                        >
                           {assignee[0]}
                         </Avatar>
                       </Tooltip>
                     );
                   })}
-                </Avatar.Group> : null}
+                </Avatar.Group>
+              ) : null}
             </Row>
           </Col>
         </Row>
       </div>
-    </div >
+    </div>
   );
 };

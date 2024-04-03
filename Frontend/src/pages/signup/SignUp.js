@@ -44,10 +44,17 @@ export default class SignUp extends Component {
           }
       }catch(error){
         console.error("Server Error")
-        this.setState({ errorMessage: "User with this email already exists  " });
-        setTimeout(() => {
-          this.setState({ errorMessage: "" });
-        }, 5000);
+        if(error.response.status === 400){
+          this.setState({ errorMessage: "User with this email already exists" });
+          setTimeout(() => {
+            this.setState({ errorMessage: "" });
+          }, 5000);
+        }else{
+          this.setState({ errorMessage: "Server error" });
+          setTimeout(() => {
+            this.setState({ errorMessage: "" });
+          }, 5000);
+        }
       }
     } else {
       console.log("UserName, Email and Password are required.");

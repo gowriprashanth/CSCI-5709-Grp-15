@@ -111,7 +111,7 @@ const ResetPassword = async (req, res) => {
             user.resetToken = null;
             await user.save();
         }else{
-            return res.status(404).json({ message: 'Reset Password link is expired.'})
+            return res.status(401).json({ message: 'Reset Password link is expired.'})
         }
 
         sendEmail(user.email, 'Reset Password', `Password reset successfully.`)
