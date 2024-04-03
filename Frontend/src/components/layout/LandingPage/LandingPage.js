@@ -15,12 +15,12 @@ import {
 } from "antd";
 import "./LandingPage.css"
 import { TypeAnimation } from 'react-type-animation';
-import HeaderAuthentication from "../headerauthentication/HeaderAuthentication";
 import bannerImage from "../../../assets/images/banner.png"
 import contactImage from "../../../assets/images/contactus-imagebg.png"
 import aboutImage from "../../../assets/images/about-bg.gif"
 import faqImage from "../../../assets/images/faqs.gif"
 import { ArrowRightOutlined, SolutionOutlined } from "@ant-design/icons";
+import Header from "../HeaderAuthentication";
 
 const { Footer } = Layout;
 const { Panel } = Collapse;
@@ -35,7 +35,7 @@ export default function LandingPage() {
     return (
         <>
             <Layout className="layout-default layout-signin">
-                <HeaderAuthentication />
+                <Header />
                 <div className="issuestack-carousel-section">
                     <Row className="carousel-content-wrapper">
                     <Col md={24} xl={12}>
@@ -204,7 +204,7 @@ export default function LandingPage() {
                                     <Col
                                         xs={{ span: 24}}
                                         lg={{ span: 12 }}
-                                        md={{ span: 12 }}
+                                        md={{ span: 24 }}
                                         className="about-description-wrapper"
                                     >
                                         <>
@@ -219,7 +219,7 @@ export default function LandingPage() {
                                         className="about-image-wrapper"
                                         xs={{ span: 24 }}
                                         lg={{ span: 12 }}
-                                        md={{ span: 12 }}
+                                        md={{ span: 24 }}
                                     >
                                         <img src={aboutImage} alt="About Banner" />
                                     </Col>
@@ -240,14 +240,14 @@ export default function LandingPage() {
                                         className="contact-image-wrapper"
                                         xs={{ span: 24 }}
                                         lg={{ span: 12 }}
-                                        md={{ span: 12 }}
+                                        md={{ span: 24 }}
                                     >
                                         <img src={contactImage} alt="Contact Banner" />
                                     </Col>
                                     <Col
                                         xs={{ span: 24}}
                                         lg={{ span: 12 }}
-                                        md={{ span: 12 }}
+                                        md={{ span: 24 }}
                                         className="contact-form-wrapper"
                                     >
                                         <Form
@@ -376,7 +376,7 @@ export default function LandingPage() {
                                     <Col
                                         xs={{ span: 24}}
                                         lg={{ span: 12 }}
-                                        md={{ span: 12 }}
+                                        md={{ span: 24 }}
                                         className="faq-description-wrapper"
                                     >
                                         <>
@@ -403,7 +403,7 @@ export default function LandingPage() {
                                         className="faq-image-wrapper"
                                         xs={{ span: 24 }}
                                         lg={{ span: 12 }}
-                                        md={{ span: 12 }}
+                                        md={{ span: 24 }}
                                     >
                                         <img src={faqImage} alt="FAQ Banner" />
                                     </Col>
