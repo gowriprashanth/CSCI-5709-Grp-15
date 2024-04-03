@@ -60,7 +60,7 @@ const SignUp = async (req, res) => {
             role: user.role
         };
         res.json({token, user: userWithoutPassword });
-    }catch{
+    }catch(error){
         console.error(error.message)
         res.status(500).send('Server Error');
     }
