@@ -23,7 +23,7 @@ export default class ForgotPassword extends Component {
     if (email) {
 
       try{
-        const response = await axios.post(`https://csci-5709-bk-assignment3.onrender.com/user/forgotPassword`, {
+        const response = await axios.post(`http://localhost:3001/user/forgotPassword`, {
           email: email,
         })
 
@@ -39,10 +39,18 @@ export default class ForgotPassword extends Component {
         
       }catch(error){
         // console.error("Server Error")
-        this.setState({ errorMessage: "User not found" });
-        setTimeout(() => {
-          this.setState({ errorMessage: "" });
-        }, 5000);
+        if (error.response.status === 404) {
+          this.setState({ errorMessage: "User not found" });
+          setTimeout(() => {
+            this.setState({ errorMessage: "" });
+          }, 5000);
+        } else {
+          this.setState({ errorMessage: "Server Error" });
+          setTimeout(() => {
+            this.setState({ errorMessage: "" });
+          }, 5000);
+        }
+      
     }
 
     } else {
