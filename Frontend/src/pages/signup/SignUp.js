@@ -3,15 +3,14 @@ import { Layout, Menu, Button, Card, Form, Input, Checkbox, Radio } from "antd";
 import "./SignUp.css";
 import { Link } from "react-router-dom";
 import HeaderAuthentication from "../../components/layout/headerauthentication/HeaderAuthentication";
-import axios from 'axios';
+import axios from "axios";
 
 const { Footer, Content } = Layout;
 export default class SignUp extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
-      errorMessage: "" 
+      errorMessage: "",
     };
 
     this.handleSignUp = this.handleSignUp.bind(this);
@@ -22,27 +21,31 @@ export default class SignUp extends Component {
 
     const { name, email, password, role, remember } = values;
     if (name && email && password && role && remember) {
-     
-      try{
-          const response = await axios.post(`https://csci-5709-bk-assignment3.onrender.com/user/signup`, {
+      try {
+        const response = await axios.post(
+          `https://csci-5709-bk-assignment3.onrender.com/user/signup`,
+          {
             name: name,
             email: email,
             role: role,
             password: password,
-          })
-
-          if(response.status === 200){
-            const responseData = response.data;
-            console.log("response", responseData);
-            this.setState({ token: responseData.token }, () => {
-              localStorage.setItem("token", responseData.token);
-              this.props.history.push("/dashboard");
-              console.log(role);
-            });
           }
-      }catch(error){
-        console.error("Server Error")
-        this.setState({ errorMessage: "User with this email already exists  " });
+        );
+
+        if (response.status === 200) {
+          const responseData = response.data;
+          console.log("response", responseData);
+          this.setState({ token: responseData.token }, () => {
+            localStorage.setItem("token", responseData.token);
+            this.props.history.push("/dashboard");
+            console.log(role);
+          });
+        }
+      } catch (error) {
+        console.error("Server Error");
+        this.setState({
+          errorMessage: "User with this email already exists or Server Error",
+        });
         setTimeout(() => {
           this.setState({ errorMessage: "" });
         }, 5000);
@@ -161,15 +164,11 @@ export default class SignUp extends Component {
                 >
                   <Input.Password placeholder="Password" />
                 </Form.Item>
-                {
-                    this.state.errorMessage ? (
-                      <p className="color text-danger font-semibold">
-                        {this.state.errorMessage}
-                      </p>
-                    ) : (
-                      null
-                    )
-                }
+                {this.state.errorMessage ? (
+                  <p className="color text-danger font-semibold">
+                    {this.state.errorMessage}
+                  </p>
+                ) : null}
                 <Form.Item
                   name="role"
                   rules={[
