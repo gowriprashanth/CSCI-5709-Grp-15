@@ -22,11 +22,10 @@ export default class SignIn extends Component {
     if (email && password) {
 
       try{
-        const response = await axios.post(`https://csci-5709-bk-assignment3.onrender.com/user/signin`, {
+        const response = await axios.post(`http://localhost:3001/user/signin`, {
           email: email,
           password: password,
         })
-
         if(response.status === 200){
           const responseData = response.data;
           console.log("response", responseData);
@@ -39,10 +38,20 @@ export default class SignIn extends Component {
         
       }catch(error){
         console.error("Server Error")
-        this.setState({ errorMessage: "Invalid email or password." });
-        setTimeout(() => {
-          this.setState({ errorMessage: "" });
-        }, 5000);
+        if(error.response.status === 404 || error.response.status === 401){
+          this.setState({
+            errorMessage: "Invalid email or password." });
+         setTimeout(() => {
+           this.setState({ errorMessage: "" });
+         }, 5000);
+        }else{
+          this.setState({
+            errorMessage: "Server error" });
+         setTimeout(() => {
+           this.setState({ errorMessage: "" });
+         }, 5000);
+        }
+       
     }
 
     } else {
