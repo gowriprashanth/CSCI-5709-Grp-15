@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Layout, Menu, Button, Form, Input, Card } from "antd";
-import HeaderAuthentication from "../../components/layout/headerauthentication/HeaderAuthentication";
+import HeaderAuthentication from "../../components/layout/HeaderAuthentication";
 import "../signin/SignIn.css"
 import { message } from "antd";
 

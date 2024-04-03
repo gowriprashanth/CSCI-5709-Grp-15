@@ -17,6 +17,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import moment from "moment/moment";
 import TextArea from "antd/es/input/TextArea";
 import { useLocation } from "react-router-dom"
+import * as TicketService from "../../services/TicketService"
 
 const priorities = [
     { value: 'low', label: 'Low' },
@@ -124,8 +125,9 @@ export default function TicketDetail() {
         updateModifyDate(moment(new Date(), moment.defaultFormat).toDate().toUTCString())
     }
 
-    const changeUpdateStatus = (value) => {
-        updateStatus(value)
+    const changeUpdateStatus = async (value) => {
+        // updateStatus(value)
+        await TicketService.UpdateTicketStatus({ ticketId: state?.id, status: value })
         messageApi.open({
             type: 'success',
             content: 'Status Updated Successfully',

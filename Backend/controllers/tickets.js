@@ -2,35 +2,18 @@
  * @author Darshit Dhameliya
  */
 
-/**
- * It perfoms ticket update operation
- * @param data 
- * @returns 
- */
-const updateTicketStatus = (data) => {
-    return data.message = "Updated by controller"
-}
+const Ticket = require("../models/Ticket");
 
 /**
  * It perfoms ticket update operation
  * @param data 
  * @returns 
  */
-const updateTicketPriority = (data) => {
-    return data.message = "Updated by controller"
-}
-
-/**
- * It perfoms ticket update operation
- * @param data 
- * @returns 
- */
-const updateTicketAssignee = (data) => {
-    return data.message = "Updated by controller"
+const updateTicketData = async ({ id, ...data }) => {
+    await Ticket.findOneAndUpdate({ _id: id }, { $set: data }, { upsert: true, new: true });
+    return true
 }
 
 module.exports = {
-    updateTicketStatus,
-    updateTicketPriority,
-    updateTicketAssignee
+    updateTicketData
 }

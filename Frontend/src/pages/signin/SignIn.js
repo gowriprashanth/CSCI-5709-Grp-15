@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Layout, Menu, Button, Form, Input, Card } from "antd";
 import "./SignIn.css";
-import HeaderAuthentication from "../../components/layout/headerauthentication/HeaderAuthentication";
+import HeaderAuthentication from "../../components/layout/HeaderAuthentication";
 
 const { Footer, Content } = Layout;
 export default class SignIn extends Component {

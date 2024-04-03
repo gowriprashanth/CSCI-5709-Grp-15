@@ -7,8 +7,7 @@ const ticketAttachmentSchema =  new mongoose.Schema({
     mimeType: {
         type: String,
         required: false
-    },
-    ticketId: mongoose.ObjectId
+    }
 });
 
 module.exports = mongoose.model('TicketAttachment', ticketAttachmentSchema)
