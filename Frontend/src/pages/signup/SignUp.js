@@ -18,7 +18,7 @@ export default class SignUp extends Component {
   }
 
   handleSignUp = async (values) => {
-    const API_URL = process.env.API_URL;
+    // const API_URL = process.env.API_URL;
 
     const { name, email, password, role, remember } = values;
     if (name && email && password && role && remember) {

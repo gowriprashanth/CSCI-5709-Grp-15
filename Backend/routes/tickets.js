@@ -108,4 +108,38 @@ router.get('/get/:teamId', async (req, res, next) => {
   }
 });
 
+router.get('/statuses', async (req, res, next) => {
+  try {
+    const statuses = await ticketController.getStatuses()
+    res.status(StatusCodes.OK).send(statuses)
+  } catch(error) {
+    console.log(error)
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error.message || error })
+  }
+})
+
+router.get('/priorities', async (req, res, next) => {
+  try {
+    const priorities = await ticketController.getPriorities()
+    res.status(StatusCodes.OK).send(priorities)
+  } catch(error) {
+    console.log(error)
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error.message || error })
+  }
+})
+
+router.get('/:ticketId', async (req, res, next) => {
+  try {
+    const { ticketId } = req.params
+    if (!ticketId) {
+      res.status(StatusCodes.BAD_REQUEST).send({ error: "ticketId is required" });
+    } else {
+      const ticketData = await ticketController.getTicketById(ticketId)
+      res.status(StatusCodes.OK).send({ ticketData });
+    }
+  } catch (error) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error.message || error })
+  }
+});
+
 module.exports = router;

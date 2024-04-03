@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Col,
@@ -19,19 +19,19 @@ import TextArea from "antd/es/input/TextArea";
 import { useLocation } from "react-router-dom"
 import * as TicketService from "../../services/TicketService"
 
-const priorities = [
-    { value: 'low', label: 'Low' },
-    { value: 'normal', label: 'Normal' },
-    { value: 'high', label: 'High' }
-]
+// const priorities = [
+//     { value: 'low', label: 'Low' },
+//     { value: 'normal', label: 'Normal' },
+//     { value: 'high', label: 'High' }
+// ]
 
-const statuses = [
-    { value: 'Not Started', label: 'Not Started' },
-    { value: 'In Progress', label: 'In Progress' },
-    { value: 'On Hold', label: 'On Hold' },
-    { value: 'Awaiting Customer Response', label: 'Awaiting Customer Response' },
-    { value: 'Resolved', label: 'Resolved' }
-]
+// const statuses = [
+//     { value: 'Not Started', label: 'Not Started' },
+//     { value: 'In Progress', label: 'In Progress' },
+//     { value: 'On Hold', label: 'On Hold' },
+//     { value: 'Awaiting Customer Response', label: 'Awaiting Customer Response' },
+//     { value: 'Resolved', label: 'Resolved' }
+// ]
 
 const users = ["Kuldeep", "Dhruvik", "Darshit", "Bhautik", "Nisarg", "Gawri", "Rushi", "Shruti", "Nikita", "Priyanka"].map(e=>({ label: e, value: e }))
 
@@ -101,12 +101,14 @@ const commentData = [
 export default function TicketDetail() {
     const { state } = useLocation();
     const [selectedPriority, updatePriority] = useState('low');
-    const [selectedStatus, updateStatus] = useState(state.status.st);
+    const [selectedStatus, updateStatus] = useState([]);
     const [selectedUser, updateAssignee] = useState(state.assignee?.map(e=> ({ label: e, value: e })));
     let [comments, addComments] = useState(commentData)
     const [newComment, setNewComment] = useState('');
     const [messageApi, contextHolder] = message.useMessage();
-    const [modifiedDate, updateModifyDate] = useState("Wed, 28 Feb 2024 04:55:48 GMT")
+    const [ticketData, updateTicketData] = useState({})
+    const [statuses, updateStatuses] = useState([])
+    const [priorities, updatePriorities] = useState([])
 
     const confirm = (e) => {
         message.success('Ticket Escalated Successfully');
@@ -116,30 +118,52 @@ export default function TicketDetail() {
         message.error('You denied to confirmation');
     };
     
-    const changeUpdateAssignee = (value) => {
-        updateAssignee(value)
+    const changeUpdateAssignee = async (value) => {
+        await TicketService.UpdateTicketAssignee({ ticketId: state?.id, assignee: value })
+        getTicketData()
         messageApi.open({
             type: 'success',
             content: 'Assignee Changed Successfully',
         });
-        updateModifyDate(moment(new Date(), moment.defaultFormat).toDate().toUTCString())
+        // updateModifyDate(moment(new Date(), moment.defaultFormat).toDate().toUTCString())
     }
 
     const changeUpdateStatus = async (value) => {
-        // updateStatus(value)
         await TicketService.UpdateTicketStatus({ ticketId: state?.id, status: value })
+        getTicketData()
         messageApi.open({
             type: 'success',
             content: 'Status Updated Successfully',
         });
     }
 
-    const changeUpdatePriority = (value) => {
-        updatePriority(value)
+    const changeUpdatePriority = async (value) => {
+        // updatePriority(value)
+        await TicketService.UpdateTicketPriority({ ticketId: state?.id, priority: value })
+        getTicketData()
         messageApi.open({
             type: 'success',
             content: 'Priority Updated Successfully',
         });
+    }
+
+    const getTicketData = async () => {
+        const ticketData = await TicketService.GetTicketDetail(state?.id)
+        console.log(ticketData)
+        updateTicketData(ticketData)
+    }
+
+    const getStatuses = async () => {
+        const response = await TicketService.GetStatuses()
+        if (response && response.data && response.data.length > 0) {
+            updateStatuses(response.data.map(e => ({ value: e._id, label: e.name })))
+        }
+    }
+
+    const getPriorties = async () => {
+        const response = await TicketService.GetPriorities()
+        if (response && response.data && response.data.length > 0)
+            updatePriorities(response.data.map(e => ({ value: e._id, label: e.name })))
     }
 
     addComments = () => {
@@ -175,6 +199,12 @@ export default function TicketDetail() {
         }
     }
 
+    useEffect(() => {
+        getTicketData()
+        getStatuses()
+        getPriorties()
+    },[state?.id])
+
     return(
         <>
             {contextHolder}
@@ -187,19 +217,19 @@ export default function TicketDetail() {
                         </Form.Item>
                         <hr />
                         <Form.Item label="Title">
-                            <b><span>{state?.title}</span></b>
+                            <b><span>{ticketData?.title}</span></b>
                         </Form.Item>
                         <hr />
                         <Form.Item label="Description">
-                            <span>{state?.description}</span>
+                            <span>{ticketData?.description}</span>
                         </Form.Item>
                         <hr />
                         <Form.Item label="Created At">
-                            <span>Wed, 28 Feb 2024 04:55:48 GMT</span>
+                            <span>{ticketData?.createdAt}</span>
                         </Form.Item>
                         <hr />
                         <Form.Item label="Modified At">
-                            <span>{modifiedDate}</span>
+                            <span>{ticketData?.modifiedAt}</span>
                         </Form.Item>
                         <hr />
                     </Col>
@@ -215,15 +245,15 @@ export default function TicketDetail() {
                         <hr />
                         <Form.Item label="Status">
                             <Select
-                                defaultValue={selectedStatus}
+                                defaultValue={ticketData.status}
                                 onChange={changeUpdateStatus}
                                 options={statuses}
                             />
-                        </Form.Item>
+                        </Form.Item>                    
                         <hr />
                         <Form.Item label="Priority">
                             <Select
-                                defaultValue={selectedPriority}
+                                defaultValue={ticketData.priority}
                                 onChange={changeUpdatePriority}
                                 options={priorities}
                             />

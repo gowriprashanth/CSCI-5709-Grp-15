@@ -4,6 +4,8 @@
 
 const Attachment = require("../models/Attachment")
 const Ticket = require("../models/Ticket")
+const Status = require("../models/Status")
+const Priority = require("../models/Priority")
 const fs = require('fs')
 
 /**
@@ -76,10 +78,24 @@ const getTicketsByTeamId = async (data) => {
     });
 }
 
+const getTicketById = async (ticketId) => {
+    return await Ticket.findById(ticketId).populate("attachments").populate("comments");
+}
+
+const getStatuses = async () => {
+    return await Status.find({})
+}
+
+const getPriorities = async () => {
+    return await Priority.find({})
+}
 
 module.exports = {
     createTicket,
     addAttachments,
     updateTicketData,
-    getTicketsByTeamId
+    getTicketsByTeamId,
+    getTicketById,
+    getStatuses,
+    getPriorities
 }

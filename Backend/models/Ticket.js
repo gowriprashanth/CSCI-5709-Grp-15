@@ -21,8 +21,8 @@ const ticketSchema = new mongoose.Schema({
     assignee: [{
         userId: mongoose.ObjectId
     }],
-    priority: String,
-    status: String,
+    priority: { type: mongoose.ObjectId, ref: 'Priority' },
+    status: { type: mongoose.ObjectId, ref: 'Status' },
     isEscalated: {
         type: Boolean,
         default: false
