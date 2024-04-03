@@ -55,6 +55,7 @@ function Header({ name, subName, onPress }) {
 
   const logOutHandler = () => {
     localStorage.clear("token");
+    localStorage.clear("role");
   };
 
   return (

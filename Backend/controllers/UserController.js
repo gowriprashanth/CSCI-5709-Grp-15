@@ -53,8 +53,13 @@ const SignUp = async (req, res) => {
         })
 
         const token = jwt.sign({userId: user._id}, process.env.JWT_SECRET, {expiresIn: '1h'});
-
-        res.json({token});
+        const userWithoutPassword = {
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role
+        };
+        res.json({token, user: userWithoutPassword });
     }catch{
         console.error(error.message)
         res.status(500).send('Server Error');
@@ -93,7 +98,13 @@ const SignIn = async (req, res) => {
                 console.log('Message ID:', info.messageId);
             }
         })
-        res.json({ token });
+        const userWithoutPassword = {
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role
+        };
+        res.json({token, user: userWithoutPassword });
     }catch (error){
         console.error(error.message);
         res.status(500).send('Server Error');
@@ -155,6 +166,22 @@ const ResetPassword = async (req, res) => {
         }else{
             return res.status(404).json({ message: 'Reset Password link is expired.'})
         }
+
+        const mailOptions = {
+            from: process.env.USERNAME, 
+            to: user.email, 
+            subject: 'Reset Password', 
+            text: `Password reset successfully.`
+        }
+
+        transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+                console.error('Error occurred:', error.message);
+            }else {
+                console.log('Email sent successfully!');
+                console.log('Message ID:', info.messageId);
+            }
+        })
 
         res.json({ message: 'Password reset successfully' });
     } catch (error) {
