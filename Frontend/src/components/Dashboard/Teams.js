@@ -66,9 +66,13 @@ export default function Teams({
               const columnDescription = columns.filter(
                 (c) => "column-" + c.id === containerId
               )[0].description;
+              const pid = columns.filter(
+                (c) => "column-" + c.id === containerId
+              )[0]._id;
 
               return (
                 <TeamTickets
+                  pid={pid}
                   id={containerId}
                   key={containerId}
                   items={items[containerId]}

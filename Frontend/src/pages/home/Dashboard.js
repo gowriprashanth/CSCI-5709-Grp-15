@@ -8,7 +8,9 @@ import { tasks } from "../../mock/MockDataDashboard";
 import "../../assets/styles/main.css";
 import "../../assets/styles/responsive.css";
 import "../../pages/home/Dashboard.css";
-import axios from "axios";
+// import axios from "axios";
+import axiosHelper from "../../helper/axioshelper";
+
 function Dashboard() {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -27,8 +29,12 @@ function Dashboard() {
 
   const getAllTeams = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/teams/get-teams");
+      const response = await axiosHelper.get(
+        "http://localhost:3001/teams/get-teams"
+      );
+      console.log("hihi", response.data);
       setTeams(response.data);
+      console.log("afterhihi", teams);
     } catch (error) {
       console.error("Error fetching teams:", error);
     }
@@ -40,21 +46,26 @@ function Dashboard() {
   }, []);
 
   const handleDeleteColumn = async (id) => {
-    setTeams(
-      teams.map((item) =>
-        item.id === id ? { ...item, isDeleted: true } : item
-      )
-    );
+    try {
+      const response = await axiosHelper.put(
+        "http://localhost:3001/teams/mark-delete/" + id
+      );
+      getAllTeams();
+    } catch (error) {
+      console.error("Error Deleting Team", error);
+    }
   };
 
-  const handleEditTeam = (id, newTeamName, newDescription) => {
-    setTeams(
-      teams.map((item) =>
-        item.id === id
-          ? { ...item, name: newTeamName, description: newDescription }
-          : item
-      )
-    );
+  const handleEditTeam = async (id, newTeamName, newDescription) => {
+    try {
+      const response = await axiosHelper.put(
+        "http://localhost:3001/teams/update/" + id,
+        { name: newTeamName, description: newDescription }
+      );
+      getAllTeams();
+    } catch (error) {
+      console.error("Error Updating Team", error);
+    }
   };
 
   const handleOk = (values) => {
@@ -62,7 +73,7 @@ function Dashboard() {
       .validateFields()
       .then((values) => {
         let len = teams.length;
-        axios
+        axiosHelper
           .post("http://localhost:3001/teams/create-team", {
             id: len + 1,
             name: values.name,
