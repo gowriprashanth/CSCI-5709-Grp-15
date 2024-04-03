@@ -2,7 +2,9 @@ import { UploadOutlined } from '@ant-design/icons';
 import { Alert, Button, Form, Input, Modal, Upload, message } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 
+import axios from 'axios';
 import React, { useState } from 'react';
+import { uploadFile } from '../FirebaseStorageService';
 const RaiseTicketForm = ({ onTicketRaised }) => {
     const [form] = Form.useForm();
     const [open, setOpen] = useState(false);
@@ -19,6 +21,18 @@ const RaiseTicketForm = ({ onTicketRaised }) => {
             setFileList(newFileList);
         },
         beforeUpload: (file) => {
+            const isImage = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg';
+            const isPDF = file.type === 'application/pdf';
+            if (!isImage && !isPDF) {
+                messageApi.error('You can only upload JPG/PNG/PDF file!');
+                return false;
+            }
+            const isLt5M = file.size / 1024 / 1024 < 5;
+            if (!isLt5M) {
+                messageApi.error('File must smaller than 5MB!');
+                return false;
+            }
+
             setFileList([...fileList, file]);
             return false;
         },
@@ -30,19 +44,30 @@ const RaiseTicketForm = ({ onTicketRaised }) => {
     };
     const handleOk = () => {
         form.submit();
-
     };
     const handleCancel = () => {
         form.resetFields();
         setOpen(false);
     };
 
+
     const onFormSubmit = (values) => {
-        if (onTicketRaised) {
-            onTicketRaised(values);
-        }
-        setConfirmLoading(true);
+        values.files = [];
+        Promise.all(fileList.map(async (file) => {
+            const data = await uploadFile(file);
+            return data;
+        })).then((filesData) => {
+            setFileList([]);
+            values.files = filesData;
+            axios.post('http://localhost:3001/tickets/create', values).then((response) => {
+                console.log(response);
+            });
+            if (onTicketRaised) {
+                onTicketRaised(values);
+            }
+        });
         setTimeout(() => {
+            setConfirmLoading(true);
             form.resetFields();
             setOpen(false);
             setConfirmLoading(false);
@@ -51,15 +76,8 @@ const RaiseTicketForm = ({ onTicketRaised }) => {
                 content: 'Ticket raised successfully!',
                 duration: 2,
             });
-        }, 100);
+        }, 500);
     }
-
-    const normFile = (e) => {
-        if (Array.isArray(e)) {
-            return e;
-        }
-        return e?.fileList;
-    };
 
     return (
         <>
@@ -102,11 +120,9 @@ const RaiseTicketForm = ({ onTicketRaised }) => {
                     ]}>
                         <TextArea rows={4} placeholder="Enter short description..." />
                     </Form.Item>
-                    <Form.Item label="Files" name="files" valuePropName="fileList" getValueFromEvent={normFile}>
-                        <Upload {...upload_props} maxCount={5} multiple>
-                            <Button icon={<UploadOutlined />}>Select File</Button>
-                        </Upload>
-                    </Form.Item>
+                    <Upload defaultFileList={fileList} {...upload_props} maxCount={5} accept=".jpg,.png,.pdf">
+                        <Button icon={<UploadOutlined />}>Select File</Button>
+                    </Upload>
                 </Form>
             </Modal>
         </>

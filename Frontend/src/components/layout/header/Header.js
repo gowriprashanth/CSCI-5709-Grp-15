@@ -54,7 +54,8 @@ function Header({ name, subName, onPress }) {
   useEffect(() => window.scrollTo(0, 0));
 
   const logOutHandler = () => {
-    localStorage.clear("isLogin");
+    localStorage.clear("token");
+    localStorage.clear("role");
   };
 
   return (

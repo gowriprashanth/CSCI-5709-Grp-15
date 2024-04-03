@@ -206,7 +206,7 @@ export const TeamTickets = (props) => {
         />
       </div>
       <div className="board-column-list">
-        <SortableContext items={items} strategy={verticalListSortingStrategy}>
+      <SortableContext items={items} strategy={verticalListSortingStrategy}>
           {items.map((item, _index) => {
             return (
               <FieldItem

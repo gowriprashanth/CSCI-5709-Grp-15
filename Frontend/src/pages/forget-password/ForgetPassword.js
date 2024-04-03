@@ -4,23 +4,50 @@ import { Layout, Menu, Button, Form, Input, Card } from "antd";
 import HeaderAuthentication from "../../components/layout/HeaderAuthentication";
 import "../signin/SignIn.css"
 import { message } from "antd";
+import axios from 'axios';
 
 const { Footer, Content } = Layout;
 export default class ForgotPassword extends Component {
   constructor(props) {
     super(props);
-    // this.state = {
-    //   isLogin: false
-    // };
+    this.state = {
+      errorMessage: "",
+      message: ""
+    };
 
     this.handleForgotPassword = this.handleForgotPassword.bind(this);
   }
 
-  handleForgotPassword = (values) => {
-    message.success(
-      "An email with a reset-password link has been sent to your email address."
-    );
-    this.props.history.push("/reset-password");
+  handleForgotPassword = async (values) => {
+    const { email } = values;
+    if (email) {
+
+      try{
+        const response = await axios.post(`https://csci-5709-bk-assignment3.onrender.com/user/forgotPassword`, {
+          email: email,
+        })
+
+        if(response.status === 200){
+          const responseData = response.data;
+          this.setState({ message: responseData.message }, () => {
+            setTimeout(() => {
+              this.setState({ message: "" });
+            }, 5000);
+
+          });
+        }
+        
+      }catch(error){
+        // console.error("Server Error")
+        this.setState({ errorMessage: "User not found" });
+        setTimeout(() => {
+          this.setState({ errorMessage: "" });
+        }, 5000);
+    }
+
+    } else {
+      console.log("Username and password are required.");
+    }
   };
 
   render() {
@@ -79,6 +106,22 @@ export default class ForgotPassword extends Component {
                 >
                   <Input placeholder="Email" />
                 </Form.Item>
+                
+                {
+                  (this.state.message !== null && this.state.message) ? (
+                    <p className="font-semibold">
+                      {this.state.message}
+                    </p>
+                  ) : (
+                    this.state.errorMessage ? (
+                      <p className="color text-danger font-semibold">
+                        {this.state.errorMessage}
+                      </p>
+                    ) : (
+                      null
+                    )
+                  )
+                }
 
                 <Form.Item>
                   <Button
