@@ -30,7 +30,10 @@ const ticketSchema = new mongoose.Schema({
     team: {
         type: mongoose.ObjectId,
         ref: 'Team'
-    }
+    },
+},
+{
+    timestamps: true
 })
 
 module.exports = mongoose.model('Ticket', ticketSchema)

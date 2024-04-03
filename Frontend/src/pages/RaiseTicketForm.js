@@ -2,10 +2,10 @@ import { UploadOutlined } from '@ant-design/icons';
 import { Alert, Button, Form, Input, Modal, Upload, message } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 
-import axios from 'axios';
+import axiosHelper from "../helper/axioshelper"
 import React, { useState } from 'react';
 import { uploadFile } from '../FirebaseStorageService';
-const RaiseTicketForm = ({ onTicketRaised }) => {
+const RaiseTicketForm = ({ onTicketRaised, teamId }) => {
     const [form] = Form.useForm();
     const [open, setOpen] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
@@ -53,13 +53,14 @@ const RaiseTicketForm = ({ onTicketRaised }) => {
 
     const onFormSubmit = (values) => {
         values.files = [];
+        values.teamId = teamId
         Promise.all(fileList.map(async (file) => {
             const data = await uploadFile(file);
             return data;
         })).then((filesData) => {
             setFileList([]);
             values.files = filesData;
-            axios.post('http://localhost:3001/tickets/create', values).then((response) => {
+            axiosHelper.post('/tickets/create', values).then((response) => {
                 console.log(response);
             });
             if (onTicketRaised) {

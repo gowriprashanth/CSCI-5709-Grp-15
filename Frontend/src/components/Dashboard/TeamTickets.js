@@ -24,12 +24,13 @@ import {
   Tooltip,
   message,
 } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { UserOutlined } from "@ant-design/icons";
 import { demoMembers } from "../../mock/MockDataDashboard";
 import RaiseTicketForm from "../../pages/RaiseTicketForm";
 import { useHistory } from "react-router-dom";
+import axiosHelper from "../../helper/axioshelper";
 
 export const TeamTickets = (props) => {
   const [isMembersVisible, setIsMembersVisible] = useState(false);
@@ -40,11 +41,11 @@ export const TeamTickets = (props) => {
   const [isMemberModalVisible, setIsMemberModalVisible] = useState(false);
   const [isMemberEditModalVisible, setIsMemberEditModalVisible] =
     useState(false);
+  const [ticketsData, updateTicketsData] = useState([])
 
   const {
     pid,
     id,
-    items,
     name,
     description,
     data,
@@ -174,6 +175,16 @@ export const TeamTickets = (props) => {
       });
   };
 
+  const getTicketsByTeamId = async () => {
+    const response = await axiosHelper.get(`/tickets/get/${pid}`)
+    if(response && response.data && response.data.length > 0)
+      updateTicketsData(response.data)
+  }
+
+  useEffect(() => {
+    getTicketsByTeamId()
+  },[])
+
   return (
     <div className="board-column" style={style}>
       <div
@@ -197,18 +208,19 @@ export const TeamTickets = (props) => {
         </div>
         <br />
         <RaiseTicketForm
+          teamId={pid}
           onTicketRaised={(values) => {
             handleSubmitRaiseTicket(id, values);
           }}
         />
       </div>
       <div className="board-column-list">
-        <SortableContext items={items} strategy={verticalListSortingStrategy}>
-          {items.map((item, _index) => {
+        <SortableContext items={ticketsData} strategy={verticalListSortingStrategy}>
+          {ticketsData.map((item, _index) => {
             return (
               <FieldItem
                 key={item}
-                item={data.filter((d) => "task-" + d.id === item)[0]}
+                item={item}
                 disabled={isSortingContainer}
               />
             );
@@ -378,7 +390,7 @@ export const FieldItem = (props) => {
               justify="space-between"
             >
               <Badge
-                count={item.status.st}
+                count={item.status.name}
                 showZero
                 color={item.status.color}
               />

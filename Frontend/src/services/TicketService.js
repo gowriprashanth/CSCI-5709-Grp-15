@@ -50,3 +50,19 @@ export const GetPriorities = async () => {
         return error
     }
 }
+
+export const AddComment = async ({ ticketId, ...data }) => {
+    try {
+        return await axiosHelper.post(`tickets/${ticketId}/add-comment`, data)
+    } catch(error) {
+        return error
+    }
+}
+
+export const AddAttachment = async (data) => {
+    try {
+        return await axiosHelper.post(`tickets/add-attachments`, data)
+    } catch(error) {
+        return error
+    }
+}

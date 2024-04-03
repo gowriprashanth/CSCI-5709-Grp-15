@@ -6,6 +6,7 @@ const Attachment = require("../models/Attachment")
 const Ticket = require("../models/Ticket")
 const Status = require("../models/Status")
 const Priority = require("../models/Priority")
+const TicketComment = require("../models/TicketComment")
 const fs = require('fs')
 
 /**
@@ -19,7 +20,7 @@ const updateTicketData = async ({ id, ...data }) => {
 }
 
 const createTicket = async (data) => {
-    const { title, description, files } = data.data
+    const { title, description, files, teamId } = data.data
     await Promise.all(files.map(file => {
         return new Promise((resolve, reject) => {
             Attachment.create({
@@ -34,10 +35,15 @@ const createTicket = async (data) => {
             });
         })
     })).then(async (attachments) => {
+        const status = await Status.findOne({ name: "Not Started" })
+        const priority = await Priority.findOne({ name: "low" })
         await Ticket.create({
             title: title,
             description: description,
-            attachments: attachments
+            attachments: attachments,
+            team: teamId,
+            status: status._id,
+            priority: priority._id
         })
         return data.message = "Ticket created successfully"
     }).catch((err) => {
@@ -75,11 +81,16 @@ const getTicketsByTeamId = async (data) => {
     const { teamId } = data
     return await Ticket.find({
         team: teamId
-    });
+    }).populate("status").populate("priority");
 }
 
 const getTicketById = async (ticketId) => {
-    return await Ticket.findById(ticketId).populate("attachments").populate("comments");
+    return await Ticket.findById(ticketId).populate("attachments").populate("comments").populate({
+        path: 'comments',
+        populate: {
+          path: 'userId'
+        }
+      }).populate("status").populate("priority");
 }
 
 const getStatuses = async () => {
@@ -90,6 +101,11 @@ const getPriorities = async () => {
     return await Priority.find({})
 }
 
+const saveComment = async ({ ticketId, ...data }) => {
+    const comment = await TicketComment.create(data)
+    await Ticket.updateOne({ _id: ticketId }, { $push: { comments: comment } })
+}
+
 module.exports = {
     createTicket,
     addAttachments,
@@ -97,5 +113,6 @@ module.exports = {
     getTicketsByTeamId,
     getTicketById,
     getStatuses,
-    getPriorities
+    getPriorities,
+    saveComment
 }
