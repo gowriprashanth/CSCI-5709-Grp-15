@@ -2,17 +2,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const User = require('../models/User');
+const { sendEmail } = require('../middleware/email');
 
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: "csci5708group15@gmail.com",
-        pass: "hiry kpkt qrzc ignb"
-    },
-    tls: {
-        rejectUnauthorized: false
-    }
-})
 
 const SignUp = async (req, res) => {
     try{
@@ -36,22 +27,7 @@ const SignUp = async (req, res) => {
         })
 
         await user.save();
-        const mailOptions = {
-            from: process.env.USERNAME, 
-            to: email, 
-            subject: 'Registration Successful', 
-            text: 'You received this email as you are just registered with the IssueStack, Welcome to the IssueStack community!'  
-        }
-
-        transporter.sendMail(mailOptions, function(error, info){
-            if (error) {
-                console.error('Error occurred:', error.message);
-            }else {
-                console.log('Email sent successfully!');
-                console.log('Message ID:', info.messageId);
-            }
-        })
-
+        sendEmail(email, 'Registration Successful', 'You received this email as you are just registered with the IssueStack, Welcome to the IssueStack community!')
         const token = jwt.sign({userId: user._id}, process.env.JWT_SECRET, {expiresIn: '1h'});
         const userWithoutPassword = {
             _id: user._id,
@@ -82,22 +58,7 @@ const SignIn = async (req, res) => {
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' })
 
         const currentDate = new Date();
-
-        const mailOptions = {
-            from: process.env.USERNAME, 
-            to: email, 
-            subject: 'Login Successful', 
-            text: `Last Login time: ${currentDate}`  
-        }
-
-        transporter.sendMail(mailOptions, function(error, info){
-            if (error) {
-                console.error('Error occurred:', error.message);
-            }else {
-                console.log('Email sent successfully!');
-                console.log('Message ID:', info.messageId);
-            }
-        })
+        sendEmail(email, 'Login Successful', `Last Login time: ${currentDate}`)
         const userWithoutPassword = {
             _id: user._id,
             name: user.name,
@@ -122,21 +83,7 @@ const ForgotPassword = async (req, res) => {
 
         const resetToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '10m' });
         const URL = `https://csci5709-web-project.netlify.app/reset-password?token=${resetToken}`;
-        const mailOptions = {
-            from: process.env.USERNAME, 
-            to: email, 
-            subject: 'Reset Password', 
-            text: `To reset your password please follow the below link, it is valid till 10 minutes only. ${URL}` 
-        }
-
-        transporter.sendMail(mailOptions, function(error, info){
-            if (error) {
-                console.error('Error occurred:', error.message);
-            }else {
-                console.log('Email sent successfully!');
-                console.log('Message ID:', info.messageId);
-            }
-        })
+        sendEmail(email, 'Reset Password', `To reset your password please follow the below link, it is valid till 10 minutes only. ${URL}`)
 
         user.resetToken = resetToken;
         await user.save();
@@ -167,21 +114,7 @@ const ResetPassword = async (req, res) => {
             return res.status(404).json({ message: 'Reset Password link is expired.'})
         }
 
-        const mailOptions = {
-            from: process.env.USERNAME, 
-            to: user.email, 
-            subject: 'Reset Password', 
-            text: `Password reset successfully.`
-        }
-
-        transporter.sendMail(mailOptions, function(error, info){
-            if (error) {
-                console.error('Error occurred:', error.message);
-            }else {
-                console.log('Email sent successfully!');
-                console.log('Message ID:', info.messageId);
-            }
-        })
+        sendEmail(user.email, 'Reset Password', `Password reset successfully.`)
 
         res.json({ message: 'Password reset successfully' });
     } catch (error) {
