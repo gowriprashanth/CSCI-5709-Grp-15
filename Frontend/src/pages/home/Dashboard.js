@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Button, Form, Input, Modal, Row, message } from "antd";
 
@@ -7,24 +7,49 @@ import { tasks } from "../../mock/MockDataDashboard";
 
 import "../../assets/styles/main.css";
 import "../../assets/styles/responsive.css";
-import { teams } from "../../mock/MockDataDashboard";
 import "../../pages/home/Dashboard.css";
+import axios from "axios";
 function Dashboard() {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const [cols, setColumns] = useState(teams);
+  const [teams, setTeams] = useState([]);
 
   const [form] = Form.useForm();
 
-  const handleDeleteColumn = (id) => {
-    setColumns(
-      cols.map((item) => (item.id === id ? { ...item, isDeleted: true } : item))
+  const changeId = () => {
+    setTeams(
+      teams.map((item) => {
+        return { ...item, id: item._id };
+      })
+    );
+    console.log(teams);
+  };
+
+  const getAllTeams = async () => {
+    try {
+      const response = await axios.get("http://localhost:3001/teams/get-teams");
+      setTeams(response.data);
+    } catch (error) {
+      console.error("Error fetching teams:", error);
+    }
+    //changeId();
+  };
+
+  useEffect(() => {
+    getAllTeams();
+  }, []);
+
+  const handleDeleteColumn = async (id) => {
+    setTeams(
+      teams.map((item) =>
+        item.id === id ? { ...item, isDeleted: true } : item
+      )
     );
   };
 
   const handleEditTeam = (id, newTeamName, newDescription) => {
-    setColumns(
-      cols.map((item) =>
+    setTeams(
+      teams.map((item) =>
         item.id === id
           ? { ...item, name: newTeamName, description: newDescription }
           : item
@@ -36,19 +61,20 @@ function Dashboard() {
     form
       .validateFields()
       .then((values) => {
-        let len = cols.length;
-        setColumns([
-          ...cols,
-          {
+        let len = teams.length;
+        axios
+          .post("http://localhost:3001/teams/create-team", {
             id: len + 1,
             name: values.name,
             description: values.description,
             order: len + 1,
             isDeleted: false,
-          },
-        ]);
-        setIsModalVisible(false);
-        message.success("Team Added Successfully!");
+          })
+          .then(async () => {
+            getAllTeams();
+            setIsModalVisible(false);
+            message.success("Team Added Successfully!");
+          });
       })
       .catch((errorInfo) => {
         console.log("Validation failed:", errorInfo);
@@ -67,9 +93,13 @@ function Dashboard() {
   return (
     <div className="dashboard">
       <Row justify="end">
-        <Button type="primary" onClick={addColumn} style={{
-          marginRight: "20px",
-        }}>
+        <Button
+          type="primary"
+          onClick={addColumn}
+          style={{
+            marginRight: "20px",
+          }}
+        >
           Create Team
         </Button>
       </Row>
@@ -110,7 +140,7 @@ function Dashboard() {
 
       <Tasks
         tasks={tasks}
-        columns={cols}
+        columns={teams}
         handleDeleteColumn={handleDeleteColumn}
         handleEditTeam={handleEditTeam}
       />
