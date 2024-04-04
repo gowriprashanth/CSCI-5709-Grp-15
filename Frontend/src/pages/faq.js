@@ -2,9 +2,7 @@ import { Button, Card, Col, Collapse, Input, Row, Space, message } from "antd";
 import BgProfile from "../assets/images/bg-profile.jpg";
 import React, { useEffect, useState } from "react";
 import TextArea from "antd/lib/input/TextArea";
-import axios from "axios";
-import { set } from "mongoose";
-import { D_API_URL } from "../constants/creds";
+import axiosHelper from "../helper/axioshelper";
 
 const { Panel } = Collapse;
 
@@ -13,10 +11,6 @@ function FAQ() {
 
   let [title, setTitle] = useState("");
   let [description, setDescription] = useState("");
-  let [title2, setTitle2] = useState("");
-  let [description2, setDescription2] = useState("");
-  let [title3, setTitle3] = useState("");
-  let [description3, setDescription3] = useState("");
   let [knowledgeBase, setKnowledgeBase] = useState([]);
   const onChange = (key) => {
     console.log(key);
@@ -27,8 +21,8 @@ function FAQ() {
   }, []);
 
   const addFaqToKbaseByTitle = (title, faq) => {
-    axios
-      .post(D_API_URL + "/knowledgebase/add-faq", { title, faq })
+    axiosHelper
+      .post("/knowledgebase/add-faq", { title, faq })
       .then((response) => {
         // Handle the response data
         if (response.status === 201) {
@@ -44,8 +38,8 @@ function FAQ() {
       });
   };
   const createKbase = (title) => {
-    axios
-      .post(D_API_URL + "/knowledgebase/create-kbase", { title })
+    axiosHelper
+      .post("/knowledgebase/create-kbase", { title })
       .then((response) => {
         // Handle the response data
         if (response.status === 201) {
@@ -61,13 +55,14 @@ function FAQ() {
       });
   };
   const getALlKnowledgeBase = () => {
-    axios
-      .get(D_API_URL + "/knowledgebase/get-allkbase")
+    axiosHelper
+      .get("/knowledgebase/get-allkbase")
       .then((response) => {
         console.log("Get all base >>>>>>>>>" + response.data);
         let data = response.data;
         data.map((item) => {
           item = { ...item, visible: false };
+          return null;
         });
         setKnowledgeBase(data);
       })
