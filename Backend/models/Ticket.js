@@ -19,7 +19,8 @@ const ticketSchema = new mongoose.Schema({
     }],
     comments: [{ type: mongoose.ObjectId, ref: 'TicketComment' }],
     assignee: [{
-        userId: mongoose.ObjectId
+        type: mongoose.ObjectId,
+        ref: 'User'
     }],
     priority: { type: mongoose.ObjectId, ref: 'Priority' },
     status: { type: mongoose.ObjectId, ref: 'Status' },
