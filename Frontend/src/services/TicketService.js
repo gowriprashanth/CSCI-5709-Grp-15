@@ -66,3 +66,11 @@ export const AddAttachment = async (data) => {
         return error
     }
 }
+
+export const GetUsers = async (data) => {
+    try {
+        return await axiosHelper.get(`users`)
+    } catch(error) {
+        return error
+    }
+}
