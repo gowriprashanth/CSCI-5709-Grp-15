@@ -3,6 +3,7 @@ const Ticket = require("../models/Ticket");
 const Team = require("../models/Team");
 const fs = require("fs");
 const User = require("../models/User");
+const { getAllMembers } = require("./teamMembersController");
 
 const createTeam = async (data) => {
   const { id, name, description, order, isDeleted, members } = data.data;
@@ -63,14 +64,22 @@ const updateTeam = async (teamId, data) => {
 
 const getTeamLeadsByTeamId = async (req, res) => {
   try {
-    const team = await Team.findById(req.params.teamId);
-    if (!team) {
-      return { message: "Team not found" };
-    }
+    const team = await Team.findOne(
+      { _id: req.params.teamId },
+      { members: 1 }
+    ).populate("members");
 
-    const teamLeads = await User.find({ _id: { $in: team.members } });
+    const temaMembers = team.members;
+
+    let teamLeads = [];
+    temaMembers.forEach((member) => {
+      if (member.teamLead.includes(req.params.teamId)) {
+        teamLeads.push(member);
+      }
+    });
     return teamLeads;
   } catch (error) {
+    console.error(error);
     return { message: "Server error" };
   }
 };
