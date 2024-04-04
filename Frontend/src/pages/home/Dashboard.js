@@ -8,7 +8,6 @@ import { tasks } from "../../mock/MockDataDashboard";
 import "../../assets/styles/main.css";
 import "../../assets/styles/responsive.css";
 import "../../pages/home/Dashboard.css";
-// import axios from "axios";
 import axiosHelper from "../../helper/axioshelper";
 
 function Dashboard() {
@@ -18,11 +17,11 @@ function Dashboard() {
 
   const [form] = Form.useForm();
 
+  const role = localStorage.getItem("role");
+
   const getAllTeams = async () => {
     try {
-      const response = await axiosHelper.get(
-        "http://localhost:3001/teams/get-teams"
-      );
+      const response = await axiosHelper.get("/teams/get-teams");
       setTeams(response.data);
     } catch (error) {
       console.error("Error fetching teams:", error);
@@ -35,7 +34,7 @@ function Dashboard() {
 
   const handleDeleteColumn = async (id) => {
     try {
-      await axiosHelper.put("http://localhost:3001/teams/mark-delete/" + id);
+      await axiosHelper.put("/teams/mark-delete/" + id);
       getAllTeams();
     } catch (error) {
       console.error("Error Deleting Team", error);
@@ -44,7 +43,7 @@ function Dashboard() {
 
   const handleEditTeam = async (id, newTeamName, newDescription) => {
     try {
-      await axiosHelper.put("http://localhost:3001/teams/update/" + id, {
+      await axiosHelper.put("/teams/update/" + id, {
         name: newTeamName,
         description: newDescription,
       });
@@ -60,7 +59,7 @@ function Dashboard() {
       .then((values) => {
         let len = teams.length;
         axiosHelper
-          .post("http://localhost:3001/teams/create-team", {
+          .post("/teams/create-team", {
             id: len + 1,
             name: values.name,
             description: values.description,
@@ -90,15 +89,17 @@ function Dashboard() {
   return (
     <div className="dashboard">
       <Row justify="end">
-        <Button
-          type="primary"
-          onClick={addColumn}
-          style={{
-            marginRight: "20px",
-          }}
-        >
-          Create Team
-        </Button>
+        {role.toLocaleLowerCase() === "admin" && (
+          <Button
+            type="primary"
+            onClick={addColumn}
+            style={{
+              marginRight: "20px",
+            }}
+          >
+            Create Team
+          </Button>
+        )}
       </Row>
 
       <Modal
