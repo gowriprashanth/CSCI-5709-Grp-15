@@ -23,14 +23,18 @@ import {
   Space,
   Tooltip,
   message,
+  Select,
+  Typography,
 } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { UserOutlined } from "@ant-design/icons";
+import { useHistory } from "react-router-dom";
+import axiosHelper from "../../helper/axioshelper";
 import { demoMembers } from "../../mock/MockDataDashboard";
 import RaiseTicketForm from "../../pages/RaiseTicketForm";
-import { useHistory } from "react-router-dom"
 
+const { Option } = Select;
 export const TeamTickets = (props) => {
   const [isMembersVisible, setIsMembersVisible] = useState(false);
   const [members, setMembers] = useState(demoMembers);
@@ -40,13 +44,15 @@ export const TeamTickets = (props) => {
   const [isMemberModalVisible, setIsMemberModalVisible] = useState(false);
   const [isMemberEditModalVisible, setIsMemberEditModalVisible] =
     useState(false);
+  const [ticketsData, updateTicketsData] = useState([]);
+
+  const [options, setOptions] = useState([]);
 
   const {
+    pid,
     id,
-    items,
     name,
     description,
-    data,
     handleDeleteColumn,
     handleEditTeam,
     handleSubmitRaiseTicket,
@@ -57,6 +63,61 @@ export const TeamTickets = (props) => {
     border: "1px solid #dcdcdc",
     cursor: "auto",
     touchAction: "auto",
+  };
+
+  const fetchData = async () => {
+    try {
+      const response = await axiosHelper.get(
+        "http://localhost:3001/users/getall"
+      );
+
+      const data = response.data.map((item) => ({
+        name: item.name,
+        email: item.email,
+        id: item._id,
+      }));
+      const presentIds = members.map((member) => member.id);
+      setOptions(data.filter((item) => !presentIds.includes(item.id)));
+    } catch (error) {
+      console.error("Failed to fetch data:", error);
+    }
+  };
+
+  const fetchDataSequentially = async () => {
+    try {
+      await getAllMembers();
+      await fetchData();
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchDataSequentially();
+  }, []);
+
+  const getAllMembers = async () => {
+    try {
+      const response = await axiosHelper.get(
+        "http://localhost:3001/team-members/" + pid
+      );
+      const promises = response.data.map(async (member) => {
+        const response1 = await axiosHelper.get(
+          "http://localhost:3001/users/user/" + member
+        );
+        return {
+          id: response1.data._id,
+          name: response1.data.name,
+          email: response1.data.email,
+        };
+      });
+
+      const membersInTeam = await Promise.all(promises);
+
+      setMembers(membersInTeam);
+    } catch (error) {
+      console.error("Error fetching members:", error);
+    }
   };
 
   const handleOk = () => {
@@ -72,7 +133,20 @@ export const TeamTickets = (props) => {
       title: "Confirm Remove",
       content: "Are you sure you want to remove this member?",
       onOk: async () => {
-        setMembers(members.filter((member) => member.id !== memberId));
+        try {
+          const response = await axiosHelper
+            .delete(
+              "http://localhost:3001/team-members/" +
+                pid +
+                "/members/" +
+                memberId
+            )
+            .then((response) => {
+              fetchDataSequentially();
+            });
+        } catch (error) {
+          console.error("Error removing member:", error);
+        }
         message.success("Member removed Successfully!");
       },
       onCancel: () => {
@@ -91,7 +165,7 @@ export const TeamTickets = (props) => {
       title: "Confirm Deletion",
       content: "Are you sure you want to delete this team?",
       onOk: async () => {
-        handleDeleteColumn(parseInt(id.split("-")[1]));
+        handleDeleteColumn(pid);
         message.success("Team Deleted Successfully!");
       },
       onCancel: () => {
@@ -143,16 +217,19 @@ export const TeamTickets = (props) => {
     memberForm
       .validateFields()
       .then((values) => {
-        let len = members.length;
-        setMembers([
-          ...members,
-          {
-            id: len + 1,
-            name: values.name,
-          },
-        ]);
-        setIsMemberModalVisible(false);
-        message.success("Member Added Successfully!");
+        //console.log(values.select, "add values");
+        values.select.forEach((element) => {
+          const response = axiosHelper
+            .post("http://localhost:3001/team-members/" + pid + "/add-member", {
+              userId: element.split("-")[2],
+            })
+            .then((response) => {
+              fetchDataSequentially();
+              console.log("after add", members);
+              setIsMemberModalVisible(false);
+              message.success("Member Added Successfully!");
+            });
+        });
       })
       .catch((errorInfo) => {
         console.log("Validation failed:", errorInfo);
@@ -163,12 +240,7 @@ export const TeamTickets = (props) => {
     editMemberForm
       .validateFields()
       .then((values) => {
-        handleEditTeam(
-          parseInt(id.split("-")[1]),
-          values.name,
-          values.description
-        );
-
+        handleEditTeam(pid, values.name, values.description);
         setIsMemberEditModalVisible(false);
         message.success("Team Details Updated Successfully!");
       })
@@ -176,6 +248,16 @@ export const TeamTickets = (props) => {
         console.log("Validation failed:", errorInfo);
       });
   };
+
+  const getTicketsByTeamId = async () => {
+    const response = await axiosHelper.get(`/tickets/get/${pid}`);
+    if (response && response.data && response.data.length > 0)
+      updateTicketsData(response.data);
+  };
+
+  useEffect(() => {
+    getTicketsByTeamId();
+  }, []);
 
   return (
     <div className="board-column" style={style}>
@@ -200,20 +282,20 @@ export const TeamTickets = (props) => {
         </div>
         <br />
         <RaiseTicketForm
+          teamId={pid}
           onTicketRaised={(values) => {
-            handleSubmitRaiseTicket(id, values);
+            getTicketsByTeamId();
           }}
         />
       </div>
       <div className="board-column-list">
-      <SortableContext items={items} strategy={verticalListSortingStrategy}>
-          {items.map((item, _index) => {
+        <SortableContext
+          items={ticketsData}
+          strategy={verticalListSortingStrategy}
+        >
+          {ticketsData.map((item, _index) => {
             return (
-              <FieldItem
-                key={item}
-                item={data.filter((d) => "task-" + d.id === item)[0]}
-                disabled={isSortingContainer}
-              />
+              <FieldItem key={item} item={item} disabled={isSortingContainer} />
             );
           })}
         </SortableContext>
@@ -257,7 +339,13 @@ export const TeamTickets = (props) => {
                     </Button>,
                   ]}
                 >
-                  <List.Item.Meta avatar={<UserOutlined />} title={item.name} />
+                  <List.Item.Meta
+                    avatar={<UserOutlined />}
+                    title={item.name}
+                    description={
+                      <span style={{ fontSize: "12px" }}>{item.email}</span>
+                    }
+                  />
                 </List.Item>
               )}
             />
@@ -280,13 +368,21 @@ export const TeamTickets = (props) => {
             }}
           >
             <Form.Item
-              label="Member Name"
-              name="name"
-              rules={[
-                { required: true, message: "Please enter the member name" },
-              ]}
+              name="select"
+              label="Select"
+              rules={[{ required: true, message: "Please select an option!" }]}
             >
-              <Input placeholder="Enter the member name" />
+              <Select placeholder="Select members" mode="multiple">
+                {options.map((item, index) => (
+                  <Option
+                    key={item.id}
+                    value={item.email + "-" + item.name + "-" + item.id}
+                  >
+                    <div>{item.name}</div>
+                    <div style={{ fontSize: "12px" }}>{item.email}</div>
+                  </Option>
+                ))}
+              </Select>
             </Form.Item>
           </Form>
         </Modal>
@@ -335,11 +431,11 @@ export const TeamTickets = (props) => {
 export const FieldItem = (props) => {
   const { item } = props;
 
-  const history = useHistory()
+  const history = useHistory();
 
   const onTicketClick = () => {
-    history.push("/ticket-detail", { ...item })
-  }
+    history.push("/ticket-detail", { ...item });
+  };
 
   return (
     <div
@@ -353,38 +449,65 @@ export const FieldItem = (props) => {
         <Row justify="space-between">
           <Col span={20}>
             <div onClick={onTicketClick}>
-              <h6 style={{
-                display: "block",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}>{item.title}</h6>
-              <span style={{
-                display: "block",
-                marginTop: "5px",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}>{item.description}</span>
+              <h6
+                style={{
+                  display: "block",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {item.title}
+              </h6>
+              <span
+                style={{
+                  display: "block",
+                  marginTop: "5px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {item.description}
+              </span>
             </div>
-            <Row style={{ marginTop: "4px", marginLeft: "4px" }} align="middle" justify="space-between" >
-              <Badge count={item.status.st} showZero color={item.status.color} />
-              {(item.assignee && item.assignee.length > 0) ?
-                <Avatar.Group maxCount={2} maxStyle={{ backgroundColor: "#1890ff" }}>
+            <Row
+              style={{ marginTop: "4px", marginLeft: "4px" }}
+              align="middle"
+              justify="space-between"
+            >
+              <Badge
+                count={item.status.name}
+                showZero
+                color={item.status.color}
+              />
+              {item.assignee && item.assignee.length > 0 ? (
+                <Avatar.Group
+                  maxCount={2}
+                  maxStyle={{ backgroundColor: "#1890ff" }}
+                >
                   {item.assignee.map((assignee, index) => {
                     return (
                       <Tooltip title={assignee} placement="top">
-                        <Avatar key={index} style={{ backgroundColor: "#1890ff", verticalAlign: "middle" }} size="small">
+                        <Avatar
+                          key={index}
+                          style={{
+                            backgroundColor: "#1890ff",
+                            verticalAlign: "middle",
+                          }}
+                          size="small"
+                        >
                           {assignee[0]}
                         </Avatar>
                       </Tooltip>
                     );
                   })}
-                </Avatar.Group> : null}
+                </Avatar.Group>
+              ) : null}
             </Row>
           </Col>
         </Row>
       </div>
-    </div >
+    </div>
   );
 };

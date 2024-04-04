@@ -9,7 +9,7 @@ export default function Teams({
   tasks,
   columns,
   handleDeleteColumn,
-  handleEditTeam,
+  handleEditTeam
 }) {
   const [data, setData] = useState(null);
   const [items, setItems] = useState({});
@@ -37,44 +37,41 @@ export default function Teams({
 
   const handleSubmitRaiseTicket = (id, values) => {
     setTickets([
-      ...tickets,
-      {
-        id: tickets.length + 1,
-        col_id: parseInt(id.split("-")[1]),
-        description: values.description,
-        title: values.title,
-        status: { st: "Not Started", color: "red" },
-      },
+      ...tickets
     ]);
+
   };
 
   return (
     <div className="board">
       <div className="board-container">
-      <SortableContext
+        <SortableContext
           items={containers}
           strategy={horizontalListSortingStrategy}
         >
           {containers.map((containerId) => {
-            if (
-              columns.filter((c) => "column-" + c.id === containerId)[0]
-                .isDeleted === false
-            ) {
+            const checkPos = columns.filter(
+              (c) => "column-" + c.id === containerId
+            );
+            if (checkPos.length > 0 && checkPos[0].isDeleted === false) {
               const columnName = columns.filter(
                 (c) => "column-" + c.id === containerId
               )[0].name;
               const columnDescription = columns.filter(
                 (c) => "column-" + c.id === containerId
               )[0].description;
+              const pid = columns.filter(
+                (c) => "column-" + c.id === containerId
+              )[0]._id;
 
               return (
                 <TeamTickets
+                  pid={pid}
                   id={containerId}
                   key={containerId}
                   items={items[containerId]}
                   name={columnName}
                   description={columnDescription}
-                  data={data}
                   handleDeleteColumn={handleDeleteColumn}
                   handleEditTeam={handleEditTeam}
                   handleSubmitRaiseTicket={handleSubmitRaiseTicket}
@@ -85,7 +82,6 @@ export default function Teams({
             }
           })}
         </SortableContext>
-
       </div>
     </div>
   );

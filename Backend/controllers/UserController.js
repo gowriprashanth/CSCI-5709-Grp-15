@@ -28,7 +28,7 @@ const SignUp = async (req, res) => {
 
         await user.save();
         sendEmail(email, 'Registration Successful', 'You received this email as you are just registered with the IssueStack, Welcome to the IssueStack community!')
-        const token = jwt.sign({userId: user._id}, process.env.JWT_SECRET, {expiresIn: '1h'});
+        const token = jwt.sign({userId: user._id, name: user.name, email: user.email, role: user.role }, process.env.JWT_SECRET, {expiresIn: '1h'});
         const userWithoutPassword = {
             _id: user._id,
             name: user.name,
@@ -55,7 +55,7 @@ const SignIn = async (req, res) => {
             return res.status(401).json({message: "Invalid email or password"});
         }
 
-        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' })
+        const token = jwt.sign({ userId: user._id, name: user.name, email: user.email, role: user.role}, process.env.JWT_SECRET, { expiresIn: '1h' })
 
         const currentDate = new Date();
         sendEmail(email, 'Login Successful', `Last Login time: ${currentDate}`)

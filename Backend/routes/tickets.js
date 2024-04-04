@@ -67,7 +67,7 @@ router.post('/create', async (req, res, next) => {
       res.status(StatusCodes.BAD_REQUEST).send({ error: "description is required" });
       return
     }
-    const message = await ticketController.createTicket({ data: { title, description, files } })
+    const message = await ticketController.createTicket({ data: { title, description, files, teamId } })
     res.status(StatusCodes.OK).send({ message });
   } catch (error) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error.message || error })
@@ -102,7 +102,60 @@ router.get('/get/:teamId', async (req, res, next) => {
       return
     }
     const tickets = await ticketController.getTicketsByTeamId({ teamId })
-    res.status(StatusCodes.OK).send({ tickets });
+    res.status(StatusCodes.OK).send(tickets);
+  } catch (error) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error.message || error })
+  }
+});
+
+router.get('/statuses', async (req, res, next) => {
+  try {
+    const statuses = await ticketController.getStatuses()
+    res.status(StatusCodes.OK).send(statuses)
+  } catch(error) {
+    console.log(error)
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error.message || error })
+  }
+})
+
+router.get('/priorities', async (req, res, next) => {
+  try {
+    const priorities = await ticketController.getPriorities()
+    res.status(StatusCodes.OK).send(priorities)
+  } catch(error) {
+    console.log(error)
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error.message || error })
+  }
+})
+
+router.post('/:id/add-comment', async (req, res, next) => {
+  try {
+    const { comment } = req.body
+    const { id: ticketId } = req.params
+    if (!ticketId) {
+      res.status(StatusCodes.BAD_REQUEST).send({ error: "ticketId is required" });
+    } else if (!comment || !comment.length || comment.length > 300) {
+      res.status(StatusCodes.BAD_REQUEST).send({ error: "comment is required and should not be more than 300 characters" });
+    } else if (!req.user) {
+      res.status(StatusCodes.BAD_REQUEST).send({ error: "User session not valid" });
+    } else {
+      const message = await ticketController.saveComment({ ticketId, comment, userId: req.user.userId })
+      res.status(StatusCodes.OK).send({ message });
+    }
+  } catch (error) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error.message || error })
+  }
+});
+
+router.get('/:ticketId', async (req, res, next) => {
+  try {
+    const { ticketId } = req.params
+    if (!ticketId) {
+      res.status(StatusCodes.BAD_REQUEST).send({ error: "ticketId is required" });
+    } else {
+      const ticketData = await ticketController.getTicketById(ticketId)
+      res.status(StatusCodes.OK).send(ticketData);
+    }
   } catch (error) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error.message || error })
   }
