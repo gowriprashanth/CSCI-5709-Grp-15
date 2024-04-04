@@ -24,14 +24,12 @@ import {
   Tooltip,
   message,
   Select,
-  Typography,
 } from "antd";
 import React, { useEffect, useState } from "react";
 
 import { UserOutlined } from "@ant-design/icons";
 import { useHistory } from "react-router-dom";
 import axiosHelper from "../../helper/axioshelper";
-import { demoMembers } from "../../mock/MockDataDashboard";
 import RaiseTicketForm from "../../pages/RaiseTicketForm";
 
 const { Option } = Select;
@@ -50,11 +48,13 @@ export const TeamTickets = (props) => {
 
   const {
     pid,
+    // eslint-disable-next-line no-unused-vars
     id,
     name,
     description,
     handleDeleteColumn,
     handleEditTeam,
+    // eslint-disable-next-line no-unused-vars
     handleSubmitRaiseTicket,
     isSortingContainer,
   } = props;
@@ -94,6 +94,8 @@ export const TeamTickets = (props) => {
 
   useEffect(() => {
     fetchDataSequentially();
+    getTicketsByTeamId();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getAllMembers = async () => {
@@ -134,7 +136,7 @@ export const TeamTickets = (props) => {
       content: "Are you sure you want to remove this member?",
       onOk: async () => {
         try {
-          const response = await axiosHelper
+          await axiosHelper
             .delete(
               "http://localhost:3001/team-members/" +
                 pid +
@@ -218,7 +220,7 @@ export const TeamTickets = (props) => {
       .validateFields()
       .then((values) => {
         values.select.forEach((element) => {
-          const response = axiosHelper
+          axiosHelper
             .post("http://localhost:3001/team-members/" + pid + "/add-member", {
               userId: element.split("-")[2],
             })
@@ -255,9 +257,9 @@ export const TeamTickets = (props) => {
       updateTicketsData(response.data);
   };
 
-  useEffect(() => {
-    getTicketsByTeamId();
-  }, []);
+  // useEffect(() => {
+  //   getTicketsByTeamId();
+  // }, []);
 
   return (
     <div className="board-column" style={style}>
