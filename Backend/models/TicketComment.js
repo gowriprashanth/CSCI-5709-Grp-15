@@ -1,3 +1,6 @@
+/**
+ * @author Darshit Dhameliya
+ */
 const mongoose = require('mongoose');
 
 const ticketCommentSchema =  new mongoose.Schema({

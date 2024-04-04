@@ -1,3 +1,6 @@
+/**
+ * @author Darshit Dhameliya
+ */
 import React from "react";
 import {
   Layout,
@@ -25,6 +28,9 @@ import Header from "../HeaderAuthentication";
 const { Footer } = Layout;
 const { Panel } = Collapse;
 
+/**
+ * Landing Page comnponent
+ */
 export default function LandingPage() {
 
     const [form] = Form.useForm();

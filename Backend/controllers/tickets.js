@@ -77,6 +77,9 @@ const addAttachments = async (data) => {
     })
 }
 
+/**
+ * It returns ticket data of given team
+ */
 const getTicketsByTeamId = async (data) => {
     const { teamId } = data
     return await Ticket.find({
@@ -84,6 +87,9 @@ const getTicketsByTeamId = async (data) => {
     }).populate("status").populate("priority").populate("assignee");
 }
 
+/**
+ * It returns ticket data of given ticket id
+ */
 const getTicketById = async (ticketId) => {
     return await Ticket.findById(ticketId).populate("attachments").populate("comments").populate("assignee").populate({
         path: 'comments',
@@ -93,14 +99,23 @@ const getTicketById = async (ticketId) => {
       }).populate("status").populate("priority");
 }
 
+/**
+ * It returns all the statuses
+ */
 const getStatuses = async () => {
     return await Status.find({})
 }
 
+/**
+ * It returns all the priorities
+ */
 const getPriorities = async () => {
     return await Priority.find({})
 }
 
+/**
+ * It saves comment added by user
+ */
 const saveComment = async ({ ticketId, ...data }) => {
     const comment = await TicketComment.create(data)
     await Ticket.updateOne({ _id: ticketId }, { $push: { comments: comment } })

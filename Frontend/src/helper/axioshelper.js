@@ -3,6 +3,9 @@
  */
 import axios from 'axios';
 
+/**
+ * It modifies deafult axios configuration. Added request and response interceptor to add JWT token in header of each API call.
+ */
 const axiosHelper = axios.create({
     baseURL: process.env.REACT_APP_API_URL || "http://localhost:3001",
 });

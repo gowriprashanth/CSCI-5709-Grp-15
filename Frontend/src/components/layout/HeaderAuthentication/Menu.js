@@ -1,9 +1,15 @@
+/**
+ * @author Darshit Dhameliya
+ */
 import React from 'react';
 import { Menu, Grid } from 'antd';
 import { Link, useLocation } from "react-router-dom";
 
 const { useBreakpoint } = Grid;
 
+/**
+ * Navigation menu of Landing Page
+ */
 const MenuComponent = () => {
   const { md } = useBreakpoint()
   const location = useLocation();

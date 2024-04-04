@@ -4,6 +4,9 @@ import { Drawer, Button } from 'antd';
 import "./Header.css";
 import { Link } from 'react-router-dom';
 
+/**
+ * Navigation Menu of Landing Page
+ */
 const Header = () => {
 	const [isDrawerVisible, updateDrawerVisibility ] = useState(false)
 
