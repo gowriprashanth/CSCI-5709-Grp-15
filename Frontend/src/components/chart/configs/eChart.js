@@ -1,5 +1,4 @@
-// Import Axios
-import axios from 'axios';
+import axiosHelper from '../../../helper/axioshelper';
 
 // Define the eChart object
 const eChart = {
@@ -95,7 +94,7 @@ const eChart = {
 };
 
 // Make a GET request to the API endpoint
-axios.get('https://csci-5709-grp-15.onrender.com/analytics/ticket')
+axiosHelper.get('/analytics/ticket')
   .then(response => {
     // Extract the data and categories from the response
     const data = response.data;

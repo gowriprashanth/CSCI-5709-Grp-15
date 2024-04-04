@@ -1,5 +1,4 @@
-// Import Axios
-import axios from 'axios';
+import axiosHelper from '../../../helper/axioshelper';
 
 // Define the lineChart object
 const lineChart = {
@@ -70,7 +69,7 @@ const lineChart = {
 };
 
 // Make a GET request to the API endpoint
-axios.get('https://csci-5709-grp-15.onrender.com/analytics/department')
+axiosHelper.get('/analytics/department')
   .then(response => {
     // Extract the data from the response
     const data = response.data;

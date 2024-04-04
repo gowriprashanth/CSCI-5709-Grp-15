@@ -1,3 +1,6 @@
+/**
+ * @author Gowri Kanagaraj
+ */
 const mongoose = require('mongoose');
 
 const departmentAnalyticsSchema = new mongoose.Schema({
