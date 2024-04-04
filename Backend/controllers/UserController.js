@@ -35,7 +35,7 @@ const SignUp = async (req, res) => {
             email: user.email,
             role: user.role
         };
-        res.json({token, user: userWithoutPassword });
+        res.status(200).json({token, user: userWithoutPassword });
     }catch(error){
         console.error(error.message)
         res.status(500).send('Server Error');
@@ -65,7 +65,7 @@ const SignIn = async (req, res) => {
             email: user.email,
             role: user.role
         };
-        res.json({token, user: userWithoutPassword });
+        res.status(200).json({token, user: userWithoutPassword });
     }catch (error){
         console.error(error.message);
         res.status(500).send('Server Error');
@@ -88,7 +88,7 @@ const ForgotPassword = async (req, res) => {
         user.resetToken = resetToken;
         await user.save();
 
-        res.json({ message: 'Reset link sent to your email' });
+        res.status(200).json({ message: 'Reset link sent to your email' });
     } catch (error) {
         console.error(error.message);
         res.status(500).send('Server Error');
@@ -116,7 +116,7 @@ const ResetPassword = async (req, res) => {
 
         sendEmail(user.email, 'Reset Password', `Password reset successfully.`)
 
-        res.json({ message: 'Password reset successfully' });
+        res.status(200).json({ message: 'Password reset successfully' });
     } catch (error) {
         console.error(error.message);
         res.status(500).send('Server Error');

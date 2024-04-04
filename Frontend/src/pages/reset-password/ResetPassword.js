@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Layout, Menu, Button, Form, Input, Card } from "antd";
 import "../signin/SignIn.css";
 import HeaderAuthentication from "../../components/layout/HeaderAuthentication";
-import { message } from "antd";
 import axios from 'axios';
 
 const { Footer, Content } = Layout;
@@ -57,12 +56,12 @@ export default class ResetPassword extends Component {
         
       }catch(error){
         console.error("Server Error")
-        if(error.response.status === 404){
+        if(error.response && error.response.status && (error.response.status === 404)){
           this.setState({ errorMessage: "User not found" });
           setTimeout(() => {
             this.setState({ errorMessage: "" });
           }, 5000);
-        }else if(error.respose.status === 401){
+        }else if(error.response && error.response.status && (error.respose.status === 401)){
           this.setState({ errorMessage: "Reset Password link is expired." });
           setTimeout(() => {
             this.setState({ errorMessage: "" });

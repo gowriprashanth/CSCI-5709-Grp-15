@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { Layout, Menu, Button, Form, Input, Card } from "antd";
 import HeaderAuthentication from "../../components/layout/HeaderAuthentication";
 import "../signin/SignIn.css"
-import { message } from "antd";
 import axios from 'axios';
 
 const { Footer, Content } = Layout;
@@ -39,7 +38,7 @@ export default class ForgotPassword extends Component {
         
       }catch(error){
         // console.error("Server Error")
-        if (error.response.status === 404) {
+        if (error.response && error.response.status && (error.response.status === 404)) {
           this.setState({ errorMessage: "User not found" });
           setTimeout(() => {
             this.setState({ errorMessage: "" });

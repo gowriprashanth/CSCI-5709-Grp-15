@@ -81,11 +81,11 @@ const getTicketsByTeamId = async (data) => {
     const { teamId } = data
     return await Ticket.find({
         team: teamId
-    }).populate("status").populate("priority");
+    }).populate("status").populate("priority").populate("assignee");
 }
 
 const getTicketById = async (ticketId) => {
-    return await Ticket.findById(ticketId).populate("attachments").populate("comments").populate({
+    return await Ticket.findById(ticketId).populate("attachments").populate("comments").populate("assignee").populate({
         path: 'comments',
         populate: {
           path: 'userId'

@@ -505,7 +505,7 @@ export const FieldItem = (props) => {
                           }}
                           size="small"
                         >
-                          {assignee[0]}
+                          {assignee.name[0]}
                         </Avatar>
                       </Tooltip>
                     );
