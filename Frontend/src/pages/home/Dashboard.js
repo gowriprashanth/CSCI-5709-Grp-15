@@ -32,9 +32,7 @@ function Dashboard() {
       const response = await axiosHelper.get(
         "http://localhost:3001/teams/get-teams"
       );
-      console.log("hihi", response.data);
       setTeams(response.data);
-      console.log("afterhihi", teams);
     } catch (error) {
       console.error("Error fetching teams:", error);
     }
