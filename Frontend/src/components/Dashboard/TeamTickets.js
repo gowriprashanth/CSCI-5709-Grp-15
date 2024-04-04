@@ -24,20 +24,18 @@ import {
   Tooltip,
   message,
   Select,
-  Typography,
 } from "antd";
 import React, { useEffect, useState } from "react";
 
 import { UserOutlined } from "@ant-design/icons";
 import { useHistory } from "react-router-dom";
 import axiosHelper from "../../helper/axioshelper";
-import { demoMembers } from "../../mock/MockDataDashboard";
 import RaiseTicketForm from "../../pages/RaiseTicketForm";
 
 const { Option } = Select;
 export const TeamTickets = (props) => {
   const [isMembersVisible, setIsMembersVisible] = useState(false);
-  const [members, setMembers] = useState(demoMembers);
+  const [members, setMembers] = useState([]);
 
   const [memberForm] = Form.useForm();
   const [editMemberForm] = Form.useForm();
@@ -50,11 +48,13 @@ export const TeamTickets = (props) => {
 
   const {
     pid,
+    // eslint-disable-next-line no-unused-vars
     id,
     name,
     description,
     handleDeleteColumn,
     handleEditTeam,
+    // eslint-disable-next-line no-unused-vars
     handleSubmitRaiseTicket,
     isSortingContainer,
   } = props;
@@ -94,6 +94,8 @@ export const TeamTickets = (props) => {
 
   useEffect(() => {
     fetchDataSequentially();
+    getTicketsByTeamId();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getAllMembers = async () => {
@@ -134,7 +136,7 @@ export const TeamTickets = (props) => {
       content: "Are you sure you want to remove this member?",
       onOk: async () => {
         try {
-          const response = await axiosHelper
+          await axiosHelper
             .delete(
               "http://localhost:3001/team-members/" +
                 pid +
@@ -217,13 +219,13 @@ export const TeamTickets = (props) => {
     memberForm
       .validateFields()
       .then((values) => {
-        //console.log(values.select, "add values");
         values.select.forEach((element) => {
-          const response = axiosHelper
+          axiosHelper
             .post("http://localhost:3001/team-members/" + pid + "/add-member", {
               userId: element.split("-")[2],
             })
             .then((response) => {
+              console.log("in then of add member");
               fetchDataSequentially();
               console.log("after add", members);
               setIsMemberModalVisible(false);
@@ -255,9 +257,9 @@ export const TeamTickets = (props) => {
       updateTicketsData(response.data);
   };
 
-  useEffect(() => {
-    getTicketsByTeamId();
-  }, []);
+  // useEffect(() => {
+  //   getTicketsByTeamId();
+  // }, []);
 
   return (
     <div className="board-column" style={style}>
@@ -295,7 +297,11 @@ export const TeamTickets = (props) => {
         >
           {ticketsData.map((item, _index) => {
             return (
-              <FieldItem key={item} item={item} disabled={isSortingContainer} />
+              <FieldItem
+                key={_index}
+                item={item}
+                disabled={isSortingContainer}
+              />
             );
           })}
         </SortableContext>
@@ -372,10 +378,14 @@ export const TeamTickets = (props) => {
               label="Select"
               rules={[{ required: true, message: "Please select an option!" }]}
             >
-              <Select placeholder="Select members" mode="multiple">
+              <Select
+                placeholder="Select members"
+                mode="multiple"
+                onFocus={fetchDataSequentially}
+              >
                 {options.map((item, index) => (
                   <Option
-                    key={item.id}
+                    key={index}
                     value={item.email + "-" + item.name + "-" + item.id}
                   >
                     <div>{item.name}</div>
@@ -488,7 +498,7 @@ export const FieldItem = (props) => {
                 >
                   {item.assignee.map((assignee, index) => {
                     return (
-                      <Tooltip title={assignee.name} placement="top">
+                      <Tooltip key={index} title={assignee} placement="top">
                         <Avatar
                           key={index}
                           style={{

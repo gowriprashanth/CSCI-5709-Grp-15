@@ -18,15 +18,6 @@ function Dashboard() {
 
   const [form] = Form.useForm();
 
-  const changeId = () => {
-    setTeams(
-      teams.map((item) => {
-        return { ...item, id: item._id };
-      })
-    );
-    console.log(teams);
-  };
-
   const getAllTeams = async () => {
     try {
       const response = await axiosHelper.get(
@@ -36,7 +27,6 @@ function Dashboard() {
     } catch (error) {
       console.error("Error fetching teams:", error);
     }
-    //changeId();
   };
 
   useEffect(() => {
@@ -45,9 +35,7 @@ function Dashboard() {
 
   const handleDeleteColumn = async (id) => {
     try {
-      const response = await axiosHelper.put(
-        "http://localhost:3001/teams/mark-delete/" + id
-      );
+      await axiosHelper.put("http://localhost:3001/teams/mark-delete/" + id);
       getAllTeams();
     } catch (error) {
       console.error("Error Deleting Team", error);
@@ -56,10 +44,10 @@ function Dashboard() {
 
   const handleEditTeam = async (id, newTeamName, newDescription) => {
     try {
-      const response = await axiosHelper.put(
-        "http://localhost:3001/teams/update/" + id,
-        { name: newTeamName, description: newDescription }
-      );
+      await axiosHelper.put("http://localhost:3001/teams/update/" + id, {
+        name: newTeamName,
+        description: newDescription,
+      });
       getAllTeams();
     } catch (error) {
       console.error("Error Updating Team", error);

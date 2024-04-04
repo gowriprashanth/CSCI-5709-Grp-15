@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Layout, Menu, Button, Form, Input, Card } from "antd";
 import "../signin/SignIn.css";
 import HeaderAuthentication from "../../components/layout/HeaderAuthentication";
-import { message } from "antd";
 import axios from 'axios';
 
 const { Footer, Content } = Layout;
@@ -40,7 +39,7 @@ export default class ResetPassword extends Component {
     if (password) {
 
       try{
-        const response = await axios.post(`http://localhost:3001/user/resetPassword`, {
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}user/resetPassword`, {
           newPassword: password,
           resetToken: this.state.token
         })

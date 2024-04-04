@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { Layout, Menu, Button, Form, Input, Card } from "antd";
 import HeaderAuthentication from "../../components/layout/HeaderAuthentication";
 import "../signin/SignIn.css"
-import { message } from "antd";
 import axios from 'axios';
 
 const { Footer, Content } = Layout;
@@ -23,7 +22,7 @@ export default class ForgotPassword extends Component {
     if (email) {
 
       try{
-        const response = await axios.post(`http://localhost:3001/user/forgotPassword`, {
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}user/forgotPassword`, {
           email: email,
         })
 

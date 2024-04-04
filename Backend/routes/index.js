@@ -2,6 +2,7 @@
  * @author Darshit Dhameliya
  */
 const ticketRoutes = require("./tickets");
+const kbaseRoutes = require("./kbaseRoutes");
 const userRoutes = require("./userRoutes");
 const analyticsRoutes = require("./analyticsRoutes");
 const { verifyToken } = require("../middleware/verifyToken");
@@ -17,6 +18,8 @@ const registerRoutes = (app) => {
   app.use("/tickets", ticketRoutes);
   app.use("/analytics", analyticsRoutes);
   app.use("/users", users);
+
+  app.use("/knowledgebase", kbaseRoutes);
 };
 
 module.exports = {
