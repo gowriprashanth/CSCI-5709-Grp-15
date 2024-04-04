@@ -105,7 +105,7 @@ export default function TicketDetail() {
                 content: e.comment,
                 datetime: e.createdAt
             }))
-            updateTicketData(response.data)
+            updateTicketData(response.data)            
         }
     }, [state?._id])
 
@@ -131,12 +131,14 @@ export default function TicketDetail() {
     /**
      * It fetches all the users
      */
-    const getUsers = async () => {
-        const response = await TicketService.GetUsers()
-        if (response && response.data && response.data.length > 0){
-            updateAssignee(response.data)
+    const getUsers = useCallback(async () => {
+        if (ticketData && ticketData.team) {
+            const response = await TicketService.GetUsers(ticketData.team)
+            if (response && response.data && response.data.length > 0){
+                updateAssignee(response.data)
+            }
         }
-    }
+    }, [ticketData])
 
     /**
      * It adds comment
@@ -164,9 +166,12 @@ export default function TicketDetail() {
 
     useEffect(() => {
         getStatuses()
-        getUsers()
         getPriorties()
     }, [])
+
+    useEffect(() => {
+        getUsers()
+    }, [getUsers])
 
     /**
      * It uploads file

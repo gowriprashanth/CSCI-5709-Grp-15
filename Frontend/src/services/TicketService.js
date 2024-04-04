@@ -96,9 +96,9 @@ export const AddAttachment = async (data) => {
 /**
  * It calls backend API to fetch all the users
  */
-export const GetUsers = async () => {
+export const GetUsers = async (teamId) => {
     try {
-        return await axiosHelper.get(`users`)
+        return await axiosHelper.get(`team-members/${teamId}?populate=true`)
     } catch(error) {
         return error
     }
