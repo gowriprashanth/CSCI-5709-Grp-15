@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
+const { StatusCodes } = require('http-status-codes');
 
 router.get("/getall", async (req, res) => {
   try {
@@ -23,5 +24,14 @@ router.get("/user/:id", async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+router.get("/", async (req, res) => {
+  try {
+    const data = await User.find({})
+    res.status(StatusCodes.OK).send(data)
+  } catch(error) {
+    res.status(500).json({ message: error.message });
+  }
+})
 
 module.exports = router;

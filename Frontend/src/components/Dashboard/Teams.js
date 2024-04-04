@@ -11,6 +11,7 @@ export default function Teams({
   handleDeleteColumn,
   handleEditTeam
 }) {
+  //eslint-disable-next-line no-unused-vars
   const [data, setData] = useState(null);
   const [items, setItems] = useState({});
   const [containers, setContainers] = useState([]);

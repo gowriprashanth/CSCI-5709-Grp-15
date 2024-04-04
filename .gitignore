@@ -11,6 +11,7 @@
 
 # production
 /Frontend/build
+/Frontend/.env
 
 # misc
 .DS_Store

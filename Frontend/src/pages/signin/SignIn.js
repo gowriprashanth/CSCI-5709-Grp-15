@@ -38,11 +38,14 @@ export default class SignIn extends Component {
             this.props.history.push("/dashboard");
           });
         }
-        
-      }catch(error){
+      } catch (error) {
         console.log("errorr", error);
-        console.error("Server Error")
-        if(error.response && error.response.status && (error.response.status === 404 || error.response.status === 401)){
+        console.error("Server Error");
+        if (
+          error.response &&
+          error.response.status &&
+          (error.response.status === 404 || error.response.status === 401)
+        ) {
           this.setState({
             errorMessage: "Invalid email or password.",
           });

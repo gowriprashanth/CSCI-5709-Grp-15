@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import {
   Col,
@@ -18,13 +18,11 @@ import { useLocation, useHistory } from "react-router-dom"
 import * as TicketService from "../../services/TicketService"
 import { uploadFile } from "../../FirebaseStorageService"
 
-const users = ["Kuldeep", "Dhruvik", "Darshit", "Bhautik", "Nisarg", "Gawri", "Rushi", "Shruti", "Nikita", "Priyanka"].map(e=>({ label: e, value: e }))
-
 const commentAvatar = "https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvdjkzNy1hZXctMTExXzMuanBn.jpg" 
 
 export default function TicketDetail() {
     const { state } = useLocation();
-    const [selectedUser, updateAssignee] = useState(state.assignee?.map(e=> ({ label: e, value: e })));
+    const [users, updateAssignee] = useState([]);
     const [newComment, setNewComment] = useState('');
     const [messageApi, contextHolder] = message.useMessage();
     const [ticketData, updateTicketData] = useState({})
@@ -71,7 +69,7 @@ export default function TicketDetail() {
         });
     }
 
-    const getTicketData = async () => {
+    const getTicketData = useCallback(async () => {
         const response = await TicketService.GetTicketDetail(state?._id)
         if (response && response.data) {
             response.data.attachments = response.data.attachments.map(e => ({
@@ -88,7 +86,7 @@ export default function TicketDetail() {
             }))
             updateTicketData(response.data)
         }
-    }
+    }, [state?._id])
 
     const getStatuses = async () => {
         const response = await TicketService.GetStatuses()
@@ -101,6 +99,13 @@ export default function TicketDetail() {
         const response = await TicketService.GetPriorities()
         if (response && response.data && response.data.length > 0)
             updatePriorities(response.data.map(e => ({ value: e._id, label: e.name })))
+    }
+
+    const getUsers = async () => {
+        const response = await TicketService.GetUsers()
+        if (response && response.data && response.data.length > 0){
+            updateAssignee(response.data)
+        }
     }
 
     const addComment = async () => {
@@ -122,10 +127,11 @@ export default function TicketDetail() {
 
     useEffect(() => {
         getTicketData()
-    },[state?._id])
+    },[getTicketData])
 
     useEffect(() => {
         getStatuses()
+        getUsers()
         getPriorties()
     }, [])
 
@@ -193,14 +199,19 @@ export default function TicketDetail() {
                             <hr />
                         </Col>
                         <Col xs={24} sm={24} md={24} xl={12}>
-                            <Form.Item label="Assignee">
-                                <Select
-                                    defaultValue={selectedUser}
-                                    mode="multiple"
-                                    onChange={changeUpdateAssignee}
-                                    options={users}
-                                />
-                            </Form.Item>
+                            {ticketData && users && (
+                                <Form.Item label="Assignee">
+                                    <Select
+                                        defaultValue={ticketData.assignee.map(e => (e._id))}
+                                        mode="multiple"
+                                        onChange={changeUpdateAssignee}
+                                        options={users.map(e => ({
+                                            label: `${e.name} (${e.email})`,
+                                            value: e._id
+                                        }))}
+                                    />
+                                </Form.Item>                                
+                            )}
                             <hr />
                             {ticketData && ticketData.status && (
                                 <Form.Item label="Status">
