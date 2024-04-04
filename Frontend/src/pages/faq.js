@@ -1,106 +1,83 @@
-import { Button, Card, Col, Collapse, Input, Row, message } from "antd";
+import { Button, Card, Col, Collapse, Input, Row, Space, message } from "antd";
 import BgProfile from "../assets/images/bg-profile.jpg";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TextArea from "antd/lib/input/TextArea";
+import axios from "axios";
+import { set } from "mongoose";
+import { D_API_URL } from "../constants/creds";
 
 const { Panel } = Collapse;
 
-let knbase1 = [
-  {
-    title: "How to create a new project?",
-    content: "This is the content related to creating a new project.",
-  },
-  {
-    title: "How to add a new team member?",
-    content: "This is the content related to adding a new team member.",
-  },
-  {
-    title: "How to add a new task?",
-    content: "This is the content related to adding a new task.",
-  },
-  {
-    title: "How to delete a project?",
-    content: "This is the content related to deleting a project.",
-  },
-  {
-    title: "How to assign a task to a team member?",
-    content:
-      "This is the content related to assigning a task to a team member.",
-  },
-  {
-    title: "How to mark a task as completed?",
-    content: "This is the content related to marking a task as completed.",
-  },
-];
-
-let knbase2 = [
-  {
-    title: "How to create a new project?",
-    content: "This is the content related to creating a new project.",
-  },
-  {
-    title: "How to add a new team member?",
-    content: "This is the content related to adding a new team member.",
-  },
-  {
-    title: "How to add a new task?",
-    content: "This is the content related to adding a new task.",
-  },
-  {
-    title: "How to delete a project?",
-    content: "This is the content related to deleting a project.",
-  },
-  {
-    title: "How to assign a task to a team member?",
-    content:
-      "This is the content related to assigning a task to a team member.",
-  },
-  {
-    title: "How to mark a task as completed?",
-    content: "This is the content related to marking a task as completed.",
-  },
-];
-
-let knbase3 = [
-  {
-    title: "How to create a new project?",
-    content: "This is the content related to creating a new project.",
-  },
-  {
-    title: "How to add a new team member?",
-    content: "This is the content related to adding a new team member.",
-  },
-  {
-    title: "How to add a new task?",
-    content: "This is the content related to adding a new task.",
-  },
-  {
-    title: "How to delete a project?",
-    content: "This is the content related to deleting a project.",
-  },
-  {
-    title: "How to assign a task to a team member?",
-    content:
-      "This is the content related to assigning a task to a team member.",
-  },
-  {
-    title: "How to mark a task as completed?",
-    content: "This is the content related to marking a task as completed.",
-  },
-];
-
 function FAQ() {
-  const [visible1, setVisible1] = useState(false);
-  const [visible2, setVisible2] = useState(false);
-  const [visible3, setVisible3] = useState(false);
-  let [title1, setTitle1] = useState("");
-  let [description1, setDescription1] = useState("");
+  let [kbaseTitle, setKbaseTitle] = useState("");
+
+  let [title, setTitle] = useState("");
+  let [description, setDescription] = useState("");
   let [title2, setTitle2] = useState("");
   let [description2, setDescription2] = useState("");
   let [title3, setTitle3] = useState("");
   let [description3, setDescription3] = useState("");
+  let [knowledgeBase, setKnowledgeBase] = useState([]);
   const onChange = (key) => {
     console.log(key);
+  };
+
+  useEffect(() => {
+    getALlKnowledgeBase();
+  }, []);
+
+  const addFaqToKbaseByTitle = (title, faq) => {
+    axios
+      .post(D_API_URL + "/knowledgebase/add-faq", { title, faq })
+      .then((response) => {
+        // Handle the response data
+        if (response.status === 201) {
+          getALlKnowledgeBase();
+          message.success("FAQ Added Successfully");
+          console.log(response.data);
+        }
+      })
+      .catch((error) => {
+        message.error("Error Adding FAQ");
+        console.error(error);
+        // Handle the error
+      });
+  };
+  const createKbase = (title) => {
+    axios
+      .post(D_API_URL + "/knowledgebase/create-kbase", { title })
+      .then((response) => {
+        // Handle the response data
+        if (response.status === 201) {
+          getALlKnowledgeBase();
+          message.success("Knowledge Base Created Successfully");
+          console.log(response.data);
+        }
+      })
+      .catch((error) => {
+        message.error("Error Creating Knowledge Base");
+        console.error(error);
+        // Handle the error
+      });
+  };
+  const getALlKnowledgeBase = () => {
+    axios
+      .get(D_API_URL + "/knowledgebase/get-allkbase")
+      .then((response) => {
+        console.log("Get all base >>>>>>>>>" + response.data);
+        let data = response.data;
+        data.map((item) => {
+          item = { ...item, visible: false };
+        });
+        setKnowledgeBase(data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const toggleVisible = (index) => {
+    knowledgeBase[index].visible = !knowledgeBase[index].visible;
+    setKnowledgeBase([...knowledgeBase]);
   };
 
   return (
@@ -125,343 +102,161 @@ function FAQ() {
           Knowldege Base
         </h1>
       </div>
-
-      {/* <Row align="center">
-        <Search
-          className="card-profile-head"
-          placeholder="Search Knowledge Base"
-          style={{
-            borderRadius: 10,
-            justifyContent: "center",
-            width: "50%",
-            alignSelf: "center",
-          }}
-          enterButton
-        />
-      </Row> */}
+      <br />
+      <Card
+        title="Create New Knowledge Base"
+        marginBottom="16px"
+        style={{ width: "100%" }}
+      >
+        <Space.Compact style={{ width: "100%" }}>
+          <Input
+            placeholder="Name of Knowledge Base"
+            onChange={(e) => {
+              setKbaseTitle(e.target.value);
+              console.log(e.target.value);
+            }}
+          />
+          <Button
+            type="primary"
+            onClick={() => {
+              const title = kbaseTitle;
+              console.log(title);
+              if (knowledgeBase.find((item) => item.title === title)) {
+                message.error("Knowledge Base with this name already exists");
+              } else if (title) {
+                createKbase(title);
+              } else {
+                message.error("Please fill the field");
+              }
+            }}
+          >
+            Create Knowldegebase
+          </Button>
+        </Space.Compact>
+      </Card>
       <br />
 
       <Row align="center">
         <Row gutter={[16, 16]}>
-          <Col span={8}>
-            <Card
-              bordered={false}
-              extra={
-                <Button
-                  onClick={() => {
-                    setVisible1(true);
-                    setDescription1(null);
-                    setTitle1(null);
-                  }}
-                >
-                  Add
-                </Button>
-              }
-              title={
-                <h1
-                  style={{
-                    fontSize: "28px",
-                    textAlign: "center",
-                    fontWeight: "bold",
-                    marginBottom: "0",
-                  }}
-                >
-                  Creating Teams
-                </h1>
-              }
-              style={{
-                borderColor: "#ADADAD",
-                borderRadius: 10,
-                width: "100%",
-              }}
-            >
-              {visible1 && (
-                <>
-                  <div style={{ textAlign: "end" }}>
-                    <Input
-                      placeholder="Title"
-                      maxLength={20}
-                      //   onChange={onChange}
-                      onInput={(e) => {
-                        setTitle1(e.target.value);
-                        console.log(e.target.value);
+          {knowledgeBase.map((item, index) => {
+            return (
+              <Col key={index}>
+                <Card
+                  bordered={false}
+                  extra={
+                    <Button
+                      onClick={() => {
+                        toggleVisible(index);
+                        setDescription(null);
+                        setTitle(null);
                       }}
-                      value={title1}
-                    />
-                    <br />
-                    <br />
-                    <TextArea
-                      placeholder="Description"
-                      showCount
-                      maxLength={100}
-                      //   onChange={onChange}
-                      onInput={(e) => setDescription1(e.target.value)}
-                      value={description1}
-                    />
-                    <br />
-                    <div style={{ display: "flex", textAlign: "end" }}>
-                      <Button
-                        onClick={() => {
-                          setVisible1(false);
-                        }}
-                        danger
-                        style={{
-                          flex: 1,
-                          marginTop: "10px",
-                        }}
-                      >
-                        Discard
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          if (title1 && description1) {
-                            setVisible1(false);
-                            console.log(title1, description1);
-                            knbase1.push({
-                              title: title1,
-                              content: description1,
-                            });
-                            message.success("Saved Successfully");
-                          } else {
-                            message.error("Please fill all the fields");
-                          }
-                        }}
-                        type="primary"
-                        style={{
-                          flex: 1,
-                          marginLeft: "10px",
-                          marginTop: "10px",
-                        }}
-                      >
-                        Save
-                      </Button>
-                    </div>
-                  </div>
-                  <br />
-                </>
-              )}
-
-              <Collapse defaultActiveKey={["1"]} onChange={onChange}>
-                {knbase1.map((item, index) => {
-                  return (
-                    <Panel header={item.title} key={index}>
-                      <p>{item.content}</p>
-                    </Panel>
-                  );
-                })}
-              </Collapse>
-            </Card>
-          </Col>
-          <Col span={8}>
-            <Card
-              extra={
-                <Button
-                  onClick={() => {
-                    setVisible2(true);
-                    setDescription2(null);
-                    setTitle2(null);
-                  }}
-                >
-                  Add
-                </Button>
-              }
-              bordered={false}
-              title={
-                <h1
+                    >
+                      Add FAQ
+                    </Button>
+                  }
+                  title={
+                    <h1
+                      style={{
+                        fontSize: "28px",
+                        textAlign: "center",
+                        fontWeight: "bold",
+                        marginBottom: "0",
+                      }}
+                    >
+                      {item.title}
+                    </h1>
+                  }
                   style={{
-                    fontSize: "28px",
-                    textAlign: "center",
-                    fontWeight: "bold",
-                    marginBottom: "0",
+                    borderColor: "#ADADAD",
+                    borderRadius: 10,
+                    width: "100%",
                   }}
                 >
-                  Creating Tickets
-                </h1>
-              }
-              style={{
-                borderColor: "#ADADAD",
-                borderRadius: 10,
-                width: "100%",
-              }}
-            >
-              {visible2 && (
-                <>
-                  <div style={{ textAlign: "end" }}>
-                    <Input
-                      placeholder="Title"
-                      maxLength={20}
-                      //   onChange={onChange}
-                      onInput={(e) => setTitle2(e.target.value)}
-                      value={title2}
-                    />
-                    <br />
-                    <br />
-                    <TextArea
-                      placeholder="Description"
-                      showCount
-                      maxLength={100}
-                      //   onChange={onChange}
-                      onInput={(e) => setDescription2(e.target.value)}
-                      value={description2}
-                    />
-                    <br />
-                    <div style={{ display: "flex", textAlign: "end" }}>
-                      <Button
-                        onClick={() => {
-                          setVisible2(false);
-                        }}
-                        danger
-                        style={{
-                          flex: 1,
-                          marginTop: "10px",
-                        }}
-                      >
-                        Discard
-                      </Button>
-
-                      <Button
-                        onClick={() => {
-                          if (title2 && description2) {
-                            setVisible2(false);
-                            knbase2.push({
-                              title: title2,
-                              content: description2,
-                            });
-                            message.success("Saved Successfully");
-                          } else {
-                            message.error("Please fill all the fields");
-                          }
-                        }}
-                        type="primary"
-                        style={{
-                          flex: 1,
-                          marginLeft: "10px",
-                          marginTop: "10px",
-                        }}
-                      >
-                        Save
-                      </Button>
-                    </div>
-                  </div>
-                  <br />
-                </>
-              )}
-              <Collapse defaultActiveKey={["1"]} onChange={onChange}>
-                {knbase2.map((item, index) => {
-                  return (
-                    <Panel header={item.title} key={index}>
-                      <p>{item.content}</p>
-                    </Panel>
-                  );
-                })}
-              </Collapse>
-            </Card>
-          </Col>
-          <Col span={8}>
-            <Card
-              extra={
-                <Button
-                  onClick={() => {
-                    setVisible3(true);
-                    setDescription3(null);
-                    setTitle3(null);
-                  }}
-                >
-                  Add
-                </Button>
-              }
-              bordered={false}
-              title={
-                <h1
-                  style={{
-                    fontSize: "28px",
-                    textAlign: "center",
-                    fontWeight: "bold",
-                    marginBottom: "0",
-                  }}
-                >
-                  New Projects
-                </h1>
-              }
-              style={{
-                borderColor: "#ADADAD",
-                borderRadius: 10,
-                width: "100%",
-              }}
-            >
-              {visible3 && (
-                <>
-                  <div style={{ textAlign: "end" }}>
-                    <Input
-                      placeholder="Title"
-                      maxLength={20}
-                      //   onChange={onChange}
-                      onInput={(e) => setTitle3(e.target.value)}
-                      value={title3}
-                    />
-                    <br />
-                    <br />
-                    <TextArea
-                      placeholder="Description"
-                      showCount
-                      maxLength={100}
-                      //   onChange={onChange}
-                      onInput={(e) => setDescription3(e.target.value)}
-                      value={description3}
-                    />
-                    <br />
-                    <div style={{ display: "flex", textAlign: "end" }}>
-                      <Button
-                        onClick={() => {
-                          setVisible3(false);
-                        }}
-                        danger
-                        style={{
-                          flex: 1,
-                          marginTop: "10px",
-                        }}
-                      >
-                        Discard
-                      </Button>
-
-                      <Button
-                        onClick={() => {
-                          if (title3 && description3) {
-                            setVisible3(false);
-                            knbase3.push({
-                              title: title3,
-                              content: description3,
-                            });
-                            message.success("Saved Successfully");
-                          } else {
-                            message.error("Please fill all the fields");
-                          }
-                        }}
-                        type="primary"
-                        style={{
-                          flex: 1,
-                          marginLeft: "10px",
-                          marginTop: "10px",
-                        }}
-                      >
-                        Save
-                      </Button>
-                    </div>
-                  </div>
-                  <br />
-                </>
-              )}
-              <Collapse defaultActiveKey={["1"]} onChange={onChange}>
-                {knbase3.map((item, index) => {
-                  return (
-                    <Panel header={item.title} key={index}>
-                      <p>{item.content}</p>
-                    </Panel>
-                  );
-                })}
-              </Collapse>
-            </Card>
-          </Col>
+                  {/* Card content */}
+                  {item.visible && (
+                    <>
+                      <div style={{ textAlign: "end" }}>
+                        <Input
+                          placeholder="Title"
+                          maxLength={20}
+                          //   onChange={onChange}
+                          onInput={(e) => {
+                            setTitle(e.target.value);
+                            console.log(e.target.value);
+                          }}
+                          value={title}
+                        />
+                        <br />
+                        <br />
+                        <TextArea
+                          placeholder="Description"
+                          showCount
+                          maxLength={100}
+                          onInput={(e) => setDescription(e.target.value)}
+                          value={description}
+                        />
+                        <br />
+                        <div style={{ display: "flex", textAlign: "end" }}>
+                          <Button
+                            onClick={() => {
+                              toggleVisible(index);
+                            }}
+                            danger
+                            style={{
+                              flex: 1,
+                              marginTop: "10px",
+                            }}
+                          >
+                            Discard
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              if (title && description) {
+                                toggleVisible(index);
+                                console.log(title, description);
+                                addFaqToKbaseByTitle(item.title, {
+                                  question: title,
+                                  answer: description,
+                                });
+                                // getALlKnowledgeBase();
+                              } else {
+                                message.error("Please fill all the fields");
+                              }
+                            }}
+                            type="primary"
+                            style={{
+                              flex: 1,
+                              marginLeft: "10px",
+                              marginTop: "10px",
+                            }}
+                          >
+                            Save
+                          </Button>
+                        </div>
+                      </div>
+                      <br />
+                    </>
+                  )}
+                  {item.faq.length > 0 ? (
+                    <Collapse defaultActiveKey={["1"]} onChange={onChange}>
+                      {item.faq.map((item, index) => {
+                        return (
+                          <Panel header={item.question} key={index}>
+                            <p>{item.answer}</p>
+                          </Panel>
+                        );
+                      })}
+                    </Collapse>
+                  ) : (
+                    <p>
+                      No FAQs available for this Knowledge Base. Please ask your
+                      Admin to update Knowldegebase
+                    </p>
+                  )}
+                </Card>
+              </Col>
+            );
+          })}
         </Row>
       </Row>
     </>
