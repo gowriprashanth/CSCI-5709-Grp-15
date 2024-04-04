@@ -61,7 +61,6 @@ const RaiseTicketForm = ({ onTicketRaised, teamId }) => {
             setFileList([]);
             values.files = filesData;
             axiosHelper.post('/tickets/create', values).then((response) => {
-                console.log(response);
                 if (onTicketRaised) {
                     onTicketRaised(values);
                 }
