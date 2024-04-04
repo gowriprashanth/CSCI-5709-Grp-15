@@ -19,10 +19,13 @@ const userSchema = new mongoose.Schema({
     enum: ["Admin", "Employee"],
     required: true,
   },
-  teamLead: {
-    type: Array,
-    default: [],
-  },
+  teamLead: [
+    {
+      type: mongoose.ObjectId,
+      ref: "Team",
+      default: [],
+    },
+  ],
   resetToken: String,
 });
 
