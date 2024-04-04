@@ -60,6 +60,24 @@ router.put('/:id/update-assignee', async (req, res, next) => {
   }
 });
 
+/**
+ * It handles update assignee request
+ */
+router.put('/:id/update-team', async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const { team } = req.body
+    if (id) {
+      const message = await ticketController.updateTicketData({ id, team, assignee: [] })
+      res.status(StatusCodes.OK).send({ message });
+    } else {
+      res.status(StatusCodes.BAD_REQUEST).send({ message: "Required missing data" });
+    }
+  } catch(error) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error.message || error })
+  }
+});
+
 router.post('/create', async (req, res, next) => {
   try {
     //TODO: add teamId in request body

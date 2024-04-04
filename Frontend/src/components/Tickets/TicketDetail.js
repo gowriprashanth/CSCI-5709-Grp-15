@@ -34,6 +34,7 @@ export default function TicketDetail() {
     const [ticketData, updateTicketData] = useState({})
     const [statuses, updateStatuses] = useState([])
     const [priorities, updatePriorities] = useState([])
+    const [teamsData, updateTeamsData] = useState([])
     const history = useHistory();
 
     if(!state._id) {
@@ -129,6 +130,36 @@ export default function TicketDetail() {
     }
 
     /**
+     * It fetches all the teams
+     */
+    const getTeams = async () => {
+        const response = await TicketService.GetAllTeams()
+        if (response && response.data && response.data.length > 0)
+            updateTeamsData(response.data.map(e => ({ value: e._id, label: e.name })))
+    }
+
+    /**
+     * 
+     */
+    const updateTeamOfTicket = async (value) => {
+        try {
+            const response = await TicketService.updateTeamOfTicket(ticketData._id, value)
+            if (response && response.data && response.data.message && response.data.message === true) {
+                getTicketData()
+                messageApi.open({
+                    type: 'success',
+                    content: 'Ticket Successfully Assigned to Other team',
+                });
+            }
+        } catch(error) {
+            messageApi.open({
+                type: 'error',
+                content: 'Error occurred while changing the team',
+            });
+        }
+    }
+
+    /**
      * It fetches all the users
      */
     const getUsers = useCallback(async () => {
@@ -167,6 +198,7 @@ export default function TicketDetail() {
     useEffect(() => {
         getStatuses()
         getPriorties()
+        getTeams()
     }, [])
 
     useEffect(() => {
@@ -280,6 +312,15 @@ export default function TicketDetail() {
                                 </Form.Item>
                             )}
                             <hr />
+                            {teamsData && ticketData && ticketData.team && (
+                                <Form.Item label="Forward To Other Team">
+                                    <Select
+                                        defaultValue={ticketData.team}
+                                        onChange={updateTeamOfTicket}
+                                        options={teamsData}
+                                    />
+                                </Form.Item>
+                            )}
                         </Col>
                     </Row>
                 )}
