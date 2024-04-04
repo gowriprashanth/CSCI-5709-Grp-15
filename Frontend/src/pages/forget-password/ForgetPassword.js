@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { Layout, Menu, Button, Form, Input, Card } from "antd";
 import HeaderAuthentication from "../../components/layout/HeaderAuthentication";
 import "../signin/SignIn.css"
-import { message } from "antd";
 import axios from 'axios';
 
 const { Footer, Content } = Layout;
