@@ -1,9 +1,33 @@
+import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import { Row, Col, Typography } from "antd";
-import eChart from "./configs/eChart";
+import { fetchEChartData } from "./configs/eChart";
 
 function EChart() {
   const { Title, Paragraph } = Typography;
+  const [chartData, setChartData] = useState(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true); 
+
+    const fetchData = async () => {
+      try {
+        const data = await fetchEChartData();
+        if (isMounted) {
+          setChartData(data);
+        }
+      } catch (error) {
+        console.error('Error fetching chart data:', error);
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      setIsMounted(false); 
+    };
+  }, [isMounted]); 
 
   const items = [
     {
@@ -12,11 +36,11 @@ function EChart() {
     },
     {
       Title: "120",
-      user: " Resolved",
+      user: "Resolved",
     },
     {
       Title: "100",
-      user: "Open ",
+      user: "Open",
     },
     {
       Title: "92%",
@@ -27,13 +51,15 @@ function EChart() {
   return (
     <>
       <div id="chart">
-        <ReactApexChart
-          className="bar-chart"
-          options={eChart.options}
-          series={eChart.series}
-          type="bar"
-          height={220}
-        />
+        {chartData && (
+          <ReactApexChart
+            className="bar-chart"
+            options={chartData.options}
+            series={chartData.series}
+            type="bar"
+            height={220}
+          />
+        )}
       </div>
       <div className="chart-vistior">
         <Title level={5}>Resolved Tickets</Title>

@@ -5,7 +5,7 @@ const eChart = {
   series: [
     {
       name: "Tickets",
-      data: [], // Initialize with empty array
+      data: [], 
       color: "#fff",
     },
   ],
@@ -39,7 +39,7 @@ const eChart = {
       strokeDashArray: 2,
     },
     xaxis: {
-      categories: [], // Initialize with empty array
+      categories: [], 
       labels: {
         show: true,
         align: "right",
@@ -93,10 +93,9 @@ const eChart = {
   },
 };
 
-// Make a GET request to the API endpoint
-axiosHelper.get('/analytics/ticket')
-  .then(response => {
-    // Extract the data and categories from the response
+const fetchEChartData = async () => {
+  try {
+    const response = await axiosHelper.get('/analytics/ticket');
     const data = response.data;
     const chartData = data.map(item => item.value);
     const categories = data.map(item => item.month);
@@ -105,11 +104,12 @@ axiosHelper.get('/analytics/ticket')
     eChart.series[0].data = chartData;
     eChart.options.xaxis.categories = categories;
 
-    // You can render your chart here or do any other processing with the data
-  })
-  .catch(error => {
-    console.error('Error fetching chart data:', error);
-  });
+    return eChart;
+  } catch (error) {
+    console.error('Error fetching eChart data:', error);
+    return null;
+  }
+};
 
-// Export the eChart object
-export default eChart;
+
+export {eChart, fetchEChartData};
