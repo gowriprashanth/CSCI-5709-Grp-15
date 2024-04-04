@@ -1,3 +1,6 @@
+/**
+ * @author Gowri Kanagaraj
+ */
 const TicketAnalytics = require('../models/TicketAnalytics');
 const DepartmentAnalytics = require('../models/DepartmentAnalytics');
 
