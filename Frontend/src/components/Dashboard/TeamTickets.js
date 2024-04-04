@@ -498,7 +498,7 @@ export const FieldItem = (props) => {
                 >
                   {item.assignee.map((assignee, index) => {
                     return (
-                      <Tooltip title={assignee.name} placement="top">
+                      <Tooltip key={index} title={assignee} placement="top">
                         <Avatar
                           key={index}
                           style={{
