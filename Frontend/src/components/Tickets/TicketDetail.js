@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import {
   Col,
@@ -69,7 +69,7 @@ export default function TicketDetail() {
         });
     }
 
-    const getTicketData = async () => {
+    const getTicketData = useCallback(async () => {
         const response = await TicketService.GetTicketDetail(state?._id)
         if (response && response.data) {
             response.data.attachments = response.data.attachments.map(e => ({
@@ -86,7 +86,7 @@ export default function TicketDetail() {
             }))
             updateTicketData(response.data)
         }
-    }
+    }, [state?._id])
 
     const getStatuses = async () => {
         const response = await TicketService.GetStatuses()
@@ -127,7 +127,7 @@ export default function TicketDetail() {
 
     useEffect(() => {
         getTicketData()
-    },[state?._id])
+    },[getTicketData])
 
     useEffect(() => {
         getStatuses()
