@@ -35,6 +35,9 @@ export default class SignIn extends Component {
           this.setState({ token: responseData.token }, () => {
             localStorage.setItem("token", responseData.token);
             localStorage.setItem("role", responseData.user.role);
+            localStorage.setItem("id", responseData.user._id);
+            localStorage.setItem("email", responseData.user.email);
+
             this.props.history.push("/dashboard");
           });
         }
