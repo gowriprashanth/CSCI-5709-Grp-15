@@ -27,10 +27,10 @@ import {
 import React, { useEffect, useState } from "react";
 
 import { UserOutlined } from "@ant-design/icons";
-import { demoMembers } from "../../mock/MockDataDashboard";
-import RaiseTicketForm from "../../pages/RaiseTicketForm";
 import { useHistory } from "react-router-dom";
 import axiosHelper from "../../helper/axioshelper";
+import { demoMembers } from "../../mock/MockDataDashboard";
+import RaiseTicketForm from "../../pages/RaiseTicketForm";
 
 export const TeamTickets = (props) => {
   const [isMembersVisible, setIsMembersVisible] = useState(false);
@@ -48,7 +48,6 @@ export const TeamTickets = (props) => {
     id,
     name,
     description,
-    data,
     handleDeleteColumn,
     handleEditTeam,
     handleSubmitRaiseTicket,
@@ -177,13 +176,13 @@ export const TeamTickets = (props) => {
 
   const getTicketsByTeamId = async () => {
     const response = await axiosHelper.get(`/tickets/get/${pid}`)
-    if(response && response.data && response.data.length > 0)
+    if (response && response.data && response.data.length > 0)
       updateTicketsData(response.data)
   }
 
   useEffect(() => {
     getTicketsByTeamId()
-  },[])
+  }, [])
 
   return (
     <div className="board-column" style={style}>
@@ -210,7 +209,7 @@ export const TeamTickets = (props) => {
         <RaiseTicketForm
           teamId={pid}
           onTicketRaised={(values) => {
-            handleSubmitRaiseTicket(id, values);
+            getTicketsByTeamId()
           }}
         />
       </div>

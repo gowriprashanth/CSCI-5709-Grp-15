@@ -9,7 +9,7 @@ export default function Teams({
   tasks,
   columns,
   handleDeleteColumn,
-  handleEditTeam,
+  handleEditTeam
 }) {
   const [data, setData] = useState(null);
   const [items, setItems] = useState({});
@@ -37,15 +37,9 @@ export default function Teams({
 
   const handleSubmitRaiseTicket = (id, values) => {
     setTickets([
-      ...tickets,
-      {
-        id: tickets.length + 1,
-        col_id: parseInt(id.split("-")[1]),
-        description: values.description,
-        title: values.title,
-        status: { st: "Not Started", color: "red" },
-      },
+      ...tickets
     ]);
+
   };
 
   return (
@@ -78,7 +72,6 @@ export default function Teams({
                   items={items[containerId]}
                   name={columnName}
                   description={columnDescription}
-                  data={data}
                   handleDeleteColumn={handleDeleteColumn}
                   handleEditTeam={handleEditTeam}
                   handleSubmitRaiseTicket={handleSubmitRaiseTicket}
