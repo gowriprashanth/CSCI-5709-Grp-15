@@ -39,7 +39,7 @@ export default class ResetPassword extends Component {
     if (password) {
 
       try{
-        const response = await axios.post(`http://localhost:3001/user/resetPassword`, {
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}user/resetPassword`, {
           newPassword: password,
           resetToken: this.state.token
         })
