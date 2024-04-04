@@ -1,14 +1,22 @@
+/**
+ * @author Darshit Dhameliya
+ */
 import axiosHelper from "../helper/axioshelper"
 
+/**
+ * It calls backend API to update the status of the ticket
+ */
 export const UpdateTicketStatus = async ({ ticketId, ...data }) => {
     try {
-        console.log("called")
         return await axiosHelper.put(`tickets/${ticketId}/update-status`, data)
     } catch(error) {
         return error
     }
 }
 
+/**
+ * It calls backend API to update the priority of the ticket
+ */
 export const UpdateTicketPriority = async ({ ticketId, ...data }) => {
     try {
         return await axiosHelper.put(`tickets/${ticketId}/update-priority`, data)
@@ -17,6 +25,9 @@ export const UpdateTicketPriority = async ({ ticketId, ...data }) => {
     }
 }
 
+/**
+ * It calls backend API to change the assignee of the ticket
+ */
 export const UpdateTicketAssignee = async ({ ticketId, ...data }) => {
     try {
         return await axiosHelper.put(`tickets/${ticketId}/update-assignee`, data)
@@ -25,6 +36,9 @@ export const UpdateTicketAssignee = async ({ ticketId, ...data }) => {
     }
 }
 
+/**
+ * It calls backend API to get the details of the ticket
+ */
 export const GetTicketDetail = async (ticketId) => {
     try {
         return await axiosHelper.get(`tickets/${ticketId}`)
@@ -33,6 +47,9 @@ export const GetTicketDetail = async (ticketId) => {
     }
 }
 
+/**
+ * It calls backend API to fetch all the statuses
+ */
 export const GetStatuses = async () => {
     try {
         return await axiosHelper.get(`tickets/statuses`)
@@ -42,6 +59,9 @@ export const GetStatuses = async () => {
     }
 }
 
+/**
+ * It calls backend API to fetch all the priorities
+ */
 export const GetPriorities = async () => {
     try {
         return await axiosHelper.get(`tickets/priorities`)
@@ -51,6 +71,9 @@ export const GetPriorities = async () => {
     }
 }
 
+/**
+ * It calls backend API to add new comment in the ticket
+ */
 export const AddComment = async ({ ticketId, ...data }) => {
     try {
         return await axiosHelper.post(`tickets/${ticketId}/add-comment`, data)
@@ -59,6 +82,9 @@ export const AddComment = async ({ ticketId, ...data }) => {
     }
 }
 
+/**
+ * It calls backend API to add new attachment to the ticket
+ */
 export const AddAttachment = async (data) => {
     try {
         return await axiosHelper.post(`tickets/add-attachments`, data)
@@ -67,7 +93,10 @@ export const AddAttachment = async (data) => {
     }
 }
 
-export const GetUsers = async (data) => {
+/**
+ * It calls backend API to fetch all the users
+ */
+export const GetUsers = async () => {
     try {
         return await axiosHelper.get(`users`)
     } catch(error) {

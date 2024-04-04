@@ -1,5 +1,5 @@
 /**
- * @author Nisarg Vaghela
+ * @author Nisarg Vaghela, Darshit Dhameliya
  */
 
 const mongoose = require('mongoose');

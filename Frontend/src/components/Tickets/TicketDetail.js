@@ -1,3 +1,6 @@
+/**
+ * @author Darshit Dhameliya
+ */
 import { useCallback, useEffect, useState } from "react";
 
 import {
@@ -20,6 +23,9 @@ import { uploadFile } from "../../FirebaseStorageService"
 
 const commentAvatar = "https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvdjkzNy1hZXctMTExXzMuanBn.jpg" 
 
+/**
+ * Ticket Detail Component
+ */
 export default function TicketDetail() {
     const { state } = useLocation();
     const [users, updateAssignee] = useState([]);
@@ -42,6 +48,10 @@ export default function TicketDetail() {
         message.error('You denied to confirmation');
     };
     
+    /**
+     * Assignee Change handler
+     * @param {*} value 
+     */
     const changeUpdateAssignee = async (value) => {
         await TicketService.UpdateTicketAssignee({ ticketId: state?._id, assignee: value })
         getTicketData()
@@ -51,6 +61,10 @@ export default function TicketDetail() {
         });
     }
 
+    /**
+     * Status value change handler
+     * @param {*} value 
+     */
     const changeUpdateStatus = async (value) => {
         await TicketService.UpdateTicketStatus({ ticketId: state?._id, status: value })
         getTicketData()
@@ -60,6 +74,10 @@ export default function TicketDetail() {
         });
     }
 
+    /**
+     * Priority value change handler
+     * @param {*} value 
+     */
     const changeUpdatePriority = async (value) => {
         await TicketService.UpdateTicketPriority({ ticketId: state?._id, priority: value })
         getTicketData()
@@ -69,6 +87,9 @@ export default function TicketDetail() {
         });
     }
 
+    /**
+     * It fetches ticket data
+     */
     const getTicketData = useCallback(async () => {
         const response = await TicketService.GetTicketDetail(state?._id)
         if (response && response.data) {
@@ -88,6 +109,9 @@ export default function TicketDetail() {
         }
     }, [state?._id])
 
+    /**
+     * It fetches all the statuses
+     */
     const getStatuses = async () => {
         const response = await TicketService.GetStatuses()
         if (response && response.data && response.data.length > 0) {
@@ -95,12 +119,18 @@ export default function TicketDetail() {
         }
     }
 
+    /**
+     * It fetches all the priorities
+     */
     const getPriorties = async () => {
         const response = await TicketService.GetPriorities()
         if (response && response.data && response.data.length > 0)
             updatePriorities(response.data.map(e => ({ value: e._id, label: e.name })))
     }
 
+    /**
+     * It fetches all the users
+     */
     const getUsers = async () => {
         const response = await TicketService.GetUsers()
         if (response && response.data && response.data.length > 0){
@@ -108,6 +138,9 @@ export default function TicketDetail() {
         }
     }
 
+    /**
+     * It adds comment
+     */
     const addComment = async () => {
         if(newComment !== "") {
             await TicketService.AddComment({ ticketId: ticketData._id, comment: newComment })
@@ -135,6 +168,10 @@ export default function TicketDetail() {
         getPriorties()
     }, [])
 
+    /**
+     * It uploads file
+     * @param {*} file
+     */
     const startUploading = async (file) => {
         try {
             const data = await uploadFile(file)
@@ -153,6 +190,11 @@ export default function TicketDetail() {
         }
     }
 
+    /**
+     * File upload action handler
+     * @param {*} file 
+     * @returns 
+     */
     const uploadAttachmentHandler = async (file) => {
         try {
             await startUploading(file)

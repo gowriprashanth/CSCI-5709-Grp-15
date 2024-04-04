@@ -6,6 +6,9 @@ const router = express.Router();
 const { StatusCodes } = require('http-status-codes');
 const ticketController = require('../controllers/tickets');
 
+/**
+ * It handles update status request
+ */
 router.put('/:id/update-status', async (req, res, next) => {
   try {
     const id = req.params.id;
@@ -21,6 +24,9 @@ router.put('/:id/update-status', async (req, res, next) => {
   }
 });
 
+/**
+ * It handles update priority request
+ */
 router.put('/:id/update-priority', async (req, res, next) => {
   try {
     const id = req.params.id;
@@ -36,6 +42,9 @@ router.put('/:id/update-priority', async (req, res, next) => {
   }
 });
 
+/**
+ * It handles update assignee request
+ */
 router.put('/:id/update-assignee', async (req, res, next) => {
   try {
     const id = req.params.id;
@@ -93,7 +102,9 @@ router.post('/add-attachments', async (req, res, next) => {
   }
 });
 
-
+/**
+ * It handles get request of tickets by given Team id
+ */
 router.get('/get/:teamId', async (req, res, next) => {
   try {
     const { teamId } = req.params
@@ -108,6 +119,9 @@ router.get('/get/:teamId', async (req, res, next) => {
   }
 });
 
+/**
+ * It handles get all statuses request
+ */
 router.get('/statuses', async (req, res, next) => {
   try {
     const statuses = await ticketController.getStatuses()
@@ -118,6 +132,9 @@ router.get('/statuses', async (req, res, next) => {
   }
 })
 
+/**
+ * It handles get all priorities request
+ */
 router.get('/priorities', async (req, res, next) => {
   try {
     const priorities = await ticketController.getPriorities()
@@ -128,6 +145,9 @@ router.get('/priorities', async (req, res, next) => {
   }
 })
 
+/**
+ * It handles add comment request
+ */
 router.post('/:id/add-comment', async (req, res, next) => {
   try {
     const { comment } = req.body
@@ -147,6 +167,9 @@ router.post('/:id/add-comment', async (req, res, next) => {
   }
 });
 
+/**
+ * It handles get ticket data by ticket id request
+ */
 router.get('/:ticketId', async (req, res, next) => {
   try {
     const { ticketId } = req.params

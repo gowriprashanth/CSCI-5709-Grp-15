@@ -5,8 +5,8 @@ import { Button, Form, Input, Modal, Row, message } from "antd";
 import Tasks from "../../components/Dashboard/Teams";
 import { tasks } from "../../mock/MockDataDashboard";
 
-import "../../assets/styles/main.css";
-import "../../assets/styles/responsive.css";
+import "../../assets/css/main.css";
+import "../../assets/css/responsive.css";
 import "../../pages/home/Dashboard.css";
 // import axios from "axios";
 import axiosHelper from "../../helper/axioshelper";
