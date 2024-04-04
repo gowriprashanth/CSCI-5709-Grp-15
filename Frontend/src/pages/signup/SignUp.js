@@ -18,13 +18,13 @@ export default class SignUp extends Component {
   }
 
   handleSignUp = async (values) => {
-    const API_URL = process.env.API_URL;
+    // const API_URL = process.env.API_URL;
 
     const { name, email, password, role, remember } = values;
     if (name && email && password && role && remember) {
      
       try{
-          const response = await axios.post(`https://csci-5709-bk-assignment3.onrender.com/user/signup`, {
+          const response = await axios.post(`${process.env.REACT_APP_API_URL}user/signup`, {
             name: name,
             email: email,
             role: role,
