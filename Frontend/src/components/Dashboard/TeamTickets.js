@@ -23,14 +23,18 @@ import {
   Space,
   Tooltip,
   message,
+  Select,
+  Typography,
 } from "antd";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { UserOutlined } from "@ant-design/icons";
 import { demoMembers } from "../../mock/MockDataDashboard";
 import RaiseTicketForm from "../../pages/RaiseTicketForm";
 import { useHistory } from "react-router-dom";
+import axiosHelper from "../../helper/axioshelper";
 
+const { Option } = Select;
 export const TeamTickets = (props) => {
   const [isMembersVisible, setIsMembersVisible] = useState(false);
   const [members, setMembers] = useState(demoMembers);
@@ -40,6 +44,8 @@ export const TeamTickets = (props) => {
   const [isMemberModalVisible, setIsMemberModalVisible] = useState(false);
   const [isMemberEditModalVisible, setIsMemberEditModalVisible] =
     useState(false);
+
+  const [options, setOptions] = useState([]);
 
   const {
     pid,
@@ -60,6 +66,61 @@ export const TeamTickets = (props) => {
     touchAction: "auto",
   };
 
+  const fetchData = async () => {
+    try {
+      const response = await axiosHelper.get(
+        "http://localhost:3001/users/getall"
+      );
+
+      const data = response.data.map((item) => ({
+        name: item.name,
+        email: item.email,
+        id: item._id,
+      }));
+      const presentIds = members.map((member) => member.id);
+      setOptions(data.filter((item) => !presentIds.includes(item.id)));
+    } catch (error) {
+      console.error("Failed to fetch data:", error);
+    }
+  };
+
+  const fetchDataSequentially = async () => {
+    try {
+      await getAllMembers();
+      await fetchData();
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchDataSequentially();
+  }, []);
+
+  const getAllMembers = async () => {
+    try {
+      const response = await axiosHelper.get(
+        "http://localhost:3001/team-members/" + pid
+      );
+      const promises = response.data.map(async (member) => {
+        const response1 = await axiosHelper.get(
+          "http://localhost:3001/users/user/" + member
+        );
+        return {
+          id: response1.data._id,
+          name: response1.data.name,
+          email: response1.data.email,
+        };
+      });
+
+      const membersInTeam = await Promise.all(promises);
+
+      setMembers(membersInTeam);
+    } catch (error) {
+      console.error("Error fetching members:", error);
+    }
+  };
+
   const handleOk = () => {
     setIsMembersVisible(false);
   };
@@ -73,7 +134,20 @@ export const TeamTickets = (props) => {
       title: "Confirm Remove",
       content: "Are you sure you want to remove this member?",
       onOk: async () => {
-        setMembers(members.filter((member) => member.id !== memberId));
+        try {
+          const response = await axiosHelper
+            .delete(
+              "http://localhost:3001/team-members/" +
+                pid +
+                "/members/" +
+                memberId
+            )
+            .then((response) => {
+              fetchDataSequentially();
+            });
+        } catch (error) {
+          console.error("Error removing member:", error);
+        }
         message.success("Member removed Successfully!");
       },
       onCancel: () => {
@@ -92,7 +166,6 @@ export const TeamTickets = (props) => {
       title: "Confirm Deletion",
       content: "Are you sure you want to delete this team?",
       onOk: async () => {
-        //handleDeleteColumn(parseInt(id.split("-")[1]));
         handleDeleteColumn(pid);
         message.success("Team Deleted Successfully!");
       },
@@ -145,16 +218,19 @@ export const TeamTickets = (props) => {
     memberForm
       .validateFields()
       .then((values) => {
-        let len = members.length;
-        setMembers([
-          ...members,
-          {
-            id: len + 1,
-            name: values.name,
-          },
-        ]);
-        setIsMemberModalVisible(false);
-        message.success("Member Added Successfully!");
+        //console.log(values.select, "add values");
+        values.select.forEach((element) => {
+          const response = axiosHelper
+            .post("http://localhost:3001/team-members/" + pid + "/add-member", {
+              userId: element.split("-")[2],
+            })
+            .then((response) => {
+              fetchDataSequentially();
+              console.log("after add", members);
+              setIsMemberModalVisible(false);
+              message.success("Member Added Successfully!");
+            });
+        });
       })
       .catch((errorInfo) => {
         console.log("Validation failed:", errorInfo);
@@ -254,7 +330,13 @@ export const TeamTickets = (props) => {
                     </Button>,
                   ]}
                 >
-                  <List.Item.Meta avatar={<UserOutlined />} title={item.name} />
+                  <List.Item.Meta
+                    avatar={<UserOutlined />}
+                    title={item.name}
+                    description={
+                      <span style={{ fontSize: "12px" }}>{item.email}</span>
+                    }
+                  />
                 </List.Item>
               )}
             />
@@ -277,13 +359,21 @@ export const TeamTickets = (props) => {
             }}
           >
             <Form.Item
-              label="Member Name"
-              name="name"
-              rules={[
-                { required: true, message: "Please enter the member name" },
-              ]}
+              name="select"
+              label="Select"
+              rules={[{ required: true, message: "Please select an option!" }]}
             >
-              <Input placeholder="Enter the member name" />
+              <Select placeholder="Select members" mode="multiple">
+                {options.map((item, index) => (
+                  <Option
+                    key={item.id}
+                    value={item.email + "-" + item.name + "-" + item.id}
+                  >
+                    <div>{item.name}</div>
+                    <div style={{ fontSize: "12px" }}>{item.email}</div>
+                  </Option>
+                ))}
+              </Select>
             </Form.Item>
           </Form>
         </Modal>
