@@ -46,6 +46,8 @@ export const TeamTickets = (props) => {
 
   const [options, setOptions] = useState([]);
 
+  const [isTeamLead, setIsTeamLead] = useState(false);
+
   const {
     pid,
     // eslint-disable-next-line no-unused-vars
@@ -67,9 +69,7 @@ export const TeamTickets = (props) => {
 
   const fetchData = async () => {
     try {
-      const response = await axiosHelper.get(
-        "http://localhost:3001/users/getall"
-      );
+      const response = await axiosHelper.get("/users/getall");
 
       const data = response.data.map((item) => ({
         name: item.name,
@@ -100,13 +100,9 @@ export const TeamTickets = (props) => {
 
   const getAllMembers = async () => {
     try {
-      const response = await axiosHelper.get(
-        "http://localhost:3001/team-members/" + pid
-      );
+      const response = await axiosHelper.get("/team-members/" + pid);
       const promises = response.data.map(async (member) => {
-        const response1 = await axiosHelper.get(
-          "http://localhost:3001/users/user/" + member
-        );
+        const response1 = await axiosHelper.get("/users/user/" + member);
         return {
           id: response1.data._id,
           name: response1.data.name,
@@ -136,13 +132,11 @@ export const TeamTickets = (props) => {
       content: "Are you sure you want to remove this member?",
       onOk: async () => {
         try {
+          if (localStorage.getItem("role").toLocaleLowerCase() === "admin") {
+            axiosHelper.delete("/users/removeTeamLead/" + memberId + "/" + pid);
+          }
           await axiosHelper
-            .delete(
-              "http://localhost:3001/team-members/" +
-                pid +
-                "/members/" +
-                memberId
-            )
+            .delete("/team-members/" + pid + "/members/" + memberId)
             .then((response) => {
               fetchDataSequentially();
             });
@@ -177,10 +171,11 @@ export const TeamTickets = (props) => {
   };
 
   const handleMembers = () => {
+    checkIsTeamLead();
     setIsMembersVisible(true);
   };
 
-  const handleAddMember = () => {
+  const handleAddMember = async () => {
     memberForm.resetFields();
     setIsMemberModalVisible(true);
   };
@@ -194,17 +189,21 @@ export const TeamTickets = (props) => {
       >
         Members
       </Menu.Item>
-      <Menu.Item key="edit" icon={<EditOutlined />} onClick={handleEdit}>
-        Edit
-      </Menu.Item>
-      <Menu.Item
-        key="delete"
-        icon={<DeleteOutlined />}
-        danger
-        onClick={handleDelete}
-      >
-        Delete
-      </Menu.Item>
+      {localStorage.getItem("role").toLocaleLowerCase() === "admin" && (
+        <>
+          <Menu.Item key="edit" icon={<EditOutlined />} onClick={handleEdit}>
+            Edit
+          </Menu.Item>
+          <Menu.Item
+            key="delete"
+            icon={<DeleteOutlined />}
+            danger
+            onClick={handleDelete}
+          >
+            Delete
+          </Menu.Item>
+        </>
+      )}
     </Menu>
   );
 
@@ -220,14 +219,17 @@ export const TeamTickets = (props) => {
       .validateFields()
       .then((values) => {
         values.select.forEach((element) => {
+          if (localStorage.getItem("role").toLocaleLowerCase() === "admin") {
+            axiosHelper.put("/users/teamLead/" + element.split("-")[2], {
+              teamLead: pid,
+            });
+          }
           axiosHelper
-            .post("http://localhost:3001/team-members/" + pid + "/add-member", {
+            .post("/team-members/" + pid + "/add-member", {
               userId: element.split("-")[2],
             })
             .then((response) => {
-              console.log("in then of add member");
               fetchDataSequentially();
-              console.log("after add", members);
               setIsMemberModalVisible(false);
               message.success("Member Added Successfully!");
             });
@@ -257,9 +259,16 @@ export const TeamTickets = (props) => {
       updateTicketsData(response.data);
   };
 
-  // useEffect(() => {
-  //   getTicketsByTeamId();
-  // }, []);
+  const checkIsTeamLead = async () => {
+    const teamLeadArray = await axiosHelper.get(
+      "/users/getTeamLead/" + localStorage.getItem("id")
+    );
+
+    setIsTeamLead(
+      localStorage.getItem("role").toLocaleLowerCase() === "admin" ||
+        teamLeadArray.data.teamLead.includes(pid)
+    );
+  };
 
   return (
     <div className="board-column" style={style}>
@@ -317,9 +326,11 @@ export const TeamTickets = (props) => {
               }}
             >
               <span>Members</span>
-              <Button type="primary" onClick={handleAddMember}>
-                Add Members
-              </Button>
+              {isTeamLead && (
+                <Button type="primary" onClick={handleAddMember}>
+                  Add Members
+                </Button>
+              )}
             </div>
           }
           visible={isMembersVisible}
@@ -334,15 +345,17 @@ export const TeamTickets = (props) => {
               renderItem={(item) => (
                 <List.Item
                   actions={[
-                    <Button
-                      type="primary"
-                      danger
-                      icon={<DeleteOutlined />}
-                      onClick={() => handleKick(item.id)}
-                      style={{ marginRight: "30px" }}
-                    >
-                      Remove
-                    </Button>,
+                    isTeamLead && (
+                      <Button
+                        type="primary"
+                        danger
+                        icon={<DeleteOutlined />}
+                        onClick={() => handleKick(item.id)}
+                        style={{ marginRight: "30px" }}
+                      >
+                        Remove
+                      </Button>
+                    ),
                   ]}
                 >
                   <List.Item.Meta
