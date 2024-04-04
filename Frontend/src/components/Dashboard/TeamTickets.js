@@ -33,8 +33,6 @@ import { useHistory } from "react-router-dom";
 import axiosHelper from "../../helper/axioshelper";
 import { demoMembers } from "../../mock/MockDataDashboard";
 import RaiseTicketForm from "../../pages/RaiseTicketForm";
-import { useHistory } from "react-router-dom";
-import axiosHelper from "../../helper/axioshelper";
 
 const { Option } = Select;
 export const TeamTickets = (props) => {
