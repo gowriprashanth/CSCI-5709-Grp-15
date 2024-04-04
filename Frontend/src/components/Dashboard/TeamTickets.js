@@ -37,7 +37,7 @@ import RaiseTicketForm from "../../pages/RaiseTicketForm";
 const { Option } = Select;
 export const TeamTickets = (props) => {
   const [isMembersVisible, setIsMembersVisible] = useState(false);
-  const [members, setMembers] = useState(demoMembers);
+  const [members, setMembers] = useState([]);
 
   const [memberForm] = Form.useForm();
   const [editMemberForm] = Form.useForm();
@@ -217,13 +217,13 @@ export const TeamTickets = (props) => {
     memberForm
       .validateFields()
       .then((values) => {
-        //console.log(values.select, "add values");
         values.select.forEach((element) => {
           const response = axiosHelper
             .post("http://localhost:3001/team-members/" + pid + "/add-member", {
               userId: element.split("-")[2],
             })
             .then((response) => {
+              console.log("in then of add member");
               fetchDataSequentially();
               console.log("after add", members);
               setIsMemberModalVisible(false);
@@ -295,7 +295,11 @@ export const TeamTickets = (props) => {
         >
           {ticketsData.map((item, _index) => {
             return (
-              <FieldItem key={item} item={item} disabled={isSortingContainer} />
+              <FieldItem
+                key={_index}
+                item={item}
+                disabled={isSortingContainer}
+              />
             );
           })}
         </SortableContext>
@@ -372,10 +376,14 @@ export const TeamTickets = (props) => {
               label="Select"
               rules={[{ required: true, message: "Please select an option!" }]}
             >
-              <Select placeholder="Select members" mode="multiple">
+              <Select
+                placeholder="Select members"
+                mode="multiple"
+                onFocus={fetchDataSequentially}
+              >
                 {options.map((item, index) => (
                   <Option
-                    key={item.id}
+                    key={index}
                     value={item.email + "-" + item.name + "-" + item.id}
                   >
                     <div>{item.name}</div>
@@ -488,7 +496,7 @@ export const FieldItem = (props) => {
                 >
                   {item.assignee.map((assignee, index) => {
                     return (
-                      <Tooltip title={assignee.name} placement="top">
+                      <Tooltip key={index} title={assignee} placement="top">
                         <Avatar
                           key={index}
                           style={{
