@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import {
   Col,
@@ -8,104 +8,31 @@ import {
   Button,
   Upload,
   List,
-  Tooltip,
   message,
   Comment,
   Popconfirm
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import moment from "moment/moment";
 import TextArea from "antd/es/input/TextArea";
-import { useLocation } from "react-router-dom"
-
-const priorities = [
-    { value: 'low', label: 'Low' },
-    { value: 'normal', label: 'Normal' },
-    { value: 'high', label: 'High' }
-]
-
-const statuses = [
-    { value: 'Not Started', label: 'Not Started' },
-    { value: 'In Progress', label: 'In Progress' },
-    { value: 'On Hold', label: 'On Hold' },
-    { value: 'Awaiting Customer Response', label: 'Awaiting Customer Response' },
-    { value: 'Resolved', label: 'Resolved' }
-]
-
-const users = ["Kuldeep", "Dhruvik", "Darshit", "Bhautik", "Nisarg", "Gawri", "Rushi", "Shruti", "Nikita", "Priyanka"].map(e=>({ label: e, value: e }))
-
-const props = {
-    defaultFileList: [
-      {
-        uid: '1',
-        name: 'issue.png',
-        status: 'done',
-        url: 'https://fastly.picsum.photos/id/668/536/354.jpg?hmac=-5KjsjYvCq7naU7b-I9yZQ3u6OVE2isy32RP7ElDzNw',
-      }
-    ],
-    showUploadList: {
-      showDownloadIcon: false,
-      showRemoveIcon: false
-    },
-};
+import { useLocation, useHistory } from "react-router-dom"
+import * as TicketService from "../../services/TicketService"
+import { uploadFile } from "../../FirebaseStorageService"
 
 const commentAvatar = "https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvdjkzNy1hZXctMTExXzMuanBn.jpg" 
-const commentData = [
-    {
-        author: 'User A',
-        avatar: commentAvatar,
-        content: (
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-            </p>
-        ),
-        datetime: (
-            <Tooltip
-                title={moment()
-                .subtract(1, 'days')
-                .format('YYYY-MM-DD HH:mm:ss')}
-            >
-                <span>
-                    {moment()
-                    .subtract(1, 'days')
-                    .fromNow()}
-                </span>
-            </Tooltip>
-        ),
-    },
-    {
-        author: 'User B',
-        avatar: commentAvatar,
-        content: (
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-            </p>
-        ),
-        datetime: (
-            <Tooltip
-                title={moment()
-                .subtract(2, 'days')
-                .format('YYYY-MM-DD HH:mm:ss')}
-            >
-                <span>
-                    {moment()
-                    .subtract(2, 'days')
-                    .fromNow()}
-                </span>
-            </Tooltip>
-        ),
-    },
-];
 
 export default function TicketDetail() {
     const { state } = useLocation();
-    const [selectedPriority, updatePriority] = useState('low');
-    const [selectedStatus, updateStatus] = useState(state.status.st);
-    const [selectedUser, updateAssignee] = useState(state.assignee?.map(e=> ({ label: e, value: e })));
-    let [comments, addComments] = useState(commentData)
+    const [users, updateAssignee] = useState([]);
     const [newComment, setNewComment] = useState('');
     const [messageApi, contextHolder] = message.useMessage();
-    const [modifiedDate, updateModifyDate] = useState("Wed, 28 Feb 2024 04:55:48 GMT")
+    const [ticketData, updateTicketData] = useState({})
+    const [statuses, updateStatuses] = useState([])
+    const [priorities, updatePriorities] = useState([])
+    const history = useHistory();
+
+    if(!state._id) {
+        history.push("/dashboard")
+    }
 
     const confirm = (e) => {
         message.success('Ticket Escalated Successfully');
@@ -115,51 +42,76 @@ export default function TicketDetail() {
         message.error('You denied to confirmation');
     };
     
-    const changeUpdateAssignee = (value) => {
-        updateAssignee(value)
+    const changeUpdateAssignee = async (value) => {
+        await TicketService.UpdateTicketAssignee({ ticketId: state?._id, assignee: value })
+        getTicketData()
         messageApi.open({
             type: 'success',
             content: 'Assignee Changed Successfully',
         });
-        updateModifyDate(moment(new Date(), moment.defaultFormat).toDate().toUTCString())
     }
 
-    const changeUpdateStatus = (value) => {
-        updateStatus(value)
+    const changeUpdateStatus = async (value) => {
+        await TicketService.UpdateTicketStatus({ ticketId: state?._id, status: value })
+        getTicketData()
         messageApi.open({
             type: 'success',
             content: 'Status Updated Successfully',
         });
     }
 
-    const changeUpdatePriority = (value) => {
-        updatePriority(value)
+    const changeUpdatePriority = async (value) => {
+        await TicketService.UpdateTicketPriority({ ticketId: state?._id, priority: value })
+        getTicketData()
         messageApi.open({
             type: 'success',
             content: 'Priority Updated Successfully',
         });
     }
 
-    addComments = () => {
-        if(newComment !== "") {
-            comments.push({
-                author: 'Current User',
+    const getTicketData = useCallback(async () => {
+        const response = await TicketService.GetTicketDetail(state?._id)
+        if (response && response.data) {
+            response.data.attachments = response.data.attachments.map(e => ({
+                uid: e._id,
+                name: e.name,
+                status: "done",
+                url: e.url
+            }))
+            response.data.comments = response.data.comments.map(e => ({
+                author: e.userId.name,
                 avatar: commentAvatar,
-                content: (
-                    <p>{newComment}</p>
-                ),
-                datetime: (
-                    <Tooltip
-                        title={moment()
-                        .format('YYYY-MM-DD HH:mm:ss')}
-                    >
-                        <span>
-                            {moment()
-                            .fromNow()}
-                        </span>
-                    </Tooltip>
-                ),
-            })
+                content: e.comment,
+                datetime: e.createdAt
+            }))
+            updateTicketData(response.data)
+        }
+    }, [state?._id])
+
+    const getStatuses = async () => {
+        const response = await TicketService.GetStatuses()
+        if (response && response.data && response.data.length > 0) {
+            updateStatuses(response.data.map(e => ({ value: e._id, label: e.name })))
+        }
+    }
+
+    const getPriorties = async () => {
+        const response = await TicketService.GetPriorities()
+        if (response && response.data && response.data.length > 0)
+            updatePriorities(response.data.map(e => ({ value: e._id, label: e.name })))
+    }
+
+    const getUsers = async () => {
+        const response = await TicketService.GetUsers()
+        if (response && response.data && response.data.length > 0){
+            updateAssignee(response.data)
+        }
+    }
+
+    const addComment = async () => {
+        if(newComment !== "") {
+            await TicketService.AddComment({ ticketId: ticketData._id, comment: newComment })
+            getTicketData()
             messageApi.open({
                 type: 'success',
                 content: 'Comment Added Successfully',
@@ -173,62 +125,118 @@ export default function TicketDetail() {
         }
     }
 
+    useEffect(() => {
+        getTicketData()
+    },[getTicketData])
+
+    useEffect(() => {
+        getStatuses()
+        getUsers()
+        getPriorties()
+    }, [])
+
+    const startUploading = async (file) => {
+        try {
+            const data = await uploadFile(file)
+            await TicketService.AddAttachment({ ticketId: ticketData._id, files: [data]})
+            getTicketData()
+            messageApi.open({
+                type: 'success',
+                content: 'File Uploaded Successfully',
+            });
+            return false
+        } catch(error) {
+            messageApi.open({
+                type: 'error',
+                content: 'Error Upload file',
+            });
+        }
+    }
+
+    const uploadAttachmentHandler = async (file) => {
+        try {
+            await startUploading(file)
+            return false;
+        } catch(error) {
+        }
+    }
+
+    const props = {
+        beforeUpload: uploadAttachmentHandler,
+        showUploadList: {
+          showDownloadIcon: false,
+          showRemoveIcon: false
+        },
+    };
+
     return(
         <>
             {contextHolder}
             <h1>Ticket Details</h1>
             <Form name="ticket-detail-form">
-                <Row gutter={[16, 16]}>
-                    <Col xs={24} sm={24} md={24} xl={12}>
-                        <Form.Item label="ID">
-                            <b><span>{state?.id}</span></b>
-                        </Form.Item>
-                        <hr />
-                        <Form.Item label="Title">
-                            <b><span>{state?.title}</span></b>
-                        </Form.Item>
-                        <hr />
-                        <Form.Item label="Description">
-                            <span>{state?.description}</span>
-                        </Form.Item>
-                        <hr />
-                        <Form.Item label="Created At">
-                            <span>Wed, 28 Feb 2024 04:55:48 GMT</span>
-                        </Form.Item>
-                        <hr />
-                        <Form.Item label="Modified At">
-                            <span>{modifiedDate}</span>
-                        </Form.Item>
-                        <hr />
-                    </Col>
-                    <Col xs={24} sm={24} md={24} xl={12}>
-                        <Form.Item label="Assignee">
-                            <Select
-                                defaultValue={selectedUser}
-                                mode="multiple"
-                                onChange={changeUpdateAssignee}
-                                options={users}
-                            />
-                        </Form.Item>
-                        <hr />
-                        <Form.Item label="Status">
-                            <Select
-                                defaultValue={selectedStatus}
-                                onChange={changeUpdateStatus}
-                                options={statuses}
-                            />
-                        </Form.Item>
-                        <hr />
-                        <Form.Item label="Priority">
-                            <Select
-                                defaultValue={selectedPriority}
-                                onChange={changeUpdatePriority}
-                                options={priorities}
-                            />
-                        </Form.Item>
-                        <hr />
-                    </Col>
-                </Row>
+                {ticketData && ticketData._id && (
+                    <Row gutter={[16, 16]}>
+                        <Col xs={24} sm={24} md={24} xl={12}>
+                            <Form.Item label="ID">
+                                <b><span>{state?._id}</span></b>
+                            </Form.Item>
+                            <hr />
+                            <Form.Item label="Title">
+                                <b><span>{ticketData?.title}</span></b>
+                            </Form.Item>
+                            <hr />
+                            <Form.Item label="Description">
+                                <span>{ticketData?.description}</span>
+                            </Form.Item>
+                            <hr />
+                            <Form.Item label="Created At">
+                                <span>{ticketData?.createdAt}</span>
+                            </Form.Item>
+                            <hr />
+                            <Form.Item label="Modified At">
+                                <span>{ticketData?.updatedAt}</span>
+                            </Form.Item>
+                            <hr />
+                        </Col>
+                        <Col xs={24} sm={24} md={24} xl={12}>
+                            {ticketData && users && (
+                                <Form.Item label="Assignee">
+                                    <Select
+                                        defaultValue={ticketData.assignee.map(e => (e._id))}
+                                        mode="multiple"
+                                        onChange={changeUpdateAssignee}
+                                        options={users.map(e => ({
+                                            label: `${e.name} (${e.email})`,
+                                            value: e._id
+                                        }))}
+                                    />
+                                </Form.Item>                                
+                            )}
+                            <hr />
+                            {ticketData && ticketData.status && (
+                                <Form.Item label="Status">
+                                    <Select
+                                        defaultValue={ticketData?.status?._id}
+                                        onChange={changeUpdateStatus}
+                                        options={statuses}
+                                    />
+                                </Form.Item>
+                            )}
+                            <hr />
+                            {ticketData && ticketData.priority && (
+                                <Form.Item label="Priority">
+                                    <Select
+                                        defaultValue={ticketData?.priority?._id}
+                                        onChange={changeUpdatePriority}
+                                        options={priorities}
+                                    />
+                                </Form.Item>
+                            )}
+                            <hr />
+                        </Col>
+                    </Row>
+                )}
+                
                 <Popconfirm
                     title="Are you sure to escalate this ticket?"
                     onConfirm={confirm}
@@ -240,29 +248,34 @@ export default function TicketDetail() {
                 </Popconfirm>
                 
                 <br />
+                <p></p>
                 <h2>Attachments</h2>
-                <Upload {...props}>
-                    <Button icon={<UploadOutlined />}>Add Attachment</Button>
-                </Upload>
+                {ticketData && ticketData.attachments && (
+                    <Upload defaultFileList={ticketData.attachments} {...props}>
+                        <Button icon={<UploadOutlined />}>Add Attachment</Button>
+                    </Upload>
+                )}
                 <br />
                 <h2>Comments</h2>
-                <List
-                    header={`${comments.length} replies`}
-                    itemLayout="horizontal"
-                    dataSource={comments}
-                    renderItem={item => (
-                        <li>
-                            <Comment {...item} />
-                        </li>
-                    )}
-                />
+                {ticketData && ticketData.comments && (
+                    <List
+                        header={`${ticketData.comments.length} replies`}
+                        itemLayout="horizontal"
+                        dataSource={ticketData.comments}
+                        renderItem={item => (
+                            <li>
+                                <Comment {...item} />
+                            </li>
+                        )}
+                    />
+                )}
                 <div>
                     <h3>Add Comment</h3>
                     <Form.Item>
                         <TextArea rows={4} value={newComment} onChange={e => setNewComment(e.target.value)} />
                     </Form.Item>
                     <Form.Item>
-                        <Button htmlType="submit" type="primary" onClick={addComments}>
+                        <Button htmlType="submit" type="primary" onClick={addComment}>
                             Submit
                         </Button>
                     </Form.Item>

@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import { Layout, Menu, Button, Form, Input, Card } from "antd";
 import "../signin/SignIn.css";
-import HeaderAuthentication from "../../components/layout/headerauthentication/HeaderAuthentication";
-import { message } from "antd";
+import HeaderAuthentication from "../../components/layout/HeaderAuthentication";
 import axios from 'axios';
 
 const { Footer, Content } = Layout;
@@ -40,7 +39,7 @@ export default class ResetPassword extends Component {
     if (password) {
 
       try{
-        const response = await axios.post(`https://csci-5709-bk-assignment3.onrender.com/user/resetPassword`, {
+        const response = await axios.post(`http://localhost:3001/user/resetPassword`, {
           newPassword: password,
           resetToken: this.state.token
         })
@@ -57,12 +56,23 @@ export default class ResetPassword extends Component {
         
       }catch(error){
         console.error("Server Error")
-        this.setState({ errorMessage: "Reset Password link is expired" });
-        setTimeout(() => {
-          this.setState({ errorMessage: "" });
-        }, 5000);
+        if(error.response && error.response.status && (error.response.status === 404)){
+          this.setState({ errorMessage: "User not found" });
+          setTimeout(() => {
+            this.setState({ errorMessage: "" });
+          }, 5000);
+        }else if(error.response && error.response.status && (error.respose.status === 401)){
+          this.setState({ errorMessage: "Reset Password link is expired." });
+          setTimeout(() => {
+            this.setState({ errorMessage: "" });
+          }, 5000);
+        }else{
+          this.setState({ errorMessage: "Server Error" });
+          setTimeout(() => {
+            this.setState({ errorMessage: "" });
+          }, 5000);
+        }
     }
-
     } else {
       console.log("Password are required.");
     }

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Layout, Menu, Button, Form, Input, Card } from "antd";
 import "./SignIn.css";
-import HeaderAuthentication from "../../components/layout/headerauthentication/HeaderAuthentication";
+import HeaderAuthentication from "../../components/layout/HeaderAuthentication";
 import axios from "axios";
 
 const { Footer, Content } = Layout;
@@ -22,7 +22,7 @@ export default class SignIn extends Component {
     if (email && password) {
       try {
         const response = await axios.post(
-          `https://csci-5709-bk-assignment3.onrender.com/user/signin`,
+          `${process.env.REACT_APP_API_URL}user/signin`,
           {
             email: email,
             password: password,
@@ -34,15 +34,32 @@ export default class SignIn extends Component {
           console.log("response", responseData);
           this.setState({ token: responseData.token }, () => {
             localStorage.setItem("token", responseData.token);
+            localStorage.setItem("role", responseData.user.role);
             this.props.history.push("/dashboard");
           });
         }
       } catch (error) {
+        console.log("errorr", error);
         console.error("Server Error");
-        this.setState({ errorMessage: "Invalid email or password." });
-        setTimeout(() => {
-          this.setState({ errorMessage: "" });
-        }, 5000);
+        if (
+          error.response &&
+          error.response.status &&
+          (error.response.status === 404 || error.response.status === 401)
+        ) {
+          this.setState({
+            errorMessage: "Invalid email or password.",
+          });
+          setTimeout(() => {
+            this.setState({ errorMessage: "" });
+          }, 5000);
+        } else {
+          this.setState({
+            errorMessage: "Server error",
+          });
+          setTimeout(() => {
+            this.setState({ errorMessage: "" });
+          }, 5000);
+        }
       }
     } else {
       console.log("Username and password are required.");

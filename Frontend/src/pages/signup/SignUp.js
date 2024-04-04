@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Layout, Menu, Button, Card, Form, Input, Checkbox, Radio } from "antd";
 import "./SignUp.css";
 import { Link } from "react-router-dom";
-import HeaderAuthentication from "../../components/layout/headerauthentication/HeaderAuthentication";
+import HeaderAuthentication from "../../components/layout/HeaderAuthentication";
 import axios from "axios";
 
 const { Footer, Content } = Layout;
@@ -17,13 +17,13 @@ export default class SignUp extends Component {
   }
 
   handleSignUp = async (values) => {
-    const API_URL = process.env.API_URL;
+    // const API_URL = process.env.API_URL;
 
     const { name, email, password, role, remember } = values;
     if (name && email && password && role && remember) {
       try {
         const response = await axios.post(
-          `https://csci-5709-bk-assignment3.onrender.com/user/signup`,
+          `${process.env.REACT_APP_API_URL}user/signup`,
           {
             name: name,
             email: email,
@@ -37,18 +37,31 @@ export default class SignUp extends Component {
           console.log("response", responseData);
           this.setState({ token: responseData.token }, () => {
             localStorage.setItem("token", responseData.token);
+            localStorage.setItem("role", responseData.user.role);
+            // console.log("role", responseData.user.role);
             this.props.history.push("/dashboard");
             console.log(role);
           });
         }
       } catch (error) {
         console.error("Server Error");
-        this.setState({
-          errorMessage: "User with this email already exists or Server Error",
-        });
-        setTimeout(() => {
-          this.setState({ errorMessage: "" });
-        }, 5000);
+        if (
+          error.response &&
+          error.response.status &&
+          error.response.status === 400
+        ) {
+          this.setState({
+            errorMessage: "User with this email already exists",
+          });
+          setTimeout(() => {
+            this.setState({ errorMessage: "" });
+          }, 5000);
+        } else {
+          this.setState({ errorMessage: "Server error" });
+          setTimeout(() => {
+            this.setState({ errorMessage: "" });
+          }, 5000);
+        }
       }
     } else {
       console.log("UserName, Email and Password are required.");

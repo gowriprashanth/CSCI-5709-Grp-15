@@ -55,6 +55,7 @@ function Header({ name, subName, onPress }) {
 
   const logOutHandler = () => {
     localStorage.clear("token");
+    localStorage.clear("role");
   };
 
   return (
@@ -63,7 +64,7 @@ function Header({ name, subName, onPress }) {
         <Col span={24} md={6}>
           <Breadcrumb>
             <Breadcrumb.Item>
-              <NavLink to="/">Pages</NavLink>
+              <NavLink to="/dashboard">Pages</NavLink>
             </Breadcrumb.Item>
             <Breadcrumb.Item style={{ textTransform: "capitalize" }}>
               {name.replace("/", "")}

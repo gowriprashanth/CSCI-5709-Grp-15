@@ -2,20 +2,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const User = require("../models/User");
+const { sendEmail } = require("../middleware/email");
 
-// Create a nodemailer transporter
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: "csci5708group15@gmail.com",
-    pass: "hiry kpkt qrzc ignb",
-  },
-  tls: {
-    rejectUnauthorized: false,
-  },
-});
-
-// Sign up a new user
 const SignUp = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
@@ -41,40 +29,30 @@ const SignUp = async (req, res) => {
       role,
     });
 
-    // Save the user to the database
     await user.save();
-
-    // Send a registration email to the user
-    const mailOptions = {
-      from: process.env.USERNAME,
-      to: email,
-      subject: "Registration Successful",
-      text: "You received this email as you are just registered with the IssueStack, Welcome to the IssueStack community!",
+    sendEmail(
+      email,
+      "Registration Successful",
+      "You received this email as you are just registered with the IssueStack, Welcome to the IssueStack community!"
+    );
+    const token = jwt.sign(
+      { userId: user._id, name: user.name, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+    const userWithoutPassword = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
     };
-
-    transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.error("Error occurred:", error.message);
-      } else {
-        console.log("Email sent successfully!");
-        console.log("Message ID:", info.messageId);
-      }
-    });
-
-    // Generate a JWT token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
-
-    // Return the token to the client
-    res.json({ token });
+    res.status(200).json({ token, user: userWithoutPassword });
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");
   }
 };
 
-// Sign in a user
 const SignIn = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -91,33 +69,21 @@ const SignIn = async (req, res) => {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    // Generate a JWT token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign(
+      { userId: user._id, name: user.name, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
-    // Get the current date
     const currentDate = new Date();
-
-    // Send a login email to the user
-    const mailOptions = {
-      from: process.env.USERNAME,
-      to: email,
-      subject: "Login Successful",
-      text: `Last Login time: ${currentDate}`,
+    sendEmail(email, "Login Successful", `Last Login time: ${currentDate}`);
+    const userWithoutPassword = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
     };
-
-    transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.error("Error occurred:", error.message);
-      } else {
-        console.log("Email sent successfully!");
-        console.log("Message ID:", info.messageId);
-      }
-    });
-
-    // Return the token to the client
-    res.json({ token });
+    res.status(200).json({ token, user: userWithoutPassword });
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");
@@ -133,36 +99,20 @@ const ForgotPassword = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Generate a reset token
     const resetToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
       expiresIn: "10m",
     });
-
-    // Create the reset password URL
     const URL = `https://csci5709-web-project.netlify.app/reset-password?token=${resetToken}`;
+    sendEmail(
+      email,
+      "Reset Password",
+      `To reset your password please follow the below link, it is valid till 10 minutes only. ${URL}`
+    );
 
-    // Send a reset password email to the user
-    const mailOptions = {
-      from: process.env.USERNAME,
-      to: email,
-      subject: "Reset Password",
-      text: `To reset your password please follow the below link, it is valid till 10 minutes only. ${URL}`,
-    };
-
-    transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.error("Error occurred:", error.message);
-      } else {
-        console.log("Email sent successfully!");
-        console.log("Message ID:", info.messageId);
-      }
-    });
-
-    // Save the reset token to the user
     user.resetToken = resetToken;
     await user.save();
 
-    res.json({ message: "Reset link sent to your email" });
+    res.status(200).json({ message: "Reset link sent to your email" });
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");
@@ -187,17 +137,18 @@ const ResetPassword = async (req, res) => {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(newPassword, salt);
 
-      // Update the user's password and reset token
       user.password = hashedPassword;
       user.resetToken = null;
       await user.save();
     } else {
       return res
-        .status(404)
+        .status(401)
         .json({ message: "Reset Password link is expired." });
     }
 
-    res.json({ message: "Password reset successfully" });
+    sendEmail(user.email, "Reset Password", `Password reset successfully.`);
+
+    res.status(200).json({ message: "Password reset successfully" });
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");
