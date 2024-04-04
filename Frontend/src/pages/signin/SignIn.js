@@ -37,8 +37,9 @@ export default class SignIn extends Component {
         }
         
       }catch(error){
+        console.log("errorr", error);
         console.error("Server Error")
-        if(error.response.status === 404 || error.response.status === 401){
+        if(error.response && error.response.status && (error.response.status === 404 || error.response.status === 401)){
           this.setState({
             errorMessage: "Invalid email or password." });
          setTimeout(() => {

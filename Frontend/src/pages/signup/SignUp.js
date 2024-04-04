@@ -44,7 +44,7 @@ export default class SignUp extends Component {
           }
       }catch(error){
         console.error("Server Error")
-        if(error.response.status === 400){
+        if(error.response && error.response.status && (error.response.status === 400)){
           this.setState({ errorMessage: "User with this email already exists" });
           setTimeout(() => {
             this.setState({ errorMessage: "" });
