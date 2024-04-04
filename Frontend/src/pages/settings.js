@@ -1,12 +1,9 @@
 import { Row, Col, Card, Avatar as AntAvatar, message } from "antd";
 import { Button, Form, Input } from "antd";
 import BgProfile from "../assets/images/bg-profile.jpg";
-import { SmileFilled } from "@ant-design/icons";
-import Title from "antd/lib/typography/Title";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { D_API_URL } from "../constants/creds";
 import Avatar, { genConfig } from "react-nice-avatar";
+import axiosHelper from "../helper/axioshelper";
 
 function Settings() {
   let token = localStorage.getItem("token");
@@ -22,8 +19,8 @@ function Settings() {
     console.log("New Password:", newpassword);
     const UpdatePassword = async () => {
       try {
-        const response = await axios.post(
-          D_API_URL + "/user/update-password",
+        const response = await axiosHelper.post(
+          "/user/update-password",
           {
             password: currentpassword,
             newPassword: newpassword,
@@ -69,7 +66,7 @@ function Settings() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await axios.get(D_API_URL + "/user/user-info", {
+        const response = await axiosHelper.get("user/user-info", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -89,7 +86,7 @@ function Settings() {
     };
     fetchUserInfo();
     console.log(name, email, role);
-  }, []);
+  });
 
   return (
     <>
@@ -182,7 +179,7 @@ function Settings() {
                   },
                   {
                     pattern:
-                      /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])/,
+                      /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*])/,
                     message:
                       "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character!",
                   },
