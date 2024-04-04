@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Layout, Menu, Button, Form, Input, Card } from "antd";
 import "./SignIn.css";
 import HeaderAuthentication from "../../components/layout/headerauthentication/HeaderAuthentication";
-import axios from 'axios';
+import axios from "axios";
 
 const { Footer, Content } = Layout;
 export default class SignIn extends Component {
@@ -11,7 +11,7 @@ export default class SignIn extends Component {
     super(props);
     this.state = {
       token: null,
-      errorMessage: "" 
+      errorMessage: "",
     };
 
     this.handleSignIn = this.handleSignIn.bind(this);
@@ -20,14 +20,16 @@ export default class SignIn extends Component {
   handleSignIn = async (values) => {
     const { email, password } = values;
     if (email && password) {
+      try {
+        const response = await axios.post(
+          `https://csci-5709-bk-assignment3.onrender.com/user/signin`,
+          {
+            email: email,
+            password: password,
+          }
+        );
 
-      try{
-        const response = await axios.post(`https://csci-5709-bk-assignment3.onrender.com/user/signin`, {
-          email: email,
-          password: password,
-        })
-
-        if(response.status === 200){
+        if (response.status === 200) {
           const responseData = response.data;
           console.log("response", responseData);
           this.setState({ token: responseData.token }, () => {
@@ -35,15 +37,13 @@ export default class SignIn extends Component {
             this.props.history.push("/dashboard");
           });
         }
-        
-      }catch(error){
-        console.error("Server Error")
+      } catch (error) {
+        console.error("Server Error");
         this.setState({ errorMessage: "Invalid email or password." });
         setTimeout(() => {
           this.setState({ errorMessage: "" });
         }, 5000);
-    }
-
+      }
     } else {
       console.log("Username and password are required.");
     }
@@ -147,15 +147,11 @@ export default class SignIn extends Component {
                     SIGN IN
                   </Button>
                 </Form.Item>
-                {
-                    this.state.errorMessage ? (
-                      <p className="color text-danger font-semibold">
-                        {this.state.errorMessage}
-                      </p>
-                    ) : (
-                      null
-                    )
-                }
+                {this.state.errorMessage ? (
+                  <p className="color text-danger font-semibold">
+                    {this.state.errorMessage}
+                  </p>
+                ) : null}
                 <p className="font-semibold text-muted">
                   Don't have an account?{" "}
                   <Link to="/sign-up" className="text-dark font-bold">
