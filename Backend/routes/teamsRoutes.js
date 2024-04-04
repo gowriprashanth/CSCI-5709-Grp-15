@@ -78,4 +78,20 @@ router.put("/update/:id", async (req, res) => {
   }
 });
 
+router.get("/getTeamLeads/:teamId", async (req, res, next) => {
+  try {
+    console.log("inside", req.params.teamId);
+    const teamLeads = await teamController.getTeamLeadsByTeamId(req, res);
+    if (!teamLeads) {
+      return res
+        .status(404)
+        .json({ message: "Team not found or no team leads found" });
+    }
+
+    res.status(200).json(teamLeads);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 module.exports = router;

@@ -2,6 +2,7 @@ const Attachment = require("../models/Attachment");
 const Ticket = require("../models/Ticket");
 const Team = require("../models/Team");
 const fs = require("fs");
+const User = require("../models/User");
 
 const createTeam = async (data) => {
   const { id, name, description, order, isDeleted, members } = data.data;
@@ -60,9 +61,24 @@ const updateTeam = async (teamId, data) => {
   }
 };
 
+const getTeamLeadsByTeamId = async (req, res) => {
+  try {
+    const team = await Team.findById(req.params.teamId);
+    if (!team) {
+      return { message: "Team not found" };
+    }
+
+    const teamLeads = await User.find({ _id: { $in: team.members } });
+    return teamLeads;
+  } catch (error) {
+    return { message: "Server error" };
+  }
+};
+
 module.exports = {
   createTeam,
   getAllTeams,
   markDelete,
   updateTeam,
+  getTeamLeadsByTeamId,
 };
