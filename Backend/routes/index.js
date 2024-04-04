@@ -2,10 +2,7 @@
  * @author Darshit Dhameliya
  */
 const ticketRoutes = require("./tickets");
-const userRoutes = require("./userRoutes");
-const analyticsRoutes = require("./analyticsRoutes");
 const kbaseRoutes = require("./kbaseRoutes");
-const ticketRoutes = require("./tickets");
 const userRoutes = require("./userRoutes");
 const analyticsRoutes = require("./analyticsRoutes");
 const { verifyToken } = require("../middleware/verifyToken");
