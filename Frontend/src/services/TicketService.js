@@ -125,3 +125,14 @@ export const updateTeamOfTicket = async (ticketId, teamId) => {
         return error
     }
 }
+
+/**
+ *  It calls backend API to fetch all the resolved tickets
+ */
+export const fetchAllResolvedTickets = async () => {
+    try {
+        return await axiosHelper.get(`tickets/archived-tickets`)
+    }  catch(error) {
+        return error
+    }
+}

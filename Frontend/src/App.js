@@ -13,6 +13,7 @@ import Dashboard from "./pages/home/Dashboard";
 import Settings from "./pages/settings";
 import FAQ from "./pages/faq";
 import TicketDetail from "./components/Tickets/TicketDetail";
+import TicketHistory from "./components/Tickets/TicketHistory";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route exact path="/profile" component={Settings} />
           <Route exact path="/knowledge-base" component={FAQ} />
           <Route exact path="/ticket-detail" component={TicketDetail} />
+          <Route exact path="/archived-tickets" component={TicketHistory} />
           {/* <Redirect from="*" to="/" /> */}
         </Main>
       </Switch>
