@@ -77,6 +77,11 @@ const addAttachments = async (data) => {
     })
 }
 
+const markEscalated = async (ticketId) => {
+    await Ticket.updateOne({ _id: ticketId }, { $set: { isEscalated: true } })
+    return data.message = "Ticket escalated successfully"
+}
+
 /**
  * It returns ticket data of given team
  */
@@ -94,9 +99,9 @@ const getTicketById = async (ticketId) => {
     return await Ticket.findById(ticketId).populate("attachments").populate("comments").populate("assignee").populate({
         path: 'comments',
         populate: {
-          path: 'userId'
+            path: 'userId'
         }
-      }).populate("status").populate("priority");
+    }).populate("status").populate("priority");
 }
 
 /**
@@ -126,6 +131,7 @@ module.exports = {
     addAttachments,
     updateTicketData,
     getTicketsByTeamId,
+    markEscalated,
     getTicketById,
     getStatuses,
     getPriorities,

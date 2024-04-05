@@ -3,26 +3,28 @@
  */
 import { useCallback, useEffect, useState } from "react";
 
-import {
-  Col,
-  Row,
-  Form,
-  Select,
-  Button,
-  Upload,
-  List,
-  message,
-  Comment,
-  Popconfirm
-} from "antd";
 import { UploadOutlined } from "@ant-design/icons";
+import {
+    Button,
+    Col,
+    Comment,
+    Form,
+    List,
+    Popconfirm,
+    Row,
+    Select,
+    Upload,
+    message
+} from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { useLocation, useHistory } from "react-router-dom"
 import * as TicketService from "../../services/TicketService"
 import { uploadFile } from "../../FirebaseStorageService"
+import axiosHelper from "../../helper/axioshelper";
+
 const { Option } = Select;
 
-const commentAvatar = "https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvdjkzNy1hZXctMTExXzMuanBn.jpg" 
+const commentAvatar = "https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvdjkzNy1hZXctMTExXzMuanBn.jpg"
 
 /**
  * Ticket Detail Component
@@ -36,20 +38,41 @@ export default function TicketDetail() {
     const [statuses, updateStatuses] = useState([])
     const [priorities, updatePriorities] = useState([])
     const [teamsData, updateTeamsData] = useState([])
+    const [userOptions, updateUserOptions] = useState([])
+
     const history = useHistory();
 
-    if(!state._id) {
+    if (!state._id) {
         history.push("/dashboard")
     }
 
+    const updateEscalated = async () => {
+        try { await axiosHelper.post('/tickets/escalate/' + state._id); }
+        catch (err) { console.log(err) }
+    }
+
+
     const confirm = (e) => {
-        message.success('Ticket Escalated Successfully');
+        axiosHelper.get('/teams/getTeamLeads/' + ticketData.team).then((res) => {
+            let data = res.data || [];
+            let ids = []
+            data.forEach(m => {
+                m._id && ids.push(m._id)
+            });
+            updateEscalated().then(() => {
+                changeUpdateAssignee(ids).then(() => {
+                    message.success('Ticket Escalated Successfully');
+                })
+            })
+        }).catch((err) => {
+            console.log(err)
+        })
     };
 
     const cancel = (e) => {
         message.error('You denied to confirmation');
     };
-    
+
     /**
      * Assignee Change handler
      * @param {*} value 
@@ -107,7 +130,7 @@ export default function TicketDetail() {
                 content: e.comment,
                 datetime: e.createdAt
             }))
-            updateTicketData(response.data)            
+            updateTicketData(response.data)
         }
     }, [state?._id])
 
@@ -147,6 +170,7 @@ export default function TicketDetail() {
             const response = await TicketService.updateTeamOfTicket(ticketData._id, value)
             if (response && response.data && response.data.message && response.data.message === true) {
                 getTicketData()
+                getUsers()
                 messageApi.open({
                     type: 'success',
                     content: 'Ticket Successfully Assigned to Other team',
@@ -166,9 +190,10 @@ export default function TicketDetail() {
     const getUsers = useCallback(async () => {
         if (ticketData && ticketData.team) {
             const response = await TicketService.GetUsers(ticketData.team)
-            if (response && response.data && response.data.length > 0){
+            if (response && response.data && response.data.length > 0) {
                 updateAssignee(response.data)
             }
+            updateUserOptions(response.data.map(e => <Option key={e._id}>{e.name} ({e.email})</Option>))
         }
     }, [ticketData])
 
@@ -176,7 +201,7 @@ export default function TicketDetail() {
      * It adds comment
      */
     const addComment = async () => {
-        if(newComment !== "") {
+        if (newComment !== "") {
             await TicketService.AddComment({ ticketId: ticketData._id, comment: newComment })
             getTicketData()
             messageApi.open({
@@ -194,7 +219,7 @@ export default function TicketDetail() {
 
     useEffect(() => {
         getTicketData()
-    },[getTicketData])
+    }, [getTicketData])
 
     useEffect(() => {
         getStatuses()
@@ -213,14 +238,14 @@ export default function TicketDetail() {
     const startUploading = async (file) => {
         try {
             const data = await uploadFile(file)
-            await TicketService.AddAttachment({ ticketId: ticketData._id, files: [data]})
+            await TicketService.AddAttachment({ ticketId: ticketData._id, files: [data] })
             getTicketData()
             messageApi.open({
                 type: 'success',
                 content: 'File Uploaded Successfully',
             });
             return false
-        } catch(error) {
+        } catch (error) {
             messageApi.open({
                 type: 'error',
                 content: 'Error Upload file',
@@ -237,19 +262,19 @@ export default function TicketDetail() {
         try {
             await startUploading(file)
             return false;
-        } catch(error) {
+        } catch (error) {
         }
     }
 
     const props = {
         beforeUpload: uploadAttachmentHandler,
         showUploadList: {
-          showDownloadIcon: false,
-          showRemoveIcon: false
+            showDownloadIcon: false,
+            showRemoveIcon: false
         },
     };
 
-    return(
+    return (
         <>
             {contextHolder}
             <h1>Ticket Details</h1>
@@ -286,9 +311,7 @@ export default function TicketDetail() {
                                         onChange={changeUpdateAssignee}
                                         value={ticketData.assignee.map(e => (e._id))}
                                     >
-                                        {
-                                            users.map(e => <Option key={e._id}>{e.name} ({e.email})</Option>)
-                                        }
+                                        {userOptions}
                                     </Select>
                                 </Form.Item>                                
                             )}
@@ -325,8 +348,7 @@ export default function TicketDetail() {
                         </Col>
                     </Row>
                 )}
-                
-                <Popconfirm
+                {(ticketData && ticketData.isEscalated) ? (<Button disabled type="primary">Escalated</Button>) : (<Popconfirm
                     title="Are you sure to escalate this ticket?"
                     onConfirm={confirm}
                     onCancel={cancel}
@@ -334,8 +356,8 @@ export default function TicketDetail() {
                     cancelText="No"
                 >
                     <Button type="primary">Escalate</Button>
-                </Popconfirm>
-                
+                </Popconfirm>)}
+
                 <br />
                 <p></p>
                 <h2>Attachments</h2>

@@ -19,7 +19,7 @@ router.put('/:id/update-status', async (req, res, next) => {
     } else {
       res.status(StatusCodes.BAD_REQUEST).send({ message: "Required missing data" });
     }
-  } catch(error) {
+  } catch (error) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error.message || error })
   }
 });
@@ -37,7 +37,7 @@ router.put('/:id/update-priority', async (req, res, next) => {
     } else {
       res.status(StatusCodes.BAD_REQUEST).send({ message: "Required missing data" });
     }
-  } catch(error) {
+  } catch (error) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error.message || error })
   }
 });
@@ -55,7 +55,7 @@ router.put('/:id/update-assignee', async (req, res, next) => {
     } else {
       res.status(StatusCodes.BAD_REQUEST).send({ message: "Required missing data" });
     }
-  } catch(error) {
+  } catch (error) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error.message || error })
   }
 });
@@ -68,7 +68,7 @@ router.put('/:id/update-team', async (req, res, next) => {
     const id = req.params.id;
     const { team } = req.body
     if (id) {
-      const message = await ticketController.updateTicketData({ id, team, assignee: [] })
+      const message = await ticketController.updateTicketData({ id, team, assignee: [], isEscalated: false })
       res.status(StatusCodes.OK).send({ message });
     } else {
       res.status(StatusCodes.BAD_REQUEST).send({ message: "Required missing data" });
@@ -80,7 +80,6 @@ router.put('/:id/update-team', async (req, res, next) => {
 
 router.post('/create', async (req, res, next) => {
   try {
-    //TODO: add teamId in request body
     const { teamId, title, description, files = [] } = req.body
     if (!teamId) {
       res.status(StatusCodes.BAD_REQUEST).send({ error: "teamId is required" });
@@ -100,6 +99,17 @@ router.post('/create', async (req, res, next) => {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error.message || error })
   }
 });
+
+router.post('/escalate/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const message = await ticketController.markEscalated(id);
+    res.status(StatusCodes.OK).send({ message });
+  } catch (error) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error.message || error })
+  }
+});
+
 
 
 router.post('/add-attachments', async (req, res, next) => {
@@ -144,7 +154,7 @@ router.get('/statuses', async (req, res, next) => {
   try {
     const statuses = await ticketController.getStatuses()
     res.status(StatusCodes.OK).send(statuses)
-  } catch(error) {
+  } catch (error) {
     console.log(error)
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error.message || error })
   }
@@ -157,7 +167,7 @@ router.get('/priorities', async (req, res, next) => {
   try {
     const priorities = await ticketController.getPriorities()
     res.status(StatusCodes.OK).send(priorities)
-  } catch(error) {
+  } catch (error) {
     console.log(error)
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error.message || error })
   }
