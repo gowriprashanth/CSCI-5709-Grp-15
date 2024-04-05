@@ -136,11 +136,12 @@ router.post('/add-attachments', async (req, res, next) => {
 router.get('/get/:teamId', async (req, res, next) => {
   try {
     const { teamId } = req.params
+    const { retrieveAll } = req.query
     if (!teamId) {
       res.status(StatusCodes.BAD_REQUEST).send({ error: "teamId is required" });
       return
     }
-    const tickets = await ticketController.getTicketsByTeamId({ teamId })
+    const tickets = await ticketController.getTicketsByTeamId(teamId, retrieveAll)
     res.status(StatusCodes.OK).send(tickets);
   } catch (error) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error.message || error })

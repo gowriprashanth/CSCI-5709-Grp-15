@@ -88,11 +88,19 @@ const markEscalated = async (ticketId) => {
 /**
  * It returns ticket data of given team
  */
-const getTicketsByTeamId = async (data) => {
-    const { teamId } = data
-    return await Ticket.find({
-        team: teamId
-    }).populate("status").populate("priority").populate("assignee");
+const getTicketsByTeamId = async (teamId, retrieveAll = false) => {
+    if (retrieveAll) {
+        return await Ticket.find({
+            team: teamId
+        }).populate("status").populate("priority").populate("assignee");
+    } else {
+        return await Ticket.find({
+            team: teamId,
+            status: {
+                "$ne": "660d958b96bd49242ec3912c"
+            }
+        }).populate("status").populate("priority").populate("assignee");
+    }
 }
 
 /**
