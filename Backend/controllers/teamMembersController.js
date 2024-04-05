@@ -7,7 +7,11 @@ const fs = require("fs");
 
 const getAllMembers = async (req, res) => {
   try {
-    return await Team.findOne({ _id: req.params.id }, { members: 1 });
+    if (req.query?.populate == "true") {
+      return await Team.findOne({ _id: req.params.id }, { members: 1 }).populate("members");
+    } else {
+      return await Team.findOne({ _id: req.params.id }, { members: 1 });
+    }
   } catch (error) {
     console.error("error error error", error);
     return { message: "Server error" };

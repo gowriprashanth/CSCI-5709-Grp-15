@@ -1,9 +1,33 @@
+import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import { Typography } from "antd";
-import lineChart from "./configs/lineChart";
+import { fetchLineChartData } from "./configs/lineChart";
 
 function LineChart() {
   const { Title, Paragraph } = Typography;
+  const [chartData, setChartData] = useState(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+
+    const fetchData = async () => {
+      try {
+        const data = await fetchLineChartData();
+        if (isMounted) {
+          setChartData(data);
+        }
+      } catch (error) {
+        console.error('Error fetching chart data:', error);
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      setIsMounted(false);
+    };
+  }, [isMounted]);
 
   return (
     <>
@@ -46,14 +70,16 @@ function LineChart() {
         </div>
       </div>
 
-      <ReactApexChart
-        className="full-width"
-        options={lineChart.options}
-        series={lineChart.series}
-        type="area"
-        height={350}
-        width={"100%"}
-      />
+      {chartData && (
+        <ReactApexChart
+          className="full-width"
+          options={chartData.options}
+          series={chartData.series}
+          type="area"
+          height={350}
+          width={"100%"}
+        />
+      )}
     </>
   );
 }

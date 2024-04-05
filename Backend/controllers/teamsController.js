@@ -2,6 +2,8 @@ const Attachment = require("../models/Attachment");
 const Ticket = require("../models/Ticket");
 const Team = require("../models/Team");
 const fs = require("fs");
+const User = require("../models/User");
+const { getAllMembers } = require("./teamMembersController");
 
 const createTeam = async (data) => {
   const { id, name, description, order, isDeleted, members } = data.data;
@@ -60,9 +62,32 @@ const updateTeam = async (teamId, data) => {
   }
 };
 
+const getTeamLeadsByTeamId = async (req, res) => {
+  try {
+    const team = await Team.findOne(
+      { _id: req.params.teamId },
+      { members: 1 }
+    ).populate("members");
+
+    const temaMembers = team.members;
+
+    let teamLeads = [];
+    temaMembers.forEach((member) => {
+      if (member.teamLead.includes(req.params.teamId)) {
+        teamLeads.push(member);
+      }
+    });
+    return teamLeads;
+  } catch (error) {
+    console.error(error);
+    return { message: "Server error" };
+  }
+};
+
 module.exports = {
   createTeam,
   getAllTeams,
   markDelete,
   updateTeam,
+  getTeamLeadsByTeamId,
 };
