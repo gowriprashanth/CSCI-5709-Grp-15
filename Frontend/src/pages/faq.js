@@ -54,7 +54,7 @@ function FAQ() {
   useEffect(() => {
     getALlKnowledgeBase();
     fetchUserInfo();
-  }, []);
+  });
 
   const addFaqToKbaseByTitle = (title, faq) => {
     axiosHelper
@@ -311,130 +311,6 @@ function FAQ() {
       </Row>
     </>
   );
-
-  <Row align="center">
-    <Row gutter={[16, 16]}>
-      {knowledgeBase.map((item, index) => {
-        return (
-          <Col key={index} style={{ width: "100%" }}>
-            <Card
-              bordered={false}
-              extra={
-                <Button
-                  onClick={() => {
-                    toggleVisible(index);
-                    setDescription(null);
-                    setTitle(null);
-                  }}
-                >
-                  Add FAQ
-                </Button>
-              }
-              title={
-                <h1
-                  style={{
-                    fontSize: "28px",
-                    textAlign: "center",
-                    fontWeight: "bold",
-                    marginBottom: "0",
-                  }}
-                >
-                  {item.title}
-                </h1>
-              }
-              style={{
-                borderColor: "#ADADAD",
-                borderRadius: 10,
-                width: "100%",
-              }}
-            >
-              {/* Card content */}
-              {item.visible && (
-                <>
-                  <div style={{ textAlign: "end" }}>
-                    <Input
-                      placeholder="Title"
-                      maxLength={20}
-                      //   onChange={onChange}
-                      onInput={(e) => {
-                        setTitle(e.target.value);
-                        console.log(e.target.value);
-                      }}
-                      value={title}
-                    />
-                    <br />
-                    <br />
-                    <TextArea
-                      placeholder="Description"
-                      showCount
-                      maxLength={100}
-                      onInput={(e) => setDescription(e.target.value)}
-                      value={description}
-                    />
-                    <br />
-                    <div style={{ display: "flex", textAlign: "end" }}>
-                      <Button
-                        onClick={() => {
-                          toggleVisible(index);
-                        }}
-                        danger
-                        style={{
-                          flex: 1,
-                          marginTop: "10px",
-                        }}
-                      >
-                        Discard
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          if (title && description) {
-                            toggleVisible(index);
-                            console.log(title, description);
-                            addFaqToKbaseByTitle(item.title, {
-                              question: title,
-                              answer: description,
-                            });
-                            // getALlKnowledgeBase();
-                          } else {
-                            message.error("Please fill all the fields");
-                          }
-                        }}
-                        type="primary"
-                        style={{
-                          flex: 1,
-                          marginLeft: "10px",
-                          marginTop: "10px",
-                        }}
-                      >
-                        Save
-                      </Button>
-                    </div>
-                  </div>
-                  <br />
-                </>
-              )}
-              {item.faq.length > 0 ? (
-                <Collapse defaultActiveKey={["1"]} onChange={onChange}>
-                  {item.faq.map((item, index) => {
-                    return (
-                      <Panel header={item.question} key={index}>
-                        <p>{item.answer}</p>
-                      </Panel>
-                    );
-                  })}
-                </Collapse>
-              ) : (
-                <p>
-                  No FAQs available for this Knowledge Base. Please ask your
-                  Admin to update Knowldegebase
-                </p>
-              )}
-            </Card>
-          </Col>
-        );
-      })}
-    </Row>
-  </Row>;
 }
 
 export default FAQ;
