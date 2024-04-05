@@ -93,7 +93,7 @@ router.post('/create', async (req, res, next) => {
       res.status(StatusCodes.BAD_REQUEST).send({ error: "description is required" });
       return
     }
-    const message = await ticketController.createTicket({ data: { title, description, files, teamId } })
+    const message = await ticketController.createTicket({ data: { title, description, files, teamId,email:req.user.email } })
     res.status(StatusCodes.OK).send({ message });
   } catch (error) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error.message || error })

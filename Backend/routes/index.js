@@ -9,6 +9,7 @@ const { verifyToken } = require("../middleware/verifyToken");
 const teamsRoutes = require("./teamsRoutes");
 const teamMemberRoutes = require("./teamMembersRoutes");
 const users = require("./users");
+const notificationRoutes = require("./notificationRoutes");
 
 const registerRoutes = (app) => {
   app.use("/user", userRoutes);
@@ -18,7 +19,7 @@ const registerRoutes = (app) => {
   app.use("/tickets", ticketRoutes);
   app.use("/analytics", analyticsRoutes);
   app.use("/users", users);
-
+  app.use("/notification", notificationRoutes);
   app.use("/knowledgebase", kbaseRoutes);
 };
 

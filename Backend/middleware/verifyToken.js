@@ -8,7 +8,6 @@ exports.verifyToken = (req, res, next) => {
 
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
         if (err) {
-            console.log("rrr", err);
             return res.status(401).json({ message: 'Failed to authenticate token' });
         }
         req.user = decoded;

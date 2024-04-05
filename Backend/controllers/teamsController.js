@@ -4,6 +4,7 @@ const Team = require("../models/Team");
 const fs = require("fs");
 const User = require("../models/User");
 const { getAllMembers } = require("./teamMembersController");
+const {storeNotificationToAllMember} = require("./NotificationController")
 
 const createTeam = async (data) => {
   const { id, name, description, order, isDeleted, members } = data.data;
@@ -16,6 +17,7 @@ const createTeam = async (data) => {
       isDeleted: isDeleted,
       members: members,
     });
+    storeNotificationToAllMember(name);
     return (data.message = "Team created successfully");
   } catch (err) {
     console.log(err);
