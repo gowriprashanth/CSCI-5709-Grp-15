@@ -148,6 +148,38 @@ const saveComment = async ({ ticketId, ...data }) => {
     await Ticket.updateOne({ _id: ticketId }, { $push: { comments: comment } })
 }
 
+/**
+ * It fetches all the closed tickets for logged in user
+ * @param {*} user 
+ * @returns 
+ */
+const fetchAllResolvedTickets = async (user) => {
+    try {
+        if(user.role.toLowerCase() === "admin") {
+            const data = await Ticket.find({ status: "660d958b96bd49242ec3912c" }).populate("attachments").populate("comments").populate("assignee").populate({
+                path: 'comments',
+                populate: {
+                    path: 'userId'
+                }
+            }).populate("status").populate("priority")
+            return data
+        } else {
+            const userData = await User.findById(user.userId)
+            const teamData = await Team.find({ members: user.userId })
+            const data = await Ticket.find({ status: "660d958b96bd49242ec3912c", team: {
+                "$in": [...userData.teamLead, ...teamData.map(e => e._id)]
+            } }).populate("attachments").populate("comments").populate("assignee").populate({
+                path: 'comments',
+                populate: {
+                    path: 'userId'
+                }
+            }).populate("status").populate("priority")
+            return data
+        }
+    } catch (error) {
+      return { message: error.message };
+    }
+}
 module.exports = {
     createTicket,
     addAttachments,
@@ -157,5 +189,6 @@ module.exports = {
     getTicketById,
     getStatuses,
     getPriorities,
-    saveComment
+    saveComment,
+    fetchAllResolvedTickets
 }

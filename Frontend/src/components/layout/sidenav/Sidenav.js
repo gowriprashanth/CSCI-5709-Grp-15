@@ -77,6 +77,19 @@ function Sidenav({ color }) {
             <span className="label">Knowledge Base</span>
           </NavLink>
         </Menu.Item>
+        <Menu.Item key="4">
+          <NavLink to="/archived-tickets">
+            <span
+              className="icon"
+              style={{
+                background: page === "archivedtickets" ? color : "",
+              }}
+            >
+              {<QuestionCircleOutlined />}
+            </span>
+            <span className="label">Archived Tickets</span>
+          </NavLink>
+        </Menu.Item>
       </Menu>
     </>
   );

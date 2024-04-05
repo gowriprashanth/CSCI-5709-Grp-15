@@ -197,6 +197,18 @@ router.post('/:id/add-comment', async (req, res, next) => {
 });
 
 /**
+ * 
+ */
+router.get('/archived-tickets', async (req, res, next) => {
+  if (!req.user) {
+    res.status(StatusCodes.UNAUTHORIZED).send({ error: "User session not valid" });
+  } else {
+    const data = await ticketController.fetchAllResolvedTickets(req.user)
+    res.status(StatusCodes.OK).send(data)
+  }
+})
+
+/**
  * It handles get ticket data by ticket id request
  */
 router.get('/:ticketId', async (req, res, next) => {
