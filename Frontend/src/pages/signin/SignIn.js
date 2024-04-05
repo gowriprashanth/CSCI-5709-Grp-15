@@ -1,11 +1,15 @@
+/**
+ * @author Bhautik Koshiya
+ */
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Layout, Menu, Button, Form, Input, Card } from "antd";
 import "./SignIn.css";
 import HeaderAuthentication from "../../components/layout/HeaderAuthentication";
 import axios from "axios";
-
 const { Footer, Content } = Layout;
+
+//SignIn page
 export default class SignIn extends Component {
   constructor(props) {
     super(props);
@@ -17,6 +21,7 @@ export default class SignIn extends Component {
     this.handleSignIn = this.handleSignIn.bind(this);
   }
 
+ // It calls SignIn Api to get access to System
   handleSignIn = async (values) => {
     const { email, password } = values;
     if (email && password) {

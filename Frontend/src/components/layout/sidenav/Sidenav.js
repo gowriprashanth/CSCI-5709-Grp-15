@@ -1,9 +1,13 @@
+/**
+ * @author Bhautik Koshiya
+ */
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { Menu } from "antd";
 import { NavLink, useLocation } from "react-router-dom";
 import logo from "../../../assets/images/logo.svg";
 import { DotChartOutlined } from "@ant-design/icons";
 
+//This code is written to create sideNavigation Bar
 function Sidenav({ color }) {
   const { pathname } = useLocation();
   const page = pathname.replace("/", "");

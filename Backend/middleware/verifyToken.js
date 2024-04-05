@@ -1,5 +1,15 @@
+/**
+ * @author Bhautik Koshiya
+ */
 const jwt = require('jsonwebtoken');
 
+/**
+ * This method will check authentucity of jwtToken
+ * @param req 
+ * @param res 
+ * @param next 
+ * @returns rese
+ */
 exports.verifyToken = (req, res, next) => {
     const token = req.headers.authorization ? req.headers.authorization.split(' ')[1] : null;
     if (!token) {
