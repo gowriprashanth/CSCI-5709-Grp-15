@@ -103,3 +103,25 @@ export const GetUsers = async (teamId) => {
         return error
     }
 }
+
+/**
+ * It calls backend API to fetch all the teams
+ */
+export const GetAllTeams = async () => {
+    try {
+        return await axiosHelper.get(`teams/get-teams`)
+    } catch(error) {
+        return error
+    }
+}
+
+/**
+ * It calls backend API to change the team of the ticket
+ */
+export const updateTeamOfTicket = async (ticketId, teamId) => {
+    try {
+        return await axiosHelper.put(`tickets/${ticketId}/update-team`, { team: teamId })
+    } catch(error) {
+        return error
+    }
+}
