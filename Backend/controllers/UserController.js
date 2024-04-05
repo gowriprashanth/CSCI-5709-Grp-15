@@ -213,6 +213,12 @@ const UpdatePassword = async (req, res) => {
     user.password = hashedPassword;
     await user.save();
 
+    sendEmail(
+      user.email,
+      "Password Update Successful",
+      `Your password has been updated successfully. You are getting this email because you have updated your password. If you did not make this change, please contact your Admin immediately.`
+    );
+
     res.json({ message: "Password updated successfully" });
   } catch (error) {
     console.error(error.message);

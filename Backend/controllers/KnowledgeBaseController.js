@@ -1,3 +1,6 @@
+/**
+ * @author Dhruvik Kakadiya
+ */
 const Kbase = require("../models/Kbase");
 
 // Controller to create a new Kbase entry
@@ -25,12 +28,10 @@ const getAllKbases = async (req, res) => {
   try {
     // Fetch all Kbase entries from the database
     const kbases = await Kbase.find();
-    // res.status(200).send("Get all Kbase");
 
     res.json(kbases);
   } catch (error) {
     console.error(error.message);
-    // return res.status(500).json({ message: "Server Error" });
     res.status(500).send("Server Error");
   }
 };
@@ -55,6 +56,13 @@ const deleteKbaseByTitle = async (req, res) => {
 };
 
 // Controller to add a new FAQ entry to a specific Kbase entry by title
+/**
+ * Add a FAQ entry to the Knowledge Base by title.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Object} The response object containing the updated Knowledge Base entry.
+ */
 const addFaqToKbaseByTitle = async (req, res) => {
   try {
     const { title, faq } = req.body;
@@ -69,8 +77,6 @@ const addFaqToKbaseByTitle = async (req, res) => {
     // Add the new FAQ entry to the Kbase entry
     kbase.faq.push(faq);
     await kbase.save();
-
-    // res.status(201).json({ message: "FAQ added successfully" });
 
     res.status(201).json(kbase);
   } catch (error) {
