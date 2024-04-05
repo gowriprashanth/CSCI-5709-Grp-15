@@ -1,3 +1,8 @@
+/**
+ * Represents the settings page component.
+ *
+ * @returns {JSX.Element} The settings page component.
+ */
 import { Row, Col, Card, Avatar as AntAvatar, message } from "antd";
 import { Button, Form, Input } from "antd";
 import BgProfile from "../assets/images/bg-profile.jpg";
@@ -6,17 +11,25 @@ import Avatar, { genConfig } from "react-nice-avatar";
 import axiosHelper from "../helper/axioshelper";
 
 function Settings() {
+  // Retrieve the token from local storage
   let token = localStorage.getItem("token");
+
+  // Define state variables
   let [name, setName] = useState("");
   let [email, setEmail] = useState("");
   let [role, setRole] = useState("");
   let [currentpassword, setCurrentPassword] = useState("");
   let [newpassword, setNewPassword] = useState("");
+
+  // Generate configuration for Avatar component using the token
   const config = genConfig(token);
 
+  // Handle form submission
   const onFinish = () => {
     console.log("Current Password:", currentpassword);
     console.log("New Password:", newpassword);
+
+    // Update password using an asynchronous function
     const UpdatePassword = async () => {
       try {
         const response = await axiosHelper.post(
@@ -33,6 +46,7 @@ function Settings() {
         );
         console.log(response.data);
 
+        // Display success message if password is updated successfully
         if (response.status === 200) {
           message.success({
             content: "Password Updated Successfully!",
@@ -41,6 +55,7 @@ function Settings() {
             },
           });
         } else {
+          // Display error message if password update fails
           message.error({
             content: "Password Update Failed!",
             style: {
@@ -49,6 +64,7 @@ function Settings() {
           });
         }
       } catch (error) {
+        // Handle error if password is invalid
         if (error.response.status === 401) {
           message.error({
             content: "Invalid Password",
@@ -63,6 +79,7 @@ function Settings() {
     UpdatePassword();
   };
 
+  // Fetch user information using an asynchronous function
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -73,6 +90,7 @@ function Settings() {
         });
         console.log(response.data);
 
+        // Update state variables with user information
         setName(response.data.name);
         setEmail(response.data.email);
         setRole(response.data.role);

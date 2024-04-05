@@ -1,3 +1,6 @@
+/**
+ * @author Dhruvik
+ */
 import { Button, Card, Col, Collapse, Input, Row, Space, message } from "antd";
 import BgProfile from "../assets/images/bg-profile.jpg";
 import React, { useEffect, useState } from "react";
@@ -6,17 +9,25 @@ import axiosHelper from "../helper/axioshelper";
 
 const { Panel } = Collapse;
 
+/**
+ * Renders the FAQ page.
+ * @returns {JSX.Element} The FAQ page component.
+ */
 function FAQ() {
+  // State variables
   let [kbaseTitle, setKbaseTitle] = useState("");
   let token = localStorage.getItem("token");
   let [title, setTitle] = useState("");
   let [description, setDescription] = useState("");
   let [knowledgeBase, setKnowledgeBase] = useState([]);
   const [role, setRole] = useState("");
+
+  // Event handler for onChange event
   const onChange = (key) => {
     console.log(key);
   };
 
+  // Fetch user information from the server
   const fetchUserInfo = async () => {
     try {
       const response = await axiosHelper.get("user/user-info", {
@@ -35,6 +46,8 @@ function FAQ() {
       throw error;
     }
   };
+
+  // Fetch all knowledge base items from the server
   const getALlKnowledgeBase = () => {
     axiosHelper
       .get("/knowledgebase/get-allkbase")
@@ -51,11 +64,14 @@ function FAQ() {
         console.log(error);
       });
   };
+
+  // Fetch user information and knowledge base items on component mount
   useEffect(() => {
     getALlKnowledgeBase();
     fetchUserInfo();
   });
 
+  // Add FAQ to a knowledge base by title
   const addFaqToKbaseByTitle = (title, faq) => {
     axiosHelper
       .post("/knowledgebase/add-faq", { title, faq })
@@ -74,6 +90,7 @@ function FAQ() {
       });
   };
 
+  // Delete a knowledge base by title
   const deleteKbaseByTitle = (title) => {
     axiosHelper
       .post("/knowledgebase/delete-kbase", { title })
@@ -91,6 +108,8 @@ function FAQ() {
         // Handle the error
       });
   };
+
+  // Create a new knowledge base
   const createKbase = (title) => {
     axiosHelper
       .post("/knowledgebase/create-kbase", { title })
@@ -108,6 +127,8 @@ function FAQ() {
         // Handle the error
       });
   };
+
+  // Toggle visibility of a knowledge base item
   const toggleVisible = (index) => {
     knowledgeBase[index].visible = !knowledgeBase[index].visible;
     setKnowledgeBase([...knowledgeBase]);
@@ -115,6 +136,7 @@ function FAQ() {
 
   return (
     <>
+      {/* Header */}
       <div
         className="profile-nav-bg"
         style={{
@@ -136,6 +158,8 @@ function FAQ() {
         </h1>
       </div>
       <br />
+
+      {/* Create New Knowledge Base (visible to Admin only) */}
       {role === "Admin" && (
         <Card
           title="Create New Knowledge Base"
@@ -170,6 +194,8 @@ function FAQ() {
         </Card>
       )}
       <br />
+
+      {/* Display Knowledge Base items */}
       <Row align="center">
         <Row gutter={[16, 16]}>
           {knowledgeBase.map((item, index) => {
@@ -229,7 +255,6 @@ function FAQ() {
                         <Input
                           placeholder="Title"
                           maxLength={20}
-                          //   onChange={onChange}
                           onInput={(e) => {
                             setTitle(e.target.value);
                             console.log(e.target.value);
@@ -268,7 +293,6 @@ function FAQ() {
                                   question: title,
                                   answer: description,
                                 });
-                                // getALlKnowledgeBase();
                               } else {
                                 message.error("Please fill all the fields");
                               }
