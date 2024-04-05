@@ -20,6 +20,7 @@ import TextArea from "antd/es/input/TextArea";
 import { useLocation, useHistory } from "react-router-dom"
 import * as TicketService from "../../services/TicketService"
 import { uploadFile } from "../../FirebaseStorageService"
+const { Option } = Select;
 
 const commentAvatar = "https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvdjkzNy1hZXctMTExXzMuanBn.jpg" 
 
@@ -139,7 +140,7 @@ export default function TicketDetail() {
     }
 
     /**
-     * 
+     * It updates team of the ticket 
      */
     const updateTeamOfTicket = async (value) => {
         try {
@@ -281,14 +282,14 @@ export default function TicketDetail() {
                             {ticketData && users && (
                                 <Form.Item label="Assignee">
                                     <Select
-                                        defaultValue={ticketData.assignee.map(e => (e._id))}
                                         mode="multiple"
                                         onChange={changeUpdateAssignee}
-                                        options={users.map(e => ({
-                                            label: `${e.name} (${e.email})`,
-                                            value: e._id
-                                        }))}
-                                    />
+                                        value={ticketData.assignee.map(e => (e._id))}
+                                    >
+                                        {
+                                            users.map(e => <Option key={e._id}>{e.name} ({e.email})</Option>)
+                                        }
+                                    </Select>
                                 </Form.Item>                                
                             )}
                             <hr />
