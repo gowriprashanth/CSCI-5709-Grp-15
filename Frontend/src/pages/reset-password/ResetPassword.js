@@ -1,3 +1,6 @@
+/**
+ * @author Bhautik Koshiya
+ */
 import React, { Component } from "react";
 import { Layout, Menu, Button, Form, Input, Card } from "antd";
 import "../signin/SignIn.css";
@@ -6,6 +9,7 @@ import axios from 'axios';
 
 const { Footer, Content } = Layout;
 
+//ResetPassword page
 export default class ResetPassword extends Component {
   constructor(props) {
     super(props);
@@ -31,6 +35,7 @@ export default class ResetPassword extends Component {
     }
   }
 
+ // It calls ResetPassword api to reset the password
   handleResetPassword = async (values) => {
     const { password, confirmPassword } = values;
     console.log("confirmPassword", confirmPassword);

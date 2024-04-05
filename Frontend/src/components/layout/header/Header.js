@@ -1,3 +1,6 @@
+/**
+ * @author Bhautik Koshiya
+ */
 import { useCallback, useEffect, useState } from "react";
 import {
   Row,
@@ -80,10 +83,6 @@ const fetchNotifications = useCallback( async () => {
     fetchNotifications(); 
   }, [fetchNotifications]);
 
-  
-  // useEffect(() => {
-  //   console.log("notifications", notifications); // Log fetched notifications
-  // }, [notifications]);
 
   useEffect(() => window.scrollTo(0, 0));
 

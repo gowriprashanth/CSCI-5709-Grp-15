@@ -1,5 +1,11 @@
+/**
+ * @author Bhautik Koshiya
+ */
 const nodemailer = require('nodemailer');
 
+/**
+ * Logic to send emails.
+ */
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {

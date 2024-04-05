@@ -1,9 +1,18 @@
+/**
+ * @author Bhautik Koshiya
+ */
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const User = require("../models/User");
 const { sendEmail } = require("../middleware/email");
 
+/**
+ * 
+ * @param req 
+ * @param res
+ * @returns res
+ */
 const SignUp = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
@@ -53,6 +62,12 @@ const SignUp = async (req, res) => {
   }
 };
 
+/**
+ * 
+ * @param req 
+ * @param res 
+ * @returns res 
+ */
 const SignIn = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -90,6 +105,12 @@ const SignIn = async (req, res) => {
   }
 };
 
+/**
+ * 
+ * @param req 
+ * @param res 
+ * @returns res
+ */
 // Send a forgot password email to the user
 const ForgotPassword = async (req, res) => {
   try {
@@ -119,6 +140,12 @@ const ForgotPassword = async (req, res) => {
   }
 };
 
+/**
+ * 
+ * @param req 
+ * @param res 
+ * @returns res
+ */
 // Reset the user's password
 const ResetPassword = async (req, res) => {
   try {
