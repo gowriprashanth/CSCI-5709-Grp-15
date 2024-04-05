@@ -34,15 +34,12 @@ export default class SignUp extends Component {
 
         if (response.status === 200) {
           const responseData = response.data;
-          console.log("response", responseData);
           this.setState({ token: responseData.token }, () => {
             localStorage.setItem("token", responseData.token);
             localStorage.setItem("role", responseData.user.role);
             localStorage.setItem("id", responseData.user._id);
             localStorage.setItem("email", responseData.user.email);
-            // console.log("role", responseData.user.role);
             this.props.history.push("/dashboard");
-            console.log(role);
           });
         }
       } catch (error) {

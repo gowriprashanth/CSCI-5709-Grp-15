@@ -11,22 +11,28 @@ const User = require("../models/User")
 const fs = require('fs')
 const Team = require("../models/Team")
 const { StatusCodes } = require("http-status-codes")
-
+const {storeNotificationByTeamId, storeNotificationAssignee} = require("./NotificationController")
+const { sendEmail } = require("../middleware/email");
 /**
  * It perfoms ticket update operation
  * @param data 
  * @returns 
  */
 const updateTicketData = async ({ id, ...data }) => {
-    const ticketData = await Ticket.findOneAndUpdate({ _id: id }, { $set: data }, { upsert: true, new: true });
+    const ticketData = (await Ticket.findOneAndUpdate({ _id: id }, { $set: data }, { upsert: true, new: true }).populate("assignee"));
     if (ticketData.status == "660d958b96bd49242ec3912c") {
         assignTickets(ticketData.team)
     }
+    storeNotificationAssignee(ticketData.assignee, ticketData.title)
+    ticketData.assignee.forEach((member) => {
+        sendEmail(member.email, "Ticket Updated",  `${ticketData.title} ticket is udpated`)
+    });
     return true
 }
 
 const createTicket = async (data) => {
-    const { title, description, files, teamId } = data.data
+    const { title,email, description, files, teamId } = data.data
+    storeNotificationByTeamId(teamId, `Ticket (${title}) Created under your team.`, email);
     await Promise.all(files.map(file => {
         return new Promise((resolve, reject) => {
             Attachment.create({
@@ -86,6 +92,9 @@ const addAttachments = async (data) => {
 
 const markEscalated = async (ticketId) => {
     await Ticket.updateOne({ _id: ticketId }, { $set: { isEscalated: true } })
+    Ticket.findById(ticketId).then((ticket)=>{
+        storeNotificationByTeamId(ticket.team,`Ticket (${ticket.title}) escalated to team leads!`)
+    })
     return data.message = "Ticket escalated successfully"
 }
 

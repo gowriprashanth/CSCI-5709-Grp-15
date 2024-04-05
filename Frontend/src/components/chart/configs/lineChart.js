@@ -72,19 +72,19 @@ const fetchLineChartData = async () => {
     const response = await axiosHelper.get('/analytics/department');
     const data = response.data;
 
-    const createdData = data.filter(item => item.name === 'Created').map(item => item.created);
-    const resolvedData = data.filter(item => item.name === 'Resolved').map(item => item.resolved);
-    const categories = data.map(item => item.categories);
+const createdData = data.filter(item => item.name === 'Created').map(item => item.created);
+const resolvedData = data.filter(item => item.name === 'Resolved').map(item => item.resolved);
+const categories = data.map(item => item.categories);
 
-    lineChart.series[0].data = createdData;
-    lineChart.series[1].data = resolvedData;
-    lineChart.options.xaxis.categories = categories;
-    
-    return lineChart; 
+lineChart.series[0].data = createdData;
+lineChart.series[1].data = resolvedData;
+lineChart.options.xaxis.categories = categories;
+
+return lineChart; 
     
   } catch (error) {
     console.error('Error fetching data:', error);
-    return null; 
+return null; 
   }
 };
 

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Row,
   Col,
@@ -12,50 +12,86 @@ import {
 import { NavLink, Link } from "react-router-dom";
 import {
   BellOutlined,
-  ClockCircleOutlined,
   CloseCircleTwoTone,
   ProfileOutlined,
 } from "@ant-design/icons";
+import axiosHelper from "../../../helper/axioshelper";
 
-const data = [
-  {
-    title: "New Tickets have been assigned to you.",
-    description: <>{<ClockCircleOutlined />} 2 days ago</>,
 
-    avatar: <CloseCircleTwoTone />,
-  },
-  {
-    title: "Your ticket is resolved.",
-    description: <>{<ClockCircleOutlined />} 2 days ago</>,
 
-    avatar: <CloseCircleTwoTone />,
-  },
-];
+function Header({ name, subName, onPress }) {
+  
+  const [notifications, setNotifications] = useState([]);
 
 const items = [];
 
-data.forEach((item) => {
+const calculateHoursAgo = (timestamp) => {
+  const currentTime = new Date();
+  const pastTime = new Date(timestamp);
+  const timeDifference = currentTime - pastTime;
+  const hoursAgo = Math.floor(timeDifference / (1000 * 60 * 60)); // Convert milliseconds to hours
+  return hoursAgo;
+};
+
+const handleNotificationClick = async (notificationId) => {
+  try {
+    // Make API call to mark notification as read
+    await axiosHelper.put(`notification/${notificationId}`);
+
+    // Update state to remove the clicked notification
+    setNotifications(notifications.filter(notification => notification._id !== notificationId));
+  } catch (error) {
+    console.error("Error marking notification as read:", error);
+  }
+};
+
+notifications.forEach((item) => {
+  const time = calculateHoursAgo(item.createdAt)
   items.push({
     label: (
       <List.Item.Meta
+      onClick={() => handleNotificationClick(item._id)}
         style={{
           padding: "10px",
         }}
-        avatar={<Avatar shape="square" src={item.avatar} />}
-        title={item.title}
-        description={item.description}
+        avatar={<Avatar shape="square" src={<CloseCircleTwoTone />} />}
+        title={item.message}
+        description={`${time} hours ago`}
       />
     ),
     key: item.title,
   });
 });
 
-function Header({ name, subName, onPress }) {
+const fetchNotifications = useCallback( async () => {
+  try {
+    const email = localStorage.getItem("email")
+    const response = await axiosHelper.get(`notification/getNotification`, {
+      params: { email },
+    });
+    setNotifications(response.data); 
+  } catch (error) {
+    console.error("Error fetching notifications:", error);
+  }
+}, []);
+
+  useEffect(() => {
+
+    fetchNotifications(); 
+  }, [fetchNotifications]);
+
+  
+  // useEffect(() => {
+  //   console.log("notifications", notifications); // Log fetched notifications
+  // }, [notifications]);
+
   useEffect(() => window.scrollTo(0, 0));
 
   const logOutHandler = () => {
     localStorage.clear("token");
     localStorage.clear("role");
+    localStorage.clear("id");
+    localStorage.clear("email");
   };
 
   return (
@@ -86,7 +122,7 @@ function Header({ name, subName, onPress }) {
           <Link to="/profile" className="btn-sign-in">
             <span>Profile</span>
           </Link>
-          <Badge size="small" count={2}>
+          <Badge size="small" count={notifications.length}>
             <Dropdown
               overlayClassName="header-notifications-dropdown-overlay"
               overlayStyle={{

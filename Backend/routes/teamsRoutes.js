@@ -80,7 +80,6 @@ router.put("/update/:id", async (req, res) => {
 
 router.get("/getTeamLeads/:teamId", async (req, res, next) => {
   try {
-    console.log("inside", req.params.teamId);
     const teamLeads = await teamController.getTeamLeadsByTeamId(req, res);
     if (!teamLeads) {
       return res
