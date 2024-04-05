@@ -18,7 +18,10 @@ const { StatusCodes } = require("http-status-codes")
  * @returns 
  */
 const updateTicketData = async ({ id, ...data }) => {
-    await Ticket.findOneAndUpdate({ _id: id }, { $set: data }, { upsert: true, new: true });
+    const ticketData = await Ticket.findOneAndUpdate({ _id: id }, { $set: data }, { upsert: true, new: true });
+    if (ticketData.status == "660d958b96bd49242ec3912c") {
+        assignTickets(ticketData.team)
+    }
     return true
 }
 
@@ -48,6 +51,7 @@ const createTicket = async (data) => {
             status: status._id,
             priority: priority._id
         })
+        assignTickets(teamId)
         return data.message = "Ticket created successfully"
     }).catch((err) => {
         console.log(err)
@@ -180,6 +184,53 @@ const fetchAllResolvedTickets = async (user) => {
       return { message: error.message };
     }
 }
+
+/**
+ * It auto assigns ticket to the next available team member
+ * @param {*} teamId 
+ * @returns 
+ */
+const assignTickets = async (teamId) => {
+    try {
+        const teamData = await Team.findById(teamId)
+        const ticketData = await Ticket.find({ team: teamId, status: {
+            "$ne": "660d958b96bd49242ec3912c"
+        }})
+        if (teamData && teamData.members) {
+            const usersByTicketCount = {}
+            teamData.members.reduce((acc, member) => {
+                let count = 0;
+                ticketData.forEach((ticket) => {
+                    if(ticket.assignee.includes(member)) {
+                        count++;
+                    }
+                })
+                usersByTicketCount[member] = count
+                return acc
+            }, [])
+            const sortedUsersByLowestTickets = Object.fromEntries(
+                Object.entries(usersByTicketCount).sort(([,a],[,b]) => a-b)
+            );
+            const userIds = Object.keys(sortedUsersByLowestTickets)
+            const unAssignedTicketData = await Ticket.find({ team: teamId, assignee: { $size: 0 }})
+            let i=0; j=0;
+            while (j < unAssignedTicketData.length) {
+                if (i === userIds.length) {
+                    i = 0;
+                }
+                if (sortedUsersByLowestTickets[userIds[i]] < 5) {
+                    await Ticket.findByIdAndUpdate(unAssignedTicketData[j]._id, { $set: { assignee: [userIds[i]] } })
+                    i++;
+                }
+                j++;
+            }
+        }
+        return true
+    } catch(error) {
+        console.log(error)
+    }
+}
+
 module.exports = {
     createTicket,
     addAttachments,
@@ -190,5 +241,6 @@ module.exports = {
     getStatuses,
     getPriorities,
     saveComment,
-    fetchAllResolvedTickets
+    fetchAllResolvedTickets,
+    assignTickets
 }

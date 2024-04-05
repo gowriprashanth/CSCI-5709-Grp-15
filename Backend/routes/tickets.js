@@ -197,7 +197,7 @@ router.post('/:id/add-comment', async (req, res, next) => {
 });
 
 /**
- * 
+ * It returns all archived tickets for logged in user
  */
 router.get('/archived-tickets', async (req, res, next) => {
   if (!req.user) {
