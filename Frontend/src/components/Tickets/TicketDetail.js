@@ -17,10 +17,12 @@ import {
     message
 } from "antd";
 import TextArea from "antd/es/input/TextArea";
-import { useHistory, useLocation } from "react-router-dom";
-import { uploadFile } from "../../FirebaseStorageService";
+import { useLocation, useHistory } from "react-router-dom"
+import * as TicketService from "../../services/TicketService"
+import { uploadFile } from "../../FirebaseStorageService"
 import axiosHelper from "../../helper/axioshelper";
-import * as TicketService from "../../services/TicketService";
+
+const { Option } = Select;
 
 const commentAvatar = "https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvdjkzNy1hZXctMTExXzMuanBn.jpg"
 
@@ -36,6 +38,8 @@ export default function TicketDetail() {
     const [statuses, updateStatuses] = useState([])
     const [priorities, updatePriorities] = useState([])
     const [teamsData, updateTeamsData] = useState([])
+    const [userOptions, updateUserOptions] = useState([])
+
     const history = useHistory();
 
     if (!state._id) {
@@ -159,13 +163,14 @@ export default function TicketDetail() {
     }
 
     /**
-     * 
+     * It updates team of the ticket 
      */
     const updateTeamOfTicket = async (value) => {
         try {
             const response = await TicketService.updateTeamOfTicket(ticketData._id, value)
             if (response && response.data && response.data.message && response.data.message === true) {
                 getTicketData()
+                getUsers()
                 messageApi.open({
                     type: 'success',
                     content: 'Ticket Successfully Assigned to Other team',
@@ -188,6 +193,7 @@ export default function TicketDetail() {
             if (response && response.data && response.data.length > 0) {
                 updateAssignee(response.data)
             }
+            updateUserOptions(response.data.map(e => <Option key={e._id}>{e.name} ({e.email})</Option>))
         }
     }, [ticketData])
 
@@ -301,15 +307,13 @@ export default function TicketDetail() {
                             {ticketData && users && (
                                 <Form.Item label="Assignee">
                                     <Select
-                                        defaultValue={ticketData.assignee.map(e => (e._id))}
                                         mode="multiple"
                                         onChange={changeUpdateAssignee}
-                                        options={users.map(e => ({
-                                            label: `${e.name} (${e.email})`,
-                                            value: e._id
-                                        }))}
-                                    />
-                                </Form.Item>
+                                        value={ticketData.assignee.map(e => (e._id))}
+                                    >
+                                        {userOptions}
+                                    </Select>
+                                </Form.Item>                                
                             )}
                             <hr />
                             {ticketData && ticketData.status && (

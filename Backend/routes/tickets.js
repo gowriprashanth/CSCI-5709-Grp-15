@@ -68,7 +68,7 @@ router.put('/:id/update-team', async (req, res, next) => {
     const id = req.params.id;
     const { team } = req.body
     if (id) {
-      const message = await ticketController.updateTicketData({ id, team, assignee: [] })
+      const message = await ticketController.updateTicketData({ id, team, assignee: [], isEscalated: false })
       res.status(StatusCodes.OK).send({ message });
     } else {
       res.status(StatusCodes.BAD_REQUEST).send({ message: "Required missing data" });
