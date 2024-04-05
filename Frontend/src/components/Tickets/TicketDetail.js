@@ -131,8 +131,10 @@ export default function TicketDetail() {
                 datetime: e.createdAt
             }))
             updateTicketData(response.data)
+        } else {
+            history.push("/dashboard")
         }
-    }, [state?._id])
+    }, [state?._id, history])
 
     /**
      * It fetches all the statuses

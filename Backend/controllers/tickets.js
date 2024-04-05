@@ -7,7 +7,10 @@ const Ticket = require("../models/Ticket")
 const Status = require("../models/Status")
 const Priority = require("../models/Priority")
 const TicketComment = require("../models/TicketComment")
+const User = require("../models/User")
 const fs = require('fs')
+const Team = require("../models/Team")
+const { StatusCodes } = require("http-status-codes")
 
 /**
  * It perfoms ticket update operation
@@ -95,13 +98,24 @@ const getTicketsByTeamId = async (data) => {
 /**
  * It returns ticket data of given ticket id
  */
-const getTicketById = async (ticketId) => {
-    return await Ticket.findById(ticketId).populate("attachments").populate("comments").populate("assignee").populate({
+const getTicketById = async (ticketId, user) => {
+    const ticketData = await Ticket.findById(ticketId).populate("attachments").populate("comments").populate("assignee").populate({
         path: 'comments',
         populate: {
             path: 'userId'
         }
     }).populate("status").populate("priority");
+    if (ticketData && ticketData.team) {
+        const userData = await User.findById(user.userId)
+        const teamData = await Team.findById(ticketData.team)
+        if(user.role.toLowerCase() === "admin" || userData.teamLead.includes(ticketData.team) || teamData.members.includes(user.userId)) {
+            return ticketData
+        } else {
+            return Promise.reject({ status: StatusCodes.FORBIDDEN })
+        }
+    } else {
+        return {}
+    }
 }
 
 /**

@@ -203,12 +203,18 @@ router.get('/:ticketId', async (req, res, next) => {
     const { ticketId } = req.params
     if (!ticketId) {
       res.status(StatusCodes.BAD_REQUEST).send({ error: "ticketId is required" });
+    } else if (!req.user) {
+      res.status(StatusCodes.FORBIDDEN).send({ error: "You do not have enough priviledges to view the data" })
     } else {
-      const ticketData = await ticketController.getTicketById(ticketId)
+      const ticketData = await ticketController.getTicketById(ticketId, req.user)
       res.status(StatusCodes.OK).send(ticketData);
     }
   } catch (error) {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error.message || error })
+    if (error.status === StatusCodes.FORBIDDEN) {
+      res.status(StatusCodes.FORBIDDEN).send({ error: "You do not have enough priviledges to view the data" })
+    } else {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error.message || error })
+    }
   }
 });
 
