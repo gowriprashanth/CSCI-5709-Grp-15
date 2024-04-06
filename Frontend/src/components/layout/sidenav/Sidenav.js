@@ -1,9 +1,13 @@
+/**
+ * @author Bhautik Koshiya
+ */
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { Menu } from "antd";
 import { NavLink, useLocation } from "react-router-dom";
 import logo from "../../../assets/images/logo.svg";
 import { DotChartOutlined } from "@ant-design/icons";
 
+//This code is written to create sideNavigation Bar
 function Sidenav({ color }) {
   const { pathname } = useLocation();
   const page = pathname.replace("/", "");
@@ -75,6 +79,19 @@ function Sidenav({ color }) {
               {<QuestionCircleOutlined />}
             </span>
             <span className="label">Knowledge Base</span>
+          </NavLink>
+        </Menu.Item>
+        <Menu.Item key="4">
+          <NavLink to="/archived-tickets">
+            <span
+              className="icon"
+              style={{
+                background: page === "archivedtickets" ? color : "",
+              }}
+            >
+              {<QuestionCircleOutlined />}
+            </span>
+            <span className="label">Archived Tickets</span>
           </NavLink>
         </Menu.Item>
       </Menu>

@@ -1,11 +1,15 @@
+/**
+ * @author Bhautik Koshiya
+ */
 import React, { Component } from "react";
 import { Layout, Menu, Button, Card, Form, Input, Checkbox, Radio } from "antd";
 import "./SignUp.css";
 import { Link } from "react-router-dom";
 import HeaderAuthentication from "../../components/layout/HeaderAuthentication";
 import axios from "axios";
-
 const { Footer, Content } = Layout;
+
+// SignUp page
 export default class SignUp extends Component {
   constructor(props) {
     super(props);
@@ -16,6 +20,7 @@ export default class SignUp extends Component {
     this.handleSignUp = this.handleSignUp.bind(this);
   }
 
+//it calls backend SignUp Api.
   handleSignUp = async (values) => {
     // const API_URL = process.env.API_URL;
 
@@ -34,15 +39,12 @@ export default class SignUp extends Component {
 
         if (response.status === 200) {
           const responseData = response.data;
-          console.log("response", responseData);
           this.setState({ token: responseData.token }, () => {
             localStorage.setItem("token", responseData.token);
             localStorage.setItem("role", responseData.user.role);
             localStorage.setItem("id", responseData.user._id);
             localStorage.setItem("email", responseData.user.email);
-            // console.log("role", responseData.user.role);
             this.props.history.push("/dashboard");
-            console.log(role);
           });
         }
       } catch (error) {

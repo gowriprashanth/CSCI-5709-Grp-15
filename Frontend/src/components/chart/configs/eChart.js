@@ -97,17 +97,17 @@ const fetchEChartData = async () => {
   try {
     const response = await axiosHelper.get('/analytics/ticket');
     const data = response.data;
-    const chartData = data.map(item => item.value);
-    const categories = data.map(item => item.month);
+const chartData = data.map(item => item.value);
+const categories = data.map(item => item.month);
 
-    // Update the eChart object with the fetched data
-    eChart.series[0].data = chartData;
-    eChart.options.xaxis.categories = categories;
+// Update the eChart object with the fetched data
+eChart.series[0].data = chartData;
+eChart.options.xaxis.categories = categories;
 
-    return eChart;
+return eChart;
   } catch (error) {
     console.error('Error fetching eChart data:', error);
-    return null;
+return null;
   }
 };
 
