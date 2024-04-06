@@ -21,11 +21,10 @@ function FAQ() {
   let [description, setDescription] = useState("");
   let [knowledgeBase, setKnowledgeBase] = useState([]);
   const [role, setRole] = useState("");
+  let [faqCounter, setFaqCounter] = useState(0);
 
   // Event handler for onChange event
-  const onChange = (key) => {
-    console.log(key);
-  };
+  const onChange = (key) => {};
 
   // Fetch user information from the server
   const fetchUserInfo = async () => {
@@ -35,7 +34,6 @@ function FAQ() {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response.data);
 
       setRole(response.data.role);
 
@@ -52,7 +50,6 @@ function FAQ() {
     axiosHelper
       .get("/knowledgebase/get-allkbase")
       .then((response) => {
-        console.log("Get all base >>>>>>>>>" + response.data);
         let data = response.data;
         data.map((item) => {
           item = { ...item, visible: false };
@@ -60,16 +57,15 @@ function FAQ() {
         });
         setKnowledgeBase(data);
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => {});
   };
 
   // Fetch user information and knowledge base items on component mount
   useEffect(() => {
     getALlKnowledgeBase();
     fetchUserInfo();
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [faqCounter]);
 
   // Add FAQ to a knowledge base by title
   const addFaqToKbaseByTitle = (title, faq) => {
@@ -80,7 +76,7 @@ function FAQ() {
         if (response.status === 201) {
           getALlKnowledgeBase();
           message.success("FAQ Added Successfully");
-          console.log(response.data);
+          setFaqCounter(faqCounter + 1);
         }
       })
       .catch((error) => {
@@ -99,7 +95,6 @@ function FAQ() {
         if (response.status === 200) {
           getALlKnowledgeBase();
           message.success("Knowledge Base Deleted Successfully");
-          console.log(response.data);
         }
       })
       .catch((error) => {
@@ -118,7 +113,6 @@ function FAQ() {
         if (response.status === 201) {
           getALlKnowledgeBase();
           message.success("Knowledge Base Created Successfully");
-          console.log(response.data);
         }
       })
       .catch((error) => {
@@ -171,14 +165,13 @@ function FAQ() {
               placeholder="Name of Knowledge Base"
               onChange={(e) => {
                 setKbaseTitle(e.target.value);
-                console.log(e.target.value);
               }}
             />
             <Button
               type="primary"
               onClick={() => {
                 const title = kbaseTitle;
-                console.log(title);
+
                 if (knowledgeBase.find((item) => item.title === title)) {
                   message.error("Knowledge Base with this name already exists");
                 } else if (title) {
@@ -257,7 +250,6 @@ function FAQ() {
                           maxLength={20}
                           onInput={(e) => {
                             setTitle(e.target.value);
-                            console.log(e.target.value);
                           }}
                           value={title}
                         />
@@ -288,7 +280,7 @@ function FAQ() {
                             onClick={() => {
                               if (title && description) {
                                 toggleVisible(index);
-                                console.log(title, description);
+
                                 addFaqToKbaseByTitle(item.title, {
                                   question: title,
                                   answer: description,
