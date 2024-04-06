@@ -26,9 +26,6 @@ function Settings() {
 
   // Handle form submission
   const onFinish = () => {
-    console.log("Current Password:", currentpassword);
-    console.log("New Password:", newpassword);
-
     // Update password using an asynchronous function
     const UpdatePassword = async () => {
       try {
@@ -44,7 +41,6 @@ function Settings() {
             },
           }
         );
-        console.log(response.data);
 
         // Display success message if password is updated successfully
         if (response.status === 200) {
@@ -88,7 +84,6 @@ function Settings() {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log(response.data);
 
         // Update state variables with user information
         setName(response.data.name);
@@ -103,7 +98,6 @@ function Settings() {
       }
     };
     fetchUserInfo();
-    console.log(name, email, role);
   });
 
   return (
