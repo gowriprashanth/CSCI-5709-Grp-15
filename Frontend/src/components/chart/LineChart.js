@@ -15,7 +15,7 @@ function LineChart() {
       try {
         const data = await fetchLineChartData();
         if (isMounted) {
-          setChartData(data);
+          setChartData(data); 
         }
       } catch (error) {
         console.error('Error fetching chart data:', error);
@@ -69,17 +69,18 @@ function LineChart() {
           </ul>
         </div>
       </div>
-
+      <div className="chart-container" style={{ overflowX: "auto" }}>
       {chartData && (
         <ReactApexChart
           className="full-width"
           options={chartData.options}
           series={chartData.series}
           type="area"
-          height={350}
-          width={"100%"}
+          height={400}
+          width={"300%"}
         />
       )}
+      </div>
     </>
   );
 }

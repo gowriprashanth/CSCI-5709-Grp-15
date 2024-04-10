@@ -34,7 +34,7 @@ const lineChart = {
     yaxis: {
       labels: {
         style: {
-          fontSize: "14px",
+          fontSize: "12px",
           fontWeight: 600,
           colors: ["#8c8c8c"],
         },
@@ -42,8 +42,7 @@ const lineChart = {
     },
     xaxis: {
       labels: {
-        style: {
-          fontSize: "14px",
+          fontSize: "2px",
           fontWeight: 600,
           colors: [
             "#8c8c8c",
@@ -52,8 +51,8 @@ const lineChart = {
             "#8c8c8c",
             "#8c8c8c",
             "#8c8c8c",
-          ],
-        },
+            "#8c8c8c"
+          ], 
       },
       categories: [], 
     },
@@ -70,21 +69,20 @@ const lineChart = {
 const fetchLineChartData = async () => {
   try {
     const response = await axiosHelper.get('/analytics/department');
-    const data = response.data;
+    const data = response.data.data; 
 
-const createdData = data.filter(item => item.name === 'Created').map(item => item.created);
-const resolvedData = data.filter(item => item.name === 'Resolved').map(item => item.resolved);
-const categories = data.map(item => item.categories);
+    const categories = data.map(item => item.team);
+    const created = data.map(item => item.created);
+    const resolved = data.map(item => item.resolved);
 
-lineChart.series[0].data = createdData;
-lineChart.series[1].data = resolvedData;
-lineChart.options.xaxis.categories = categories;
+    lineChart.series[0].data = created;
+    lineChart.series[1].data = resolved;
+    lineChart.options.xaxis.categories = categories;
 
-return lineChart; 
-    
+    return lineChart; 
   } catch (error) {
     console.error('Error fetching data:', error);
-return null; 
+    return null; 
   }
 };
 
