@@ -1,6 +1,5 @@
 import axiosHelper from '../../../helper/axioshelper';
 
-// Define the eChart object
 const eChart = {
   series: [
     {
@@ -12,7 +11,7 @@ const eChart = {
   options: {
     chart: {
       type: "bar",
-      width: "100%",
+      width: "auto",
       height: "auto",
       toolbar: {
         show: false,
@@ -97,19 +96,27 @@ const fetchEChartData = async () => {
   try {
     const response = await axiosHelper.get('/analytics/ticket');
     const data = response.data;
-const chartData = data.map(item => item.value);
-const categories = data.map(item => item.month);
+    const chartData = data.map(item => item.value);
+    const categories = data.map(item => item.month);
 
-// Update the eChart object with the fetched data
-eChart.series[0].data = chartData;
-eChart.options.xaxis.categories = categories;
+    eChart.series[0].data = chartData;
+    eChart.options.xaxis.categories = categories;
 
-return eChart;
+    return eChart;
   } catch (error) {
     console.error('Error fetching eChart data:', error);
-return null;
+    return null;
   }
 };
 
+const fetchTicketStatus = async () => {
+  try {
+    const response = await axiosHelper.get('/analytics/status');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching ticket status:', error);
+    throw error;
+  }
+};
 
-export {eChart, fetchEChartData};
+export { eChart, fetchEChartData, fetchTicketStatus };

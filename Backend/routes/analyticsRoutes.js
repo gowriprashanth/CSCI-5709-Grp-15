@@ -7,5 +7,6 @@ const ticketAnalyticsController = require('../controllers/ticketAnalyticsControl
 
 router.get('/ticket', ticketAnalyticsController.getTicketAnalytics);
 router.get('/department', ticketAnalyticsController.getDepartmentAnalytics);
+router.get('/status',ticketAnalyticsController.getTicketStatus);
 
 module.exports = router;

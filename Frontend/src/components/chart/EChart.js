@@ -1,22 +1,18 @@
 import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import { Row, Col, Typography } from "antd";
-import { fetchEChartData } from "./configs/eChart";
+import { fetchEChartData, fetchTicketStatus } from "./configs/eChart";
 
 function EChart() {
   const { Title, Paragraph } = Typography;
   const [chartData, setChartData] = useState(null);
-  const [isMounted, setIsMounted] = useState(false);
+  const [items, setItems] = useState([]);
 
   useEffect(() => {
-    setIsMounted(true); 
-
     const fetchData = async () => {
       try {
         const data = await fetchEChartData();
-        if (isMounted) {
-          setChartData(data);
-        }
+        setChartData(data);
       } catch (error) {
         console.error('Error fetching chart data:', error);
       }
@@ -24,29 +20,24 @@ function EChart() {
 
     fetchData();
 
-    return () => {
-      setIsMounted(false); 
-    };
-  }, [isMounted]); 
+    fetchTicketStatus() 
+      .then(response => {
+        if (response.success) {
+          const ticketStatusData = response.data;
+          const updatedItems = ticketStatusData.map(statusData => ({
+            user: statusData.status, 
+            count: statusData.data.reduce((acc, curr) => acc + curr.count, 0) 
+          }));
+          setItems(updatedItems);
+        } else {
+          console.error('Error fetching ticket status:', response.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching ticket status:', error);
+      });
 
-  const items = [
-    {
-      Title: "220",
-      user: "Created",
-    },
-    {
-      Title: "120",
-      user: "Resolved",
-    },
-    {
-      Title: "100",
-      user: "Open",
-    },
-    {
-      Title: "92%",
-      user: "Customer Satisfaction",
-    },
-  ];
+  }, []);
 
   return (
     <>
@@ -67,14 +58,14 @@ function EChart() {
           than last week <span className="bnb2">+30%</span>
         </Paragraph>
         <Paragraph className="lastweek">
-          Resolved Tickets Compared to last week
+          Ticket status
         </Paragraph>
         <Row gutter>
-          {items.map((v, index) => (
+          {items.map((item, index) => (
             <Col xs={6} xl={6} sm={6} md={6} key={index}>
               <div className="chart-visitor-count">
-                <Title level={4}>{v.Title}</Title>
-                <span>{v.user}</span>
+                <Title level={4}>{item.count}</Title>
+                <span>{item.user}</span> {/* Display count */}
               </div>
             </Col>
           ))}
